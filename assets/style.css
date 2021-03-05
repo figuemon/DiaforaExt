@@ -636,7 +636,7 @@ a {
 /********* Custom App CSS *****/
 .div-card {
   border-radius: 2px;
-  background-color: white;
+  background-color: #212529;
   margin: 10px;
   padding: 15px;
   box-shadow: 1px 1px 1px lightgrey;
