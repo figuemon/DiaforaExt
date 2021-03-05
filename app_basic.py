@@ -5,6 +5,7 @@ import dash_bootstrap_components as dbc
 import dash_daq as daq
 import plotly.graph_objects as go
 import pandas as pd
+import dash_split_pane
 from dash.dependencies import Input, Output
 
 # Load data
@@ -25,30 +26,127 @@ def get_options(list_stocks):
 
     return dict_list
 
-navbar = dbc.NavbarSimple(
-    children=[
-        dbc.NavItem(dbc.NavLink("Page 1", href="#")),
-        dbc.DropdownMenu(
-            children=[
-                dbc.DropdownMenuItem("More pages", header=True),
-                dbc.DropdownMenuItem("Page 2", href="#"),
-                dbc.DropdownMenuItem("Page 3", href="#"),
-            ],
-            nav=True,
-            in_navbar=True,
-            label="More",
+PLOTLY_LOGO = "assets/DiaforaIcon.png"
+splitColor = "#C700BA"
+mergeColor = "#FFA452"
+movedColor = "#09D3D3"
+renamedColor = "#1700E7"
+addedColor = "#38B03D"
+excludedColor = "#D50000"
+
+search_bar = dbc.Row(
+    [
+        dbc.Col(dbc.Input(type="search", placeholder="Search")),
+        dbc.Col(
+            dbc.Button("Search", color="primary", className="ml-3"),
+            width="auto",
         ),
     ],
-    brand="NavbarSimple",
-    brand_href="#",
-    color="primary",
+    no_gutters=True,
+    className="ml-auto flex-nowrap mt-3 mt-md-0",
+    align="center",
+)
+
+navbar = dbc.Navbar(
+    [
+        html.A(
+            # Use row and col to control vertical alignment of logo / brand
+            dbc.Row(
+                [
+                    dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
+                    dbc.Col(dbc.NavbarBrand("Diaforá", style={
+                        "font-size": "2.0rem"
+                        }, className="mb-0 h1 ml-2")),
+                ],
+                align="center",
+                no_gutters=True,
+            ),
+            href="https://plot.ly",
+        ),
+        daq.BooleanSwitch(
+        id='split-switch1',
+        label={
+            'label': 'Split',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  splitColor,
+        className = "toggle-switch",
+        ),  
+         daq.BooleanSwitch(
+        id='merge-switch1',
+        label={
+            'label': 'Merge',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  mergeColor,
+        className = "toggle-switch",
+        ),  
+        daq.BooleanSwitch(
+        id='moved-switch1',
+        label={
+            'label': 'Moved',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  movedColor,
+        className = "toggle-switch",
+        ),  
+        daq.BooleanSwitch(
+        id='renamed-switch1',
+        label={
+            'label': 'Renamed',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  renamedColor,
+        className = "toggle-switch",
+        ),  
+        daq.BooleanSwitch(
+        id='added-switch1',
+        label={
+            'label': 'Added',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  addedColor,
+        className = "toggle-switch",
+        ),
+        daq.BooleanSwitch(
+        id='excluded-switch1',
+        label={
+            'label': 'Excluded',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  excludedColor,
+        className = "toggle-switch",
+        ),    
+        dbc.NavbarToggler(id="navbar-toggler"),
+        dbc.Collapse(search_bar, id="navbar-collapse", navbar=True),
+    ],
+    color="dark",
     dark=True,
 )
 app.layout = html.Div(
-    children=[ navbar,
+    children=[navbar,
         html.Div(className='row',
                  children=[
-                    html.Div(className='four columns div-user-controls',
+                     dash_split_pane.DashSplitPane(
+                            children=[html.Div(className=' div-user-controls',
                              children=[
                                  html.H2('DASH - STOCK PRICES'),
                                  html.P('Visualising time series with Plotly - Dash.'),
@@ -78,15 +176,23 @@ app.layout = html.Div(
                                      ],
                                      style={'color': '#1E1E1E'})
                                 ]
-                             ),
-                    html.Div(className='eight columns div-for-charts bg-grey',
+                             ), 
+                            html.Div(className=' div-for-charts bg-grey',
                              children=[
-                                 dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=True)
-                             ])
-                              ])
+                                 dbc.Card(
+                        dbc.CardBody( className= "bg-grey", children= [
+                                 dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=True)]
+                                ))
+                             ])],
+                                    id="splitter",
+                                    split="vertical",
+                                    size=450,
+                                ),
+                    
+
         ]
 
-)
+)])
 
 
 # Callback for timeseries price
