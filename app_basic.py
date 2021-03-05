@@ -9,12 +9,14 @@ import pandas as pd
 import dash_split_pane
 from dash.dependencies import Input, Output
 
+
+external_stylesheets=["assets/template.css", "assets/bootstrap.min.css"]
 # Load data
 df = pd.read_csv('data/stockdata2.csv', index_col=0, parse_dates=True)
 df.index = pd.to_datetime(df['Date'])
 
 # Initialize the app
-app =dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app =dash.Dash(__name__,external_stylesheets=external_stylesheets)
 app.title = 'Diaforá'
 app._favicon 
 server = app.server
