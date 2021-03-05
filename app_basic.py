@@ -180,7 +180,7 @@ app.layout = html.Div(
                             html.Div(className=' div-for-charts bg-grey',
                              children=[
 
-                                 dcc.Graph(id='timeseries', config={'displayModeBar': False}, animate=True)
+                                 dcc.Graph(id='timeseries',className="div-card", config={'displayModeBar': False}, animate=True)
 
                              ])],
                                     id="splitter",
