@@ -632,3 +632,12 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: #d8d8d870 !important;
 }
+
+/********* Custom App CSS *****/
+.div-card {
+  border-radius: 2px;
+  background-color: white;
+  margin: 10px;
+  padding: 15px;
+  box-shadow: 1px 1px 1px lightgrey;
+}
