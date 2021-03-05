@@ -1,3 +1,4 @@
+import os
 import dash
 import dash_html_components as html
 import dash_core_components as dcc
@@ -16,6 +17,7 @@ df.index = pd.to_datetime(df['Date'])
 app =dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 app.title = 'Diaforá'
 app._favicon 
+server = app.server
 app.config.suppress_callback_exceptions = True
 
 
