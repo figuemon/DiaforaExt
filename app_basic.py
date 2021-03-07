@@ -7,7 +7,7 @@ import dash_daq as daq
 import plotly.graph_objects as go
 import pandas as pd
 import dash_split_pane
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 
 external_stylesheets=["assets/template.css", "assets/bootstrap.min.css"]
@@ -51,6 +51,78 @@ search_bar = dbc.Row(
     align="center",
 )
 
+splitSwitch = daq.BooleanSwitch(
+        id = 'split-switch',
+        label={
+            'label': 'Split',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  splitColor,
+        className = "toggle-switch",
+        )
+mergeSwitch = daq.BooleanSwitch(
+        id = 'merge-switch',
+        label={
+            'label': 'Merge',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  mergeColor,
+        className = "toggle-switch",
+        )
+movedSwitch =  daq.BooleanSwitch(
+        id = 'moved-switch',
+        label={
+            'label': 'Moved',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  movedColor,
+        className = "toggle-switch",
+        )
+renamedSwitch = daq.BooleanSwitch(
+        id = 'renamed-switch',
+        label={
+            'label': 'Renamed',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  renamedColor,
+        className = "toggle-switch",
+        )
+addedSwitch = daq.BooleanSwitch(
+        id = 'added-switch',
+        label={
+            'label': 'Added',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  addedColor,
+        className = "toggle-switch",
+        )
+excludedSwitch = daq.BooleanSwitch(
+        id = 'excluded-switch',
+        label={
+            'label': 'Excluded',
+            'style': {
+                'color': 'white'
+            }
+        },
+        labelPosition='top',
+        color=  excludedColor,
+        className = "toggle-switch",
+        )
 navbar = dbc.Navbar(
     [
         html.A(
@@ -65,82 +137,17 @@ navbar = dbc.Navbar(
                 align="center",
                 no_gutters=True,
             ),
-            href="https://plot.ly",
+            href="#",
         ),
-        daq.BooleanSwitch(
-        id='split-switch1',
-        label={
-            'label': 'Split',
-            'style': {
-                'color': 'white'
-            }
-        },
-        labelPosition='top',
-        color=  splitColor,
-        className = "toggle-switch",
-        ),  
-         daq.BooleanSwitch(
-        id='merge-switch1',
-        label={
-            'label': 'Merge',
-            'style': {
-                'color': 'white'
-            }
-        },
-        labelPosition='top',
-        color=  mergeColor,
-        className = "toggle-switch",
-        ),  
-        daq.BooleanSwitch(
-        id='moved-switch1',
-        label={
-            'label': 'Moved',
-            'style': {
-                'color': 'white'
-            }
-        },
-        labelPosition='top',
-        color=  movedColor,
-        className = "toggle-switch",
-        ),  
-        daq.BooleanSwitch(
-        id='renamed-switch1',
-        label={
-            'label': 'Renamed',
-            'style': {
-                'color': 'white'
-            }
-        },
-        labelPosition='top',
-        color=  renamedColor,
-        className = "toggle-switch",
-        ),  
-        daq.BooleanSwitch(
-        id='added-switch1',
-        label={
-            'label': 'Added',
-            'style': {
-                'color': 'white'
-            }
-        },
-        labelPosition='top',
-        color=  addedColor,
-        className = "toggle-switch",
-        ),
-        daq.BooleanSwitch(
-        id='excluded-switch1',
-        label={
-            'label': 'Excluded',
-            'style': {
-                'color': 'white'
-            }
-        },
-        labelPosition='top',
-        color=  excludedColor,
-        className = "toggle-switch",
-        ),    
         dbc.NavbarToggler(id="navbar-toggler"),
-        dbc.Collapse(search_bar, id="navbar-collapse", navbar=True),
+        dbc.Collapse(
+               dbc.Nav(
+                    [splitSwitch, mergeSwitch, movedSwitch,renamedSwitch,addedSwitch,
+                     excludedSwitch], className="ml-auto", navbar=True
+                ),
+                id="navbar-collapse",
+                navbar=True,
+           ),
     ],
     color="dark",
     dark=True,
@@ -197,6 +204,16 @@ app.layout = html.Div(
 
 )])
 
+def toggle_navbar_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+app.callback(
+        Output("navbar-collapse", "is_open"),
+        [Input("navbar-toggler", "n_clicks")],
+        [State("navbar-collapse", "is_open")],
+    )(toggle_navbar_collapse)
 
 # Callback for timeseries price
 @app.callback(Output('timeseries', 'figure'),
@@ -229,6 +246,11 @@ def update_graph(selected_dropdown_value):
               }
 
     return figure
+
+@app.callback(Output('merge-switch', 'on'), 
+            Input('split-switch', 'on'))
+def fn(input_prop):
+    return input_prop
 
 
 if __name__ == '__main__':
