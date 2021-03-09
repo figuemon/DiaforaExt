@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import dash_split_pane
 from dash.dependencies import Input, Output, State
+import visdcc
 
 
 external_stylesheets=["assets/template.css", "assets/bootstrap.min.css"]
@@ -16,7 +17,7 @@ df = pd.read_csv('data/stockdata2.csv', index_col=0, parse_dates=True)
 df.index = pd.to_datetime(df['Date'])
 
 # Initialize the app
-app =dash.Dash(__name__,external_stylesheets=external_stylesheets)
+app =dash.Dash(__name__,external_stylesheets=external_stylesheets, update_title=None)
 app.title = 'Diaforá'
 app._favicon 
 server = app.server
@@ -123,6 +124,11 @@ excludedSwitch = daq.BooleanSwitch(
         color=  excludedColor,
         className = "toggle-switch",
         )
+
+edgeDrawingVisualization = html.Div(id='sketch-holder', className="main_body right top", children=[
+     visdcc.Run_js(id = 'javascript')
+])
+
 navbar = dbc.Navbar(
     [
         html.A(
@@ -190,8 +196,8 @@ app.layout = html.Div(
                              ), 
                             html.Div(className=' div-for-charts bg-grey',
                              children=[
-
-                                 dcc.Graph(id='timeseries',className="div-card", config={'displayModeBar': False}, animate=True)
+                                edgeDrawingVisualization,
+                                #  dcc.Graph(id='timeseries',className="div-card", config={'displayModeBar': False}, animate=True)
 
                              ])],
                                     id="splitter",
@@ -203,6 +209,14 @@ app.layout = html.Div(
         ]
 
 )])
+
+@app.callback(
+    Output('javascript', 'run'),
+    [Input('sketch-holder', 'children')])
+def myfun(x): 
+    if x: 
+        return "window.open('https://yahoo.com/')"
+    return ""
 
 def toggle_navbar_collapse(n, is_open):
     if n:
