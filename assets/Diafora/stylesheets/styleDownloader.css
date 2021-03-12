@@ -1,21 +1,9 @@
 /*color scheme https://coolors.co/d4e27b-c8da56-bcd231-9aac29-788620*/
 
 :root {
-  --main-bg-color: #268970;
-  --main-color: #054357;
-  --secondary-color: #BED948;
-  --accent-color: #FB7422;
+  
 }
 
-body {
-	margin: 0px;
-	padding: 0px;
-	background: var(--main-color);
-	font-family: 'Raleway', sans-serif;
-	font-size: 12pt;
-	font-weight: 400;
-
-}
 
 .header{
     position:absolute;

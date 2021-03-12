@@ -215,7 +215,7 @@ app.layout = html.Div(
     [Input('sketch-holder', 'children')])
 def myfun(x): 
     if x: 
-        return "window.open('https://yahoo.com/')"
+        return "console.log('Executed')"
     return ""
 
 def toggle_navbar_collapse(n, is_open):
