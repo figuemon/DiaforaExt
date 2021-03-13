@@ -6,3 +6,16 @@ h1{
   background-color: var(--main-bg-color);
   text-align: center;
 }
+
+.carousel-inner > .carousel-item > img {
+  width:50%;
+  height:360px;
+  margin:auto;
+}
+
+h5{
+  text-shadow: 2px 2px 4px black;
+}
+p{
+  text-shadow: 2px 2px 4px black;
+}
