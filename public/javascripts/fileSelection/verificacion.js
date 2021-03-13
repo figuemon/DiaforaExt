@@ -1,5 +1,5 @@
-const visualizationUrl = 'http://localhost:3000/indented';
-const downloadUrl = 'http://localhost:3000/download';
+const visualizationUrl = '/indented';
+const downloadUrl = 'https://diafora-taxonomies.herokuapp.com/download';
 
 function onDownload() {
     window.location.replace(downloadUrl);
@@ -34,7 +34,7 @@ function VerificarDatos() {
                 readFile(file2, function(resultFile2) {
                     sessionStorage.setItem('sessionTree2', resultFile2);
 
-                    window.location.replace(visualizationUrl);
+                    window.location.replace(window.location.href  + visualizationUrl);
                 });
             });
             //window.sessionStorage.file1 = file1;

@@ -16,7 +16,7 @@ tree.setLog(function(logContent) {
 	}
 );*/
 
-const loadingUrl = 'http://localhost:3000/';
+const loadingUrl = 'https://diafora-taxonomies.herokuapp.com/';
 
 function onSalir() {
     //alert("salir")
