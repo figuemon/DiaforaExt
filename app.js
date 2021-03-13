@@ -64,7 +64,7 @@ module.exports = app;
 // Listen on a specific host via the HOST environment variable
 var host = process.env.HOST || '127.0.0.1';
 // Listen on a specific port via the PORT environment variable
-var port = process.env.PORT || 5757;
+var port = 5757;
  
 var cors_proxy = require('cors-anywhere');
 cors_proxy.createServer({
