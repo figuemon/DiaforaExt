@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/styleDownloader.css' />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src = "/javascripts/xmlToJSON.js" ></script>
+	<script src = "/javascripts/hierachyThreeDownloader.js" ></script>
+	<script src = "/javascripts/handleQueryIndex.js" ></script>
+  </head>
+  <body>
+  	<button class="interfaceButton vis_button" onclick="onSalir()">Volver</button>
+    <div class="header">
+		<h1 class="textTittle">
+			Taxonomy Downloader
+		</h1>
+	
+	<table class="centeredTable">
+	<tr >
+		<td class="spacedTableRow">
+		<label class="downloaderInputLabel" for="yearL">Year</label>
+		</td>
+		<td class="spacedTableRow"> 
+		<input class = "downloaderInput" type="number" id = "year" name="year"  title="The year of of the taxonomy consulted" placeholder="Year">
+		</td>
+	</tr>
+	<tr >
+		<td class="spacedTableRow">
+			<label class="downloaderInputLabel" for="taxonL">Target Taxon</label>
+		</td>
+		<td class="spacedTableRow">
+			<input class = "downloaderInput" type="text" id = "name" name="taxon" title="The name of the taxon consulted" placeholder="Taxon name">
+		</td>
+	</tr>
+	</table>
+	<button type="button" id = "searchButton" class="interfaceButton search_button">Buscar</button>
+	<div id = "resultadoName">
+		<p id = "notify"></p>
+    </div>
+    <div id = "resultadoId">
+    </div>
+    </div>
+		<p class="footerText">
+		This webside downloads taxonomies from  CATALOGUE OF LIFE (www.catalogueoflife.org) in json format, also you can download images from ENCYCOPEDIA OF LIFE if you want.
+		</p>  
+  </body>
+</html>

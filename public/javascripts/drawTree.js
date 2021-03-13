@@ -14,8 +14,6 @@ var tree2 = JSON.parse(sessionStorage.getItem('sessionTree2'));
 var treeTax = tree.taxonomy;
 var treeTax2 = tree2.taxonomy;
 
-function initTreeFn() {
-    alert('DD');
 countChildren(treeTax);
 countChildren(treeTax2);
 
@@ -178,8 +176,6 @@ document.getElementById('table_rank_id').innerHTML =
 //this treeTax comes from a file selected by the user and is modified by preprocesamiento.js and contChildren.js
 if (!treeTax || !treeTax2) {
     window.location.replace(loadingUrl);
-}
-
 }
 
 //all options that can influece how the visualization is displayed

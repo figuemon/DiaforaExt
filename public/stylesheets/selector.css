@@ -1,0 +1,8 @@
+h1{
+  margin-top: 50px;
+  margin-left: 20px;
+  font-size: 16pt;
+  color: white;
+  background-color: var(--main-bg-color);
+  text-align: center;
+}
