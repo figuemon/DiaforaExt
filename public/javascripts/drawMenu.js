@@ -1,4 +1,4 @@
-const loadingUrl = 'https://diafora-taxonomies.herokuapp.com/';
+const loadingUrl = host;
 
 //this variables are accesed all over the code to enable or disable features
 var interface_variables = {

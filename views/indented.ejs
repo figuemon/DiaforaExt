@@ -1,156 +1,279 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
-	 <script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.js"></script>
-	<script src = "/javascripts/drawMenu.js" ></script>
-	<script src = "/javascripts/generic.js" ></script>
-	<script src = "/javascripts/countChildren.js" ></script>
-	<script src = "/javascripts/preprocesamiento.js" ></script>
-	<script src = "/javascripts/lineSystem.js" ></script>
-	<script src = "/javascripts/filter.js" ></script>
-	<script src = "/javascripts/ordering.js" ></script>
+    <head>
+        <title><%= title %></title>
+        <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
+        <link href="/stylesheets/selector.css" rel="stylesheet" />
+        <link rel="stylesheet" href="/stylesheets/style.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.js"></script>
+        <script src="/lib/jquery.min.js"></script>
+        <script src="/lib/bootstrap.bundle.js"></script>
+        <script src="/javascripts/globalconf.js"></script>
+        <script src="/javascripts/drawMenu.js"></script>
+        <script src="/javascripts/generic.js"></script>
+        <script src="/javascripts/countChildren.js"></script>
+        <script src="/javascripts/preprocesamiento.js"></script>
+        <script src="/javascripts/lineSystem.js"></script>
+        <script src="/javascripts/filter.js"></script>
+        <script src="/javascripts/ordering.js"></script>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a href="#"
+                ><div class="align-items-center no-gutters row">
+                    <div class="col">
+                        <img height="30px" src="assets/DiaforaIcon.png" />
+                    </div>
+                    <div class="col">
+                        <span class="mb-0 h1 ml-2 navbar-brand">Diaforá</span>
+                    </div>
+                </div>
+            </a>
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-toggle="collapse"
+                data-target="#navbarColor02"
+                aria-controls="navbarColor02"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-  </head>
-  <body>
+            <div class="collapse navbar-collapse" id="navbarColor02">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label>Congruent</label>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="congruece"
+                                    onclick="onCongruenceChange()"
+                                />
+                                <span
+                                    class="slider_switch round congruence_slider_switch"
+                                ></span>
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label>Split</label>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="split"
+                                    onclick="onSplitChange()"
+                                />
+                                <span
+                                    class="slider_switch round split_slider_switch"
+                                ></span>
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label>Merged</label>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="merge"
+                                    onclick="onMergeChange()"
+                                />
+                                <span
+                                    class="slider_switch round merge_slider_switch"
+                                ></span>
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label>Moved</label>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="move"
+                                    onclick="onMoveChange()"
+                                />
+                                <span
+                                    class="slider_switch round move_slider_switch"
+                                ></span>
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label>Renamed</label>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="rename"
+                                    onclick="onRenameChange()"
+                                />
+                                <span
+                                    class="slider_switch round rename_slider_switch"
+                                ></span>
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label>Added</label>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="add"
+                                    onclick="onAddedChange()"
+                                />
+                                <span
+                                    class="slider_switch round add_slider_switch"
+                                ></span>
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label>Excluded</label>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="removes"
+                                    onclick="onRemovedChange()"
+                                />
+                                <span
+                                    class="slider_switch round remove_slider_switch"
+                                ></span>
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label></label>
+                            <label class="switch">
+                                <input type="checkbox" name="space" />
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label>Lines</label>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="lineas"
+                                    onclick="onLineChange()"
+                                    checked
+                                />
+                                <span
+                                    class="slider_switch round other_slider_switch"
+                                ></span>
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label>Bars</label>
+                            <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="bars"
+                                    onclick="onBarsChange()"
+                                />
+                                <span
+                                    class="slider_switch round other_slider_switch"
+                                ></span>
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label></label>
+                            <label class="switch">
+                                <input type="checkbox" name="space" />
+                            </label>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <button class="buttonsHeader" onclick="onExpand()">
+                            Expand
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <!--Function comes from drawing system -->
+                        <button
+                            class="buttonsHeader"
+                            onclick="sort_and_update_lines()"
+                        >
+                            Sort
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <!--Function comes from drawing system -->
+                        <button class="buttonsHeader" onclick="resetTrees()">
+                            Reset
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <div class="slidecontainer">
+                            <input
+                                type="range"
+                                min="0"
+                                max="100"
+                                value="50"
+                                class="slider"
+                                id="myRange"
+                                oninput="onSliderChange(this.value)"
+                                onchange="onSliderChange(this.value)"
+                            />
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <!-- <button type="button" class="matrix"  onclick="onMatrixClicked()"> <img src = "/images/matrixButton.png" ></img></button>-->
+                        <button
+                            type="button"
+                            class="matrix"
+                            onclick="onMatrixClicked()"
+                        ></button>
+                    </li>
+                    <li class="nav-item">
+                        <!--Function comes from ordering menu script -->
+                        <button
+                            type="“button”"
+                            class="buttonsHeader"
+                            onclick="onSalir()"
+                        >
+                            Exit
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-	<div class="optionSquare">
-		
-		<div class="encircledBox">	
-		<label>Congruent</label>
-		<label class="switch">
-			<input type="checkbox" name="congruece" onclick="onCongruenceChange()"/>
-		 <span class="slider_switch round congruence_slider_switch"></span>
-		</label>
-		</div>
+        <div class="main_body left top">
+            <br />
+            <label class="navbar-dark navbar-brand">Statistics</label>
+            <br /><br />
+            <table id="table_taxon_id" class="table_stadistic"></table>
+            <br />
+            <hr class="separator" />
+            <br />
+            <table id="table_rank_id" class="table_stadistic"></table>
 
-		<div class="encircledBox">
-		<label>Split</label>
-		<label class="switch">
-			<input type="checkbox" name="split" onclick="onSplitChange()"/>
-		 <span class="slider_switch round split_slider_switch"></span>
-		</label>
-		</div>
+            <div id="sketch-holder" class="main_body right top">
+                <!-- Our sketch will go here! -->
+                <script src="/javascripts/drawTree.js"></script>
+            </div>
+        </div>
 
-		<div class="encircledBox">
-		<label>Merged</label>
-		<label class="switch">
-			<input type="checkbox" name="merge" onclick="onMergeChange()"/>
-		 <span class="slider_switch round merge_slider_switch"></span>
-		</label>
-		</div>
-
-		<div class="encircledBox">
-		<label>Moved</label>
-		<label class="switch">
-			<input type="checkbox" name="move" onclick="onMoveChange()"/>
-		 <span class="slider_switch round move_slider_switch"></span>
-		</label>
-		</div>
-
-		<div class="encircledBox">
-		<label>Renamed</label>
-		<label class="switch">
-			<input type="checkbox" name="rename" onclick="onRenameChange()"/>
-		 <span class="slider_switch round rename_slider_switch"></span>
-		</label>
-		</div>
-
-		<div class="encircledBox">
-		<label>Added</label>
-		<label class="switch">
-			<input type="checkbox" name="add" onclick="onAddedChange()"/>
-		 <span class="slider_switch round add_slider_switch"></span>
-		</label>
-		</div>
-
-		<div class="encircledBox">
-		<label>Excluded</label>
-		<label class="switch">
-			<input type="checkbox" name="removes" onclick="onRemovedChange()"/>
-		 <span class="slider_switch round remove_slider_switch"></span>
-		</label>
-		</div>
-
-		<div class="encircledBox">
-		<label></label>
-		<label class="switch">
-		<input type="checkbox" name="space"/>
-		</label>
-		</div>
-
-		<div class="encircledBox">
-		<label>Lines</label>
-			<label class="switch">
-			<input type="checkbox" name="lineas" onclick="onLineChange()" checked/>
-		 <span class="slider_switch round other_slider_switch"></span>
-		</label>
-		</div>
-
-		<div class="encircledBox">
-		<label>Bars</label>
-		<label class="switch">
-			<input type="checkbox" name="bars" onclick="onBarsChange()"/>
-		 <span class="slider_switch round other_slider_switch"></span>
-		</label>
-		</div>
-		
-		<div class="encircledBox">
-		<label></label>
-		<label class="switch">
-		<input type="checkbox" name="space"/>
-		</label>
-		</div>
-		
-		<button class="buttonsHeader" onclick="onExpand()">Expand</button>
-		<!--Function comes from drawing system -->
-		<button class="buttonsHeader" onclick="sort_and_update_lines()">Sort</button>
-
-		<!--Function comes from drawing system -->
-		<button class="buttonsHeader" onclick="resetTrees()">Reset</button>
-		
-		<div class="slidecontainer">
-		<input type="range" min="0" max="100" value="50" class="slider" id="myRange" 
-		oninput="onSliderChange(this.value)" onchange="onSliderChange(this.value)">
-		</div>
-
-		<!-- <button type="button" class="matrix"  onclick="onMatrixClicked()"> <img src = "/images/matrixButton.png" ></img></button>-->
-		<button type="button" class="matrix"  onclick="onMatrixClicked()"></button>
-	
-		<!--Function comes from ordering menu script -->
-		<button type=“button” class="buttonsHeader" onclick="onSalir()">Exit</button>
-
-	</div>
-
-	<div class="main_body left top">
-		<br>
-		<label>Statistics</label>
-		<br><br>
-		<table id="table_taxon_id" class="table_stadistic">
-		</table>
-		<br>
-		<hr class="separator">
-		<br>
-		<table id="table_rank_id" class="table_stadistic">
-		</table>
-
-		<div id="sketch-holder" class="main_body right top">
-		<!-- Our sketch will go here! -->
-		<script src = "/javascripts/drawTree.js" ></script>
-		</div>
-
-  		</div>
-
-  		<!-- -->
-		<div class="infoSquare">
-		<p class="infoTitle"></p>
-		<p class="infoBody" ></p>
-		</div>
-  		<!-- -->
-	
-
-  </body>
+        <!-- -->
+        <div class="infoSquare">
+            <p class="infoTitle"></p>
+            <p class="infoBody"></p>
+        </div>
+        <!-- -->
+    </body>
 </html>

@@ -1,0 +1,1 @@
+var host =  process.env.HOST? "https://diafora-taxonomies.herokuapp.com" : "localhost";

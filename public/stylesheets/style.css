@@ -42,7 +42,7 @@ body {
 /*Stadistics side*/
 .left{
   width: 20%;
-  background: #cccccc;
+  background: #393B40;
   text-align: center;
 
 }
@@ -64,9 +64,10 @@ body {
   border-collapse: collapse;
   text-align: right;
   font-size:8pt;
-  color: #222222;
+  color: #F2ECFF;
   border-bottom: 1px solid #999999;
-  left-padding: 8px;
+  text-shadow: 2px 2px 4px black;
+  padding-left: 8px;
   width: 80%;
   margin-left: 10%;
 }

@@ -1,46 +1,52 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-  <head>
+<meta charset="utf-8" />
+<head>
+    <link
+        rel="icon"
+        type="image/vnd.microsoft.icon"
+        href="assets/favicon.ico"
+        sizes="16x16"
+    />
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
+    <link href="/stylesheets/selector.css" rel="stylesheet" />
+    <script src="/lib/jquery.min.js"></script>
+    <script src="/lib/bootstrap.bundle.js"></script>
+    <script src="/javascripts/globalconf.js"></script>
+    <script src="/javascripts/drawMenu.js"></script>
     <title><%= title %></title>
     <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script src = "/javascripts/xmlToJSON.js" ></script>
-    <script src = "/javascripts/preprocesamiento.js" ></script>
-    <script src = "/javascripts/countChildren.js" ></script>
-    <script src = "/javascripts/generic.js" ></script>
-    <script src = "/javascripts/hierachyThreeDownloader.js" ></script>
-    <script src= "/javascripts/tableToExcel.js"></script>
-    <link rel='stylesheet' href='/stylesheets/graphicsStyle.css' />
+    <script src="/javascripts/xmlToJSON.js"></script>
+    <script src="/javascripts/preprocesamiento.js"></script>
+    <script src="/javascripts/countChildren.js"></script>
+    <script src="/javascripts/generic.js"></script>
+    <script src="/javascripts/hierachyThreeDownloader.js"></script>
+    <script src="/javascripts/tableToExcel.js"></script>
+    <link rel="stylesheet" href="/stylesheets/graphicsStyle.css" />
 
+    <h1>Comparison of Biological Taxonomies</h1>
+    <h2 id="TaxName" class="inlineHeader"></h2>
 
-<h1>Comparison of Biological Taxonomies</h1>
-<h2 id="TaxName" class = "inlineHeader"></h2>
-
-<button onclick = "onSaveclick()" class = "saveButton"> Save Excel</button>
-
-
-  </head>
+    <button onclick="onSaveclick()" class="saveButton">Save Excel</button>
+</head>
 
 <body>
+    <table id="tblData">
+        <tr>
+            <th>Name</th>
+            <th>Amount of Species</th>
+            <th>Source</th>
+            <th>Date</th>
+            <th>AccessDate</th>
+            <th>Splits</th>
+            <th>Merges</th>
+            <th>Removes</th>
+            <th>Insertions</th>
+            <th>Moves</th>
+            <th>Renames</th>
+        </tr>
+        <tr id="Tree1"></tr>
+        <tr id="Tree2"></tr>
+    </table>
 
-<table id="tblData">
-    <tr>
-        <th>Name</th>
-        <th>Amount of Species</th>
-        <th>Source</th>
-        <th>Date</th>
-        <th>AccessDate</th>
-        <th>Splits</th>
-        <th>Merges</th>
-        <th>Removes</th>
-        <th>Insertions</th>
-        <th>Moves</th>
-        <th>Renames</th>
-    </tr>
-    <tr id="Tree1"></tr>
-    <tr id="Tree2"></tr>
-</table>
-
-<script src = "/javascripts/graphics3.js" ></script>
-
-
+    <script src="/javascripts/graphics3.js"></script>
 </body>

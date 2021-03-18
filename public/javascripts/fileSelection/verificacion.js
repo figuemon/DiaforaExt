@@ -1,5 +1,5 @@
-const visualizationUrl = '/indented';
-const downloadUrl = 'https://diafora-taxonomies.herokuapp.com/download';
+const visualizationUrl = 'indented';
+const downloadUrl = host+'/download';
 
 function onDownload() {
     window.location.replace(downloadUrl);
