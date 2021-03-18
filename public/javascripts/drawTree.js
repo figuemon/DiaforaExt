@@ -8,7 +8,6 @@
 
 //var trree = JSON.parse(sessionStorage.getItem("sessionTree1")).taxonomy;
 //var trree2 = JSON.parse(sessionStorage.getItem("sessionTree2")).taxonomy;
-debugger;
 var tree = JSON.parse(sessionStorage.getItem('sessionTree1'));
 var tree2 = JSON.parse(sessionStorage.getItem('sessionTree2'));
 var treeTax = tree.taxonomy;

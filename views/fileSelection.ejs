@@ -43,7 +43,7 @@
 		  </form>
 		</div>
 	  </nav>
-<div id="carousel" class="carousel slide" data-ride="carousel">
+<!-- <div id="carousel" class="carousel slide" data-ride="carousel">
   <ol class="carousel-indicators">
     <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
     <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
@@ -71,15 +71,22 @@
         <p>Get insight about taxonomies changes.</p>
       </div>
     </div>
-  </div>
-  <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+  </div> -->
+  <!-- <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     <span class="sr-only">Previous</span>
   </a>
   <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="sr-only">Next</span>
-  </a>
+  </a> -->
+<div class="jumbotron jumbotron-fluid">
+  <div class="bg"></div>
+  <div class="container jumbo-item">
+    <h1 class="display-4 jumbo-item">Welcome to Diaforá</h1>
+    <p class="lead jumbo-item  col-md-8 col-md-offset-2 center">A taxonomic comparison tool.</p>
+  </div>
+</div>
 </div>
 	<h1 class="">Select Taxonomies</h1>
 	<p id="error_text" class="alert_display"></p>
@@ -91,9 +98,11 @@
 		<td width="30%"><label id="label">Second Taxonomy</label></td>
 		<td><input id="file2" class="file_input"type="file" name="Taxonomy2" value="Taxonomy" accept=".json"></input></br></td>
 		</table>
-		<button onclick="VerificarDatos()" id="Save" class="important_button">Load</button>
-		<button onclick="onDownload()" class="important_button">Download from Col</button>
-		<button class="important_button">About</button>
+		<div class="row" style="margin-left: 50%;">
+		<button onclick="VerificarDatos()" id="Save" class="btn btn-secondary mr-2 important_button">Load</button>
+		<button onclick="onDownload()" class="btn btn-secondary mr-2 important_button">Download from Col</button>
+		<button class="btn btn-secondary mr-2 important_button">About</button>
+		</div>
 	</div>
 </body>
 </html>
