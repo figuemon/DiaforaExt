@@ -32,7 +32,7 @@ p{
     display:flex;  
     background-size:cover;
     background-color:#898888;
-    height: 50vh; /* Add this */
+    height: 40vh; /* Add this */
     color:white;
 }
 
@@ -55,6 +55,7 @@ p{
 
 .lead {
   margin-left: 50%;
+  width: auto;
 }
 
 .jmb-desc {

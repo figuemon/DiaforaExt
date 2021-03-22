@@ -1,13 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title><%= title %></title>
+        <title>Diaforá Taxonomy Viewer</title>
+        <link
+            rel="icon"
+            type="image/vnd.microsoft.icon"
+            href="assets/favicon.ico"
+            sizes="16x16"
+        />
         <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
         <link href="/stylesheets/selector.css" rel="stylesheet" />
         <link rel="stylesheet" href="/stylesheets/style.css" />
+        <link rel="stylesheet" href="/stylesheets/maindash.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
         <script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css"
+        />
         <script src="/lib/jquery.min.js"></script>
         <script src="/lib/bootstrap.bundle.js"></script>
         <script src="/javascripts/globalconf.js"></script>
@@ -252,21 +263,28 @@
                 </ul>
             </div>
         </nav>
-
         <div class="main_body left top">
-            <br />
-            <label class="navbar-dark navbar-brand">Statistics</label>
-            <br /><br />
-            <table id="table_taxon_id" class="table_stadistic"></table>
-            <br />
-            <hr class="separator" />
-            <br />
-            <table id="table_rank_id" class="table_stadistic"></table>
-
-            <div id="sketch-holder" class="main_body right top">
-                <!-- Our sketch will go here! -->
-                <script src="/javascripts/drawTree.js"></script>
+            <button
+                class="btn btn  btn-outline-secondary statistics-btn"
+                type="button"
+                data-toggle="collapse"
+                data-target="#statistics"
+                aria-expanded="true"
+                aria-controls="statistics"
+            >
+                <i class="bi bi-graph-up"></i>
+            </button>
+            <div id="statistics" class="collapse show">
+                <label class="navbar-dark navbar-brand">Statistics</label>
+                <table id="table_taxon_id" class="table_stadistic"></table>
+                <hr class="separator" />
+                <table id="table_rank_id" class="table_stadistic"></table>
             </div>
+        </div>
+
+        <div id="sketch-holder" class="main_body right top">
+            <!-- Our sketch will go here! -->
+            <script src="/javascripts/drawTree.js"></script>
         </div>
 
         <!-- -->
