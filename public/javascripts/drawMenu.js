@@ -17,8 +17,8 @@ var interface_variables = {
 };
 
 //Used when the buttton exit is cliked
-function onSalir() {
-    window.location.replace(loadingUrl);
+function onExit() {
+    window.location.replace('/');
 }
 
 //writes to info square
@@ -89,4 +89,22 @@ function onMatrixClicked(value) {
 
 function onExpand() {
     expandAllLevels();
+}
+
+/**
+ *  When the statistics panel is hidden the 
+ *  graph area shoul be maximized
+ */
+function toggleGraphSize(){
+    const sketchHolder = $('#sketch-holder');
+   if(sketchHolder.hasClass('right')){
+    $('#statistics').collapse('hide');
+    sketchHolder.removeClass('right');
+    sketchHolder.addClass('fullwidth');
+   }
+   else {
+    $('#statistics').collapse('show');
+    sketchHolder.removeClass('fullwidth');
+    sketchHolder.addClass('right');
+   }
 }

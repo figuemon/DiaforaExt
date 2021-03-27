@@ -14,6 +14,14 @@ const families = [
     'infraspecies',
     'subspecies',
 ];
+
+differenceTreeA: any;
+differenceTreeB: any;
+differencesAdded: any;
+differencesRemoved: any;
+differencesMerged: any;
+differencesSplit: any;
+differencesRenamed: any;
 //todo tasks:
 /**
  * -Some nodes ares spliting and merging at the same time
@@ -176,6 +184,7 @@ function name_changes_left(node_list) {
                 familiar.totalSplits++;
             });
             node.split = true;
+            differenceTreeA.splitted.push(node);
         } else if (equivalence == 1 && !node.moved) {
             let eq_node = node.equivalent[0];
             let same_author = compare_author(node.a, eq_node.a);
@@ -185,6 +194,7 @@ function name_changes_left(node_list) {
                 node.rename = false;
             } else {
                 node.rename = true;
+                differenceTreeA.renamed.push(node);
                 node.f.forEach(function(familiar) {
                     familiar.totalRenames++;
                 });
@@ -193,6 +203,7 @@ function name_changes_left(node_list) {
             //check for remove ---------------------------------------------------------------------------------------
         } else if (equivalence == 0) {
             node.removed = true;
+            differenceTreeA.removed.push(node);
             node.f.forEach(function(familiar) {
                 familiar.totalRemoves++;
             });
@@ -211,6 +222,7 @@ function name_changes_right(node_list) {
                 familiar.totalMerges++;
             });
             node.merge = true;
+            differenceTreeB.merged.push(node);
         } else if (equivalence == 1 && !node.moved) {
             let eq_node = node.equivalent[0];
             let same_author = compare_author(node.a, eq_node.a);
@@ -221,6 +233,7 @@ function name_changes_right(node_list) {
             } else {
                 //console.log(node.a,eq_node);
                 node.rename = true;
+                differenceTreeB.renamed.push(node);
                 node.f.forEach(function(familiar) {
                     familiar.totalRenames++;
                 });
@@ -228,6 +241,7 @@ function name_changes_right(node_list) {
             //check for remove ---------------------------------------------------------------------------------------
         } else if (equivalence == 0) {
             node.added = true;
+            differenceTreeB.added.push(node);
             node.f.forEach(function(familiar) {
                 familiar.totalInsertions++;
             });
@@ -238,10 +252,85 @@ function name_changes_right(node_list) {
 //executes task searching functions for each rank
 
 function calculate_all_merges(left_tree, rigth_tree) {
+   differenceTreeA = {
+    added:[],
+    removed:[],
+    renamed:[],
+    splitted:[],
+    merged:[]
+}
+
+differenceTreeB = {
+
+    added:[],
+    removed:[],
+    renamed:[],
+    splitted:[],
+    merged:[]
+}
     families.forEach(function(rank) {
         verificar_name_changes(left_tree[rank], rigth_tree[rank]);
         name_changes_left(left_tree[rank]);
         name_changes_right(rigth_tree[rank]);
+    });
+    differences = generateDiffTree();
+
+}
+
+/**
+ *  A Function that runs over the trees to generate the 
+ *  differences tree hierarchy
+ * @param {*} operation 
+ * @returns 
+ */
+function generateDiffTree(){
+    differences = {};
+    currentLevel = differences;
+    operations = ['added','removed','renamed','splitted','merged'];
+    operations.forEach(op => populateDiffTree(op, differences, currentLevel, differenceTreeA));
+    operations.forEach(op => populateDiffTree(op, differences, currentLevel, differenceTreeB));
+    const result =  [];
+    convertToTree(differences, result);
+    return result.pop();
+}
+
+function convertToTree(structure, root) {
+    const elems = Object.keys(structure);
+    elems.forEach(element => {
+        const diffNode = structure[element];
+        diffNode.c = diffNode.c || [];
+        convertToTree(diffNode.children, diffNode.c);
+        root.push(diffNode);
+    });
+}
+
+function populateDiffTree(operation, differences, currentLevel, tree) {
+    tree[operation].forEach(node => {
+        currentLevel = differences;
+        for (let index = 0; index < node.f.length; index++) {
+            const element = node.f[index];
+            if (!currentLevel[element.n]) {
+                currentLevel[element.n] = {
+                    name: element.n,
+                    rank: element.r,
+                    changes: {},
+                    node: element,
+                    children: {}
+                };
+                currentLevel[element.n].changes[operation] = 1;
+            }
+            else {
+                 currentLevel[element.n].changes && currentLevel[element.n].changes[operation] > 0?
+                 currentLevel[element.n].changes[operation]++ : currentLevel[element.n].changes[operation] = 1;
+            }
+            currentLevel = currentLevel[element.n].children;
+        }
+        if (!currentLevel[node.n]) {
+            currentLevel[node.n] = { name: node.n, rank: node.r, node: node, changes: {}, children: {} };
+            currentLevel[node.n].changes[operation]=1;
+        } else {
+            currentLevel[node.n].changes[operation] > 0? currentLevel[node.n].changes[operation]++ : currentLevel[node.n].changes[operation] = 1;;
+        }
     });
 }
 

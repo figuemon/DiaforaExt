@@ -18,9 +18,9 @@ tree.setLog(function(logContent) {
 
 const loadingUrl = host;
 
-function onSalir() {
+function onExit() {
     //alert("salir")
-    window.location.replace(loadingUrl);
+    window.location.replace('/');
 }
 
 $(function() {

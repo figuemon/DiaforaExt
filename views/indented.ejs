@@ -10,6 +10,10 @@
         />
         <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
         <link href="/stylesheets/selector.css" rel="stylesheet" />
+        <link
+            rel="stylesheet"
+            href="/javascripts/sunburst-chart/sunburst.css"
+        />
         <link rel="stylesheet" href="/stylesheets/style.css" />
         <link rel="stylesheet" href="/stylesheets/maindash.css" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -29,6 +33,10 @@
         <script src="/javascripts/lineSystem.js"></script>
         <script src="/javascripts/filter.js"></script>
         <script src="/javascripts/ordering.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+        <script src="/javascripts/sunburst-chart/sunburst-chart.js"></script>
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -209,27 +217,8 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <button class="buttonsHeader" onclick="onExpand()">
-                            Expand
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <!--Function comes from drawing system -->
-                        <button
-                            class="buttonsHeader"
-                            onclick="sort_and_update_lines()"
-                        >
-                            Sort
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <!--Function comes from drawing system -->
-                        <button class="buttonsHeader" onclick="resetTrees()">
-                            Reset
-                        </button>
-                    </li>
-                    <li class="nav-item">
                         <div class="slidecontainer">
+                            <label>Edge bundling</label>
                             <input
                                 type="range"
                                 min="0"
@@ -243,37 +232,62 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <!-- <button type="button" class="matrix"  onclick="onMatrixClicked()"> <img src = "/images/matrixButton.png" ></img></button>-->
+                        <button
+                            class="buttonsHeader"
+                            type="button"
+                            title="Toggle Statistics"
+                            onclick="toggleGraphSize()"
+                        >
+                            Statistics<i class="bi bi-graph-up"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="buttonsHeader" onclick="onExpand()">
+                            Expand
+                            <i class="bi bi-arrows-angle-expand"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <!--Function comes from drawing system -->
+                        <button
+                            class="buttonsHeader"
+                            onclick="sort_and_update_lines()"
+                        >
+                            Sort
+                            <i class="bi bi-sort-down-alt"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <!--Function comes from drawing system -->
+                        <button class="buttonsHeader" onclick="resetTrees()">
+                            Reset
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                        </button>
+                    </li>
+
+                    <!-- <li class="nav-item">
+                        <button type="button" class="matrix"  onclick="onMatrixClicked()"> <img src = "/images/matrixButton.png" ></img></button>
                         <button
                             type="button"
                             class="matrix"
                             onclick="onMatrixClicked()"
                         ></button>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <!--Function comes from ordering menu script -->
                         <button
                             type="“button”"
                             class="buttonsHeader"
-                            onclick="onSalir()"
+                            onclick="onExit()"
                         >
                             Exit
+                            <i class="bi bi-x-octagon"></i>
                         </button>
                     </li>
                 </ul>
             </div>
         </nav>
         <div class="main_body left top">
-            <button
-                class="btn btn  btn-outline-secondary statistics-btn"
-                type="button"
-                data-toggle="collapse"
-                data-target="#statistics"
-                aria-expanded="true"
-                aria-controls="statistics"
-            >
-                <i class="bi bi-graph-up"></i>
-            </button>
             <div id="statistics" class="collapse show">
                 <label class="navbar-dark navbar-brand">Statistics</label>
                 <table id="table_taxon_id" class="table_stadistic"></table>
@@ -283,8 +297,21 @@
         </div>
 
         <div id="sketch-holder" class="main_body right top">
+            <div
+                id="tooltip"
+                style="position: absolute; display: none;z-index: 5;"
+            >
+                <canvas id="tooltipChart" width="150" height="150"></canvas>
+                <label id="tooltipText" class="toolTipText"></label>
+            </div>
             <!-- Our sketch will go here! -->
             <script src="/javascripts/drawTree.js"></script>
+            <div id="context-holder" class="context-holder">
+                <div id="chart" class="sunburst">
+                    <label id="treeContext" class="treeContext"></label>
+                </div>
+                <script></script>
+            </div>
         </div>
 
         <!-- -->

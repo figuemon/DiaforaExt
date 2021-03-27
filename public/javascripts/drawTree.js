@@ -19,157 +19,10 @@ countChildren(treeTax2);
 //Calculates al tasks for both taxonomies
 let levelList = createRankList(treeTax);
 let levelList2 = createRankList(treeTax2);
-calculate_all_merges(levelList, levelList2);
+//calculate_all_merges(levelList, levelList2);
 
-console.log(treeTax);
-console.log(treeTax2);
-
-document.getElementById('table_taxon_id').innerHTML =
-    '<tr><th></th><th>' +
-    tree.name +
-    '</th><th>' +
-    tree2.name +
-    '</th></tr>' +
-    '<tr><th>        </th><th>' +
-    (tree.author != null ? tree.author : '') +
-    ' - ' +
-    tree.date +
-    '</th><th>' +
-    tree2.author +
-    ' - ' +
-    tree2.date +
-    '</th></tr>' +
-    '<tr><th>Rank</th><th>' +
-    tree.accesDate +
-    '</th><th>' +
-    tree2.accesDate +
-    '</th></tr>' +
-    (treeTax.totalKingdom != null
-        ? '<tr> <th>Kingdom</th><th>' +
-          'Buscar' +
-          '</th><th>' +
-          'Buscar' +
-          '</th> </tr>'
-        : '') +
-    (treeTax.totalPhylum != null
-        ? '<tr> <th>Phylum</th><th>' +
-          'Buscar' +
-          '</th><th>' +
-          'Buscar' +
-          '</th> </tr>'
-        : '') +
-    (treeTax.totalClass != null
-        ? '<tr> <th>Class</th><th>' +
-          formatNumber(treeTax.totalClass) +
-          '</th><th>' +
-          formatNumber(treeTax2.totalClass) +
-          '</th> </tr>'
-        : '') +
-    (treeTax.totalFamily != null
-        ? '<tr> <th>Family</th><th>' +
-          formatNumber(treeTax.totalFamily) +
-          '</th><th>' +
-          formatNumber(treeTax2.totalFamily) +
-          '</th> </tr>'
-        : '') +
-    ('<tr> <th>Genus</th><th>' +
-        formatNumber(treeTax.totalGenus) +
-        '</th><th>' +
-        formatNumber(treeTax2.totalGenus) +
-        '</th> </tr>') +
-    '<tr> <th>Species</th><th>' +
-    formatNumber(treeTax.totalSpecies) +
-    '</th><th>' +
-    formatNumber(treeTax2.totalSpecies) +
-    '</th> </tr>' +
-    '<tr> <th>Total Nodes</th><th>' +
-    formatNumber(treeTax.desendece) +
-    '</th><th>' +
-    formatNumber(treeTax2.desendece) +
-    '</th> </tr>';
-
-var totalChanges =
-    treeTax.totalSplits +
-    treeTax.totalMerges +
-    treeTax.totalMoves +
-    treeTax.totalRenames +
-    treeTax.totalInsertions +
-    treeTax.totalRemoves;
-var totalChanges2 =
-    treeTax2.totalSplits +
-    treeTax2.totalMerges +
-    treeTax2.totalMoves +
-    treeTax2.totalRenames +
-    treeTax2.totalInsertions +
-    treeTax2.totalRemoves;
-
-document.getElementById('table_rank_id').innerHTML =
-    '<tr><th>Changes</th><th>' +
-    tree.name +
-    '</th><th>' +
-    tree2.name +
-    '</th></tr>' +
-    '<tr><th>        </th><th>' +
-    tree.author +
-    ' - ' +
-    tree.date +
-    '</th><th>' +
-    tree2.author +
-    ' - ' +
-    tree2.date +
-    '</th></tr>' +
-    '<tr><th>        </th><th>' +
-    tree.accesDate +
-    '</th><th>' +
-    tree2.accesDate +
-    '</th></tr>' +
-    '<tr><th>Synonyms</th><th>' +
-    tree.name +
-    '</th><th>' +
-    tree2.name +
-    '</th> </tr>' +
-    '<tr><th>Split</th><th>' +
-    formatNumber(treeTax.totalSplits) +
-    '</th><th>' +
-    formatNumber(treeTax2.totalSplits) +
-    '</th></tr>' +
-    '<tr><th>Merged</th><th>' +
-    formatNumber(treeTax.totalMerges) +
-    '</th><th>' +
-    formatNumber(treeTax2.totalMerges) +
-    '</th></tr>' +
-    '<tr><th>Moved</th><th>' +
-    formatNumber(treeTax.totalMoves) +
-    '</th><th>' +
-    formatNumber(treeTax2.totalMoves) +
-    '</th></tr>' +
-    '<tr><th>Renamed</th><th>' +
-    formatNumber(treeTax.totalRenames) +
-    '</th><th>' +
-    formatNumber(treeTax2.totalRenames) +
-    '</th></tr>' +
-    '<tr><th>Added</th><th>' +
-    formatNumber(treeTax.totalInsertions) +
-    '</th><th>' +
-    formatNumber(treeTax2.totalInsertions) +
-    '</th></tr>' +
-    '<tr><th>Excluded</th><th>' +
-    formatNumber(treeTax.totalRemoves) +
-    '</th><th>' +
-    formatNumber(treeTax2.totalRemoves) +
-    '</th></tr>' +
-    '<tr><th>Taxa changed</th><th>' +
-    formatNumber(totalChanges) +
-    '</th><th>' +
-    formatNumber(totalChanges2) +
-    '</th></tr>' +
-    '<tr><th>% changed</th><th>' +
-    '%' +
-    formatNumber((totalChanges * 100) / treeTax.totalSpecies) +
-    '</th><th>' +
-    '%' +
-    formatNumber((totalChanges2 * 100) / treeTax2.totalSpecies) +
-    '</th></tr>';
+// console.log(treeTax);
+// console.log(treeTax2);
 
 //checks if bot trees are valid for visualization
 //this treeTax comes from a file selected by the user and is modified by preprocesamiento.js and contChildren.js
@@ -223,9 +76,9 @@ var initOptions = {
 //stores the canvas
 var canvas = null;
 
-//amuount of the screen the canvas takes
+//Canvas screen size rate
 var totalCanvasWidth = 1.0;
-var totalCanvasHeight = 0.9;
+var totalCanvasHeight = 0.6;
 
 //position of canvas focus
 var xPointer = 0; //stores x displacement of visualization, not used
@@ -245,6 +98,7 @@ var click = false; //
 
 var focusNode = undefined; //Last node selected by the user
 var focusClick = 0;
+var sunburstChart= undefined;
 
 //List of visible nodes for both trees by rank
 //Only nodes on this list will be rendered, they are added or removed when user open or closes a node
@@ -285,6 +139,154 @@ treeTax2.visible_lbr = {
     infraspecies: [],
     subspecies: [],
 };
+
+function PopulateStatistics() {
+    document.getElementById('table_taxon_id').innerHTML =
+        '<tr><th></th><th>' +
+        tree.name +
+        '</th><th>' +
+        tree2.name +
+        '</th></tr>' +
+        '<tr><th>        </th><th>' +
+        (tree.author != null ? tree.author : '') +
+        ' - ' +
+        tree.date +
+        '</th><th>' +
+        tree2.author +
+        ' - ' +
+        tree2.date +
+        '</th></tr>' +
+        '<tr><th>Rank</th><th>' +
+        tree.accesDate +
+        '</th><th>' +
+        tree2.accesDate +
+        '</th></tr>' +
+        (treeTax.totalKingdom != null
+            ? '<tr> <th>Kingdom</th><th>' +
+            'Buscar' +
+            '</th><th>' +
+            'Buscar' +
+            '</th> </tr>'
+            : '') +
+        (treeTax.totalPhylum != null
+            ? '<tr> <th>Phylum</th><th>' +
+            'Buscar' +
+            '</th><th>' +
+            'Buscar' +
+            '</th> </tr>'
+            : '') +
+        (treeTax.totalClass != null
+            ? '<tr> <th>Class</th><th>' +
+            formatNumber(treeTax.totalClass) +
+            '</th><th>' +
+            formatNumber(treeTax2.totalClass) +
+            '</th> </tr>'
+            : '') +
+        (treeTax.totalFamily != null
+            ? '<tr> <th>Family</th><th>' +
+            formatNumber(treeTax.totalFamily) +
+            '</th><th>' +
+            formatNumber(treeTax2.totalFamily) +
+            '</th> </tr>'
+            : '') +
+        ('<tr> <th>Genus</th><th>' +
+            formatNumber(treeTax.totalGenus) +
+            '</th><th>' +
+            formatNumber(treeTax2.totalGenus) +
+            '</th> </tr>') +
+        '<tr> <th>Species</th><th>' +
+        formatNumber(treeTax.totalSpecies) +
+        '</th><th>' +
+        formatNumber(treeTax2.totalSpecies) +
+        '</th> </tr>' +
+        '<tr> <th>Total Nodes</th><th>' +
+        formatNumber(treeTax.desendece) +
+        '</th><th>' +
+        formatNumber(treeTax2.desendece) +
+        '</th> </tr>';
+
+    var totalChanges = treeTax.totalSplits +
+        treeTax.totalMerges +
+        treeTax.totalMoves +
+        treeTax.totalRenames +
+        treeTax.totalInsertions +
+        treeTax.totalRemoves;
+    var totalChanges2 = treeTax2.totalSplits +
+        treeTax2.totalMerges +
+        treeTax2.totalMoves +
+        treeTax2.totalRenames +
+        treeTax2.totalInsertions +
+        treeTax2.totalRemoves;
+
+    document.getElementById('table_rank_id').innerHTML =
+        '<tr><th>Changes</th><th>' +
+        tree.name +
+        '</th><th>' +
+        tree2.name +
+        '</th></tr>' +
+        '<tr><th>        </th><th>' +
+        tree.author +
+        ' - ' +
+        tree.date +
+        '</th><th>' +
+        tree2.author +
+        ' - ' +
+        tree2.date +
+        '</th></tr>' +
+        '<tr><th>        </th><th>' +
+        tree.accesDate +
+        '</th><th>' +
+        tree2.accesDate +
+        '</th></tr>' +
+        '<tr><th>Synonyms</th><th>' +
+        tree.name +
+        '</th><th>' +
+        tree2.name +
+        '</th> </tr>' +
+        '<tr><th>Split</th><th>' +
+        formatNumber(treeTax.totalSplits) +
+        '</th><th>' +
+        formatNumber(treeTax2.totalSplits) +
+        '</th></tr>' +
+        '<tr><th>Merged</th><th>' +
+        formatNumber(treeTax.totalMerges) +
+        '</th><th>' +
+        formatNumber(treeTax2.totalMerges) +
+        '</th></tr>' +
+        '<tr><th>Moved</th><th>' +
+        formatNumber(treeTax.totalMoves) +
+        '</th><th>' +
+        formatNumber(treeTax2.totalMoves) +
+        '</th></tr>' +
+        '<tr><th>Renamed</th><th>' +
+        formatNumber(treeTax.totalRenames) +
+        '</th><th>' +
+        formatNumber(treeTax2.totalRenames) +
+        '</th></tr>' +
+        '<tr><th>Added</th><th>' +
+        formatNumber(treeTax.totalInsertions) +
+        '</th><th>' +
+        formatNumber(treeTax2.totalInsertions) +
+        '</th></tr>' +
+        '<tr><th>Excluded</th><th>' +
+        formatNumber(treeTax.totalRemoves) +
+        '</th><th>' +
+        formatNumber(treeTax2.totalRemoves) +
+        '</th></tr>' +
+        '<tr><th>Taxa changed</th><th>' +
+        formatNumber(totalChanges) +
+        '</th><th>' +
+        formatNumber(totalChanges2) +
+        '</th></tr>' +
+        '<tr><th>% changed</th><th>' +
+        '%' +
+        formatNumber((totalChanges * 100) / treeTax.totalSpecies) +
+        '</th><th>' +
+        '%' +
+        formatNumber((totalChanges2 * 100) / treeTax2.totalSpecies) +
+        '</th></tr>';
+    return { totalChanges, totalChanges2 };
+}
 
 /*This function reasign value of windowWith due to the division*/
 function getWindowWidth() {
@@ -331,7 +333,7 @@ function setup() {
     let levelList = createRankList(treeTax);
     let levelList2 = createRankList(treeTax2);
     calculate_all_merges(levelList, levelList2);
-
+    PopulateStatistics();
     //first line update before drawing
     update_lines(treeTax, false, initOptions);
     sort_and_update_lines();
@@ -339,10 +341,52 @@ function setup() {
     //filte system
     var filter = new FilterSystem(treeTax, treeTax2);
 
-    console.log(filter.getClosestKey('treu'));
-    console.log(filter.getTopNKeys(3, 'treu'));
-    console.log(filter.queryTaxons(null, 'treu'));
+    // console.log(filter.getClosestKey('treu'));
+    // console.log(filter.getTopNKeys(3, 'treu'));
+    // console.log(filter.queryTaxons(null, 'treu'));
+
+    const d3color = d3.scaleOrdinal(d3.schemePaired);
+    sunburstChart = Sunburst()
+        .data(differences)
+        .size(d => d.c.length || 1)
+        .color(d => d3color(d.name))
+        .width(150)
+        .height(150)
+        .children(d => d.c)
+        .label(d => d.rank + ':' + d.name)
+        .tooltipTitle(d => d.rank)
+        .tooltipContent(d => d.name)
+        .showLabels(false)
+        .minSliceAngle(0.4)
+        .onClick(nodeClick)(document.getElementById('chart'));
+
+                   
+        setTimeout(()=>{addLabel();}, 200);
 }
+
+function nodeClick(node) {
+    if (node) {
+        sunburstChart.focusOnNode(node);
+        this.addLabel();
+        sunburstSelection = true;
+    }
+    }
+
+function addLabel() {
+    let p = document.getElementById('treeContext');
+    p.innerHTML = 'Test';
+    let node = sunburstChart.focusOnNode()
+        ? sunburstChart.focusOnNode()
+        : sunburstChart.data();
+    let currentState = `${node.rank}:${node.name}`;
+    node.selected = true;
+    sunburstNode = node;
+    click = true;
+    sunburstSelection = true;
+    focusNode = node;
+    p.innerHTML = currentState;
+}
+
 
 //processing function to detect mouse wheel movement used to move the visualization
 function mouseWheel(event) {
@@ -1184,7 +1228,7 @@ function printListNodeNames(printedList) {
     for (let i = 0; i < printedList.length; i++) {
         result = result + '->' + printedList[i].n;
     }
-    console.log(result);
+    // console.log(result);
 }
 
 //remove element from rendering queue
@@ -1637,7 +1681,7 @@ function expandAllLevels() {
     };
     createBundles(left_pos, right_pos, initOptions.bundle_radius);
 
-    console.log({ lines });
+    // console.log({ lines });
 }
 
 //requires that node position has been given at least onece
