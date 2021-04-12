@@ -14,6 +14,7 @@ var interface_variables = {
     move: false,
     bundling: 0.5,
     changedLines: false,
+    secondaryFilter: false
 };
 
 //Used when the buttton exit is cliked
@@ -45,6 +46,7 @@ function onBoxChange() {
 
 function onRemovedChange() {
     interface_variables.removed = !interface_variables.removed;
+    interface_variables.secondaryFilter = true;
 }
 
 function onBarsChange() {
@@ -53,6 +55,7 @@ function onBarsChange() {
 
 function onAddedChange() {
     interface_variables.added = !interface_variables.added;
+    interface_variables.secondaryFilter = true;
 }
 
 //task activating functionss
@@ -63,20 +66,24 @@ function onCongruenceChange() {
 function onMergeChange() {
     interface_variables.merge = !interface_variables.merge;
     interface_variables.changedLines = true;
+    interface_variables.secondaryFilter = true;
 }
 function onSplitChange() {
     interface_variables.split = !interface_variables.split;
     interface_variables.changedLines = true;
+    interface_variables.secondaryFilter = true;
 }
 
 function onRenameChange() {
     interface_variables.rename = !interface_variables.rename;
     interface_variables.changedLines = true;
+    interface_variables.secondaryFilter = true;
 }
 
 function onMoveChange() {
     interface_variables.move = !interface_variables.move;
     interface_variables.changedLines = true;
+    interface_variables.secondaryFilter = true;
 }
 
 function onSliderChange(value) {

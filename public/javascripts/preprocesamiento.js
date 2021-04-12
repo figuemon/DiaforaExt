@@ -15,24 +15,23 @@ const families = [
     'subspecies',
 ];
 
-differenceTreeA: any;
-differenceTreeB: any;
-differencesAdded: any;
-differencesRemoved: any;
-differencesMerged: any;
-differencesSplit: any;
-differencesRenamed: any;
+differenceTreeA = undefined;
+differenceTreeB = undefined;
+differencesAdded = undefined;
+differencesRemoved = undefined;
+differencesMerged = undefined;
+differencesSplit = undefined;
+differencesRenamed  = undefined;
 //todo tasks:
 /**
  * -Some nodes ares spliting and merging at the same time
  *
  *
  */
-//rename cambia el nombre si o si
 
-//calcular splits por familia
-//calcular removes adds y moves
-//moved significa que el nodo se movio, si tiene equivalent, significa que el nodo persiste;
+//calculate splits 
+//calculate removes adds moves
+// moved means that node moved, if the node has an equivalent the node persists
 async function verificar_name_changes(left_nodes, rigth_nodes) {
     let left_map = {};
     let rigth_map = {};
@@ -44,9 +43,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
         }
         left_map[node.n].push(node);
         node.moved = false;
-        //node.sinonym_number = 0;
         node.equivalent = [];
-        //console.log(typeof left_map[node.n]);
     });
 
     rigth_nodes.forEach(function(node) {
@@ -56,11 +53,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
         rigth_map[node.n].push(node);
         node.moved = false;
         node.equivalent = [];
-        //node.sinonym_number = 0;
-        //console.log(node);
     });
-
-    //console.log({left_map})
     //search for new nodes, and moves
 
     left_nodes.forEach(node => {
@@ -69,8 +62,6 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
             equivalentArray.forEach(equivalent => {
                 if (equivalent && compare_author_date(node, equivalent)) {
                     node.equivalent.push(equivalent);
-
-                    //equivalent.equivalent.push(node);
                     //Compare the parent of each node, check if parents changed
                     if (
                         node.f.length > 0 &&
@@ -79,7 +70,6 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
                     ) {
                         node.moved = true;
                         equivalent.moved = true;
-
                         //increase move counter for familiar nodes
                         node.f.forEach(function(familiar) {
                             familiar.totalMoves++;
@@ -106,7 +96,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
                     ) {
                         node.moved = true;
                         equivalent.moved = true;
-
+                        differenceTreeB.moved.push(node);
                         //increase move counter for familiar nodes
                         node.f.forEach(function(familiar) {
                             familiar.totalMoves++;
@@ -117,29 +107,23 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
         }
     });
 
-    //compare nodes to other node synonims
-    //let synonims_left = [];
-    //let synonims_rigth = [];
-
-    //add synonim to node
+    //compare nodes to other node synonyms
+    //add synonym to node
     left_nodes.forEach(function(node) {
-        node.s.forEach(function(sinonym) {
-            //console.log(sinonym);
-            let sinonym_node_array = rigth_map[sinonym.n];
-            if (sinonym_node_array)
-                sinonym_node_array.forEach(sinonym_node => {
+        node.s.forEach(function(synonym) {
+            //console.log(synonym);
+            let synonym_node_array = rigth_map[synonym.n];
+            if (synonym_node_array)
+                synonym_node_array.forEach(synonym_node => {
                     if (
-                        sinonym_node &&
-                        compare_author_date(node, sinonym_node) &&
-                        node.n != sinonym.n
+                        synonym_node &&
+                        compare_author_date(node, synonym_node) &&
+                        node.n != synonym.n
                     ) {
-                        if (!containsObject(node, sinonym_node.equivalent))
-                            node.equivalent.push(sinonym_node);
-                        if (!containsObject(node, sinonym_node.equivalent)) {
-                            sinonym_node.equivalent.push(node);
+                        if (!containsObject(node, synonym_node.equivalent)){
+                            node.equivalent.push(synonym_node);
+                            synonym_node.equivalent.push(node);
                         }
-
-                        //synonims_left.push({left: node, rigth: sinonym_node});
                     }
                 });
         });
@@ -147,28 +131,26 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
 
     //add synonim to node
     rigth_nodes.forEach(function(node) {
-        node.s.forEach(function(sinonym) {
-            let sinonym_node_array = left_map[sinonym.n];
-            if (sinonym_node_array)
-                sinonym_node_array.forEach(sinonym_node => {
+        node.s.forEach(function(synonym) {
+            let synonym_node_array = left_map[synonym.n];
+            if (synonym_node_array)
+                synonym_node_array.forEach(synonym_node => {
                     if (
-                        sinonym_node &&
-                        compare_author_date(node, sinonym_node) &&
-                        node.n != sinonym.n
+                        synonym_node &&
+                        compare_author_date(node, synonym_node) &&
+                        node.n != synonym.n
                     ) {
-                        if (!containsObject(node, sinonym_node.equivalent))
-                            node.equivalent.push(sinonym_node);
-                        if (!containsObject(node, sinonym_node.equivalent)) {
-                            sinonym_node.equivalent.push(node);
+                        if (!containsObject(node, synonym_node.equivalent)){
+                            node.equivalent.push(synonym_node);
+                            synonym_node.equivalent.push(node);
                         }
-                        //synonims_rigth.push({left: sinonym_node, rigth: node});
                     }
                 });
         });
     });
 
-    //console.log({"synonims_left" : synonims_left, "synonims_rigth" : synonims_rigth});
-    //return {"synonims_left" : synonims_left, "synonims_rigth" : synonims_rigth};
+    //console.log({"synonyms_left" : synonyms_left, "synonyms_rigth" : synonyms_rigth});
+    //return {"synonyms_left" : synonyms_left, "synonyms_rigth" : synonyms_rigth};
 }
 
 //preguntar sobre el conteo de splits
@@ -189,20 +171,23 @@ function name_changes_left(node_list) {
             let eq_node = node.equivalent[0];
             let same_author = compare_author(node.a, eq_node.a);
 
+            /* Renames in the old tree can be caused by merges  See case
+            Amphitrite affinis  -> Neoamphitrite affinis
+            */
             //check for  rename ----------------------------------------------------------------------------------
-            if (node.n == eq_node.n && same_author) {
-                node.rename = false;
-            } else {
-                node.rename = true;
-                differenceTreeA.renamed.push(node);
-                node.f.forEach(function(familiar) {
-                    familiar.totalRenames++;
-                });
-            }
-            //node.rename = true;
+            // if (node.n == eq_node.n && same_author) {
+            //     node.rename = false;
+            // } else {
+            //     node.rename = true;
+            //     renames.push(node.n,eq_node.n);
+            //     differenceTreeA.renamed.push(node);
+            //     node.f.forEach(function(familiar) {
+            //         familiar.totalRenames++;
+            //     });
+            // }
             //check for remove ---------------------------------------------------------------------------------------
         } else if (equivalence == 0) {
-            node.removed = true;
+            node.rename = false;
             differenceTreeA.removed.push(node);
             node.f.forEach(function(familiar) {
                 familiar.totalRemoves++;
@@ -231,7 +216,6 @@ function name_changes_right(node_list) {
             if (node.n == eq_node.n && same_author) {
                 node.rename = false;
             } else {
-                //console.log(node.a,eq_node);
                 node.rename = true;
                 differenceTreeB.renamed.push(node);
                 node.f.forEach(function(familiar) {
@@ -256,6 +240,7 @@ function calculate_all_merges(left_tree, rigth_tree) {
     added:[],
     removed:[],
     renamed:[],
+    moved: [],
     splitted:[],
     merged:[]
 }
@@ -265,6 +250,7 @@ differenceTreeB = {
     added:[],
     removed:[],
     renamed:[],
+    moved: [],
     splitted:[],
     merged:[]
 }
@@ -286,7 +272,7 @@ differenceTreeB = {
 function generateDiffTree(){
     differences = {};
     currentLevel = differences;
-    operations = ['added','removed','renamed','splitted','merged'];
+    operations = ['added','removed','renamed','splitted','merged', 'moved'];
     operations.forEach(op => populateDiffTree(op, differences, currentLevel, differenceTreeA));
     operations.forEach(op => populateDiffTree(op, differences, currentLevel, differenceTreeB));
     const result =  [];
@@ -367,7 +353,6 @@ function compare_author_date(first_author, second_author) {
             author_slot++
         ) {
             if (first_author.a[author_slot] != second_author.a[author_slot]) {
-                //console.log({first_author,second_author});
                 return false;
             }
         }
@@ -377,7 +362,6 @@ function compare_author_date(first_author, second_author) {
             author_slot++
         ) {
             if (first_author.ad[author_slot] != second_author.ad[author_slot]) {
-                //console.log({first_author,second_author});
                 return false;
             }
         }
@@ -388,7 +372,6 @@ function compare_author_date(first_author, second_author) {
 //helper function
 function containsObject(obj, list) {
     var i;
-
     for (i = 0; i < list.length; i++) {
         if (list[i] === obj) {
             return true;

@@ -99,6 +99,8 @@ var click = false; //
 var focusNode = undefined; //Last node selected by the user
 var focusClick = 0;
 var sunburstChart= undefined;
+const d3color = d3.scaleOrdinal(d3.schemePaired);
+var filteredTrees = {};
 
 //List of visible nodes for both trees by rank
 //Only nodes on this list will be rendered, they are added or removed when user open or closes a node
@@ -295,12 +297,12 @@ function getWindowWidth() {
 
 //processing function executed before the first draw
 function setup() {
-    console.log({
-        dispLefTree,
-        dispRightTree,
-        targetDispLefTree,
-        targetDispRightTree,
-    });
+    // console.log({
+    //     dispLefTree,
+    //     dispRightTree,
+    //     targetDispLefTree,
+    //     targetDispRightTree,
+    // });
 
     //make canvas size dynamic
     canvas = createCanvas(
@@ -340,33 +342,107 @@ function setup() {
 
     //filte system
     var filter = new FilterSystem(treeTax, treeTax2);
+    // drawSunburst(differences);
+    // filteredTrees["000000"]= differences;
+         var svg = d3.select(".d3Holder");
+         var format = d3.format(",d")
+        // var iciclePlot = createForceTree (differences,d3,975,1200);
+         // svg.append(()=>iciclePlot);
+        // console.log(iciclePlot);
+    runChart();
+}
 
-    // console.log(filter.getClosestKey('treu'));
-    // console.log(filter.getTopNKeys(3, 'treu'));
-    // console.log(filter.queryTaxons(null, 'treu'));
-
-    const d3color = d3.scaleOrdinal(d3.schemePaired);
+/**
+ * Sunburst Drawing
+ */
+function drawSunburst(data) {
+    const container = document.getElementById('chart');
+    container.innerHTML = ""; // clean the container before drawing the interface
     sunburstChart = Sunburst()
-        .data(differences)
+        .data(data)
         .size(d => d.c.length || 1)
-        .color(d => d3color(d.name))
-        .width(150)
-        .height(150)
+        .color(d => sunburstColors(d))
+        .width(500)
+        .height(500)
         .children(d => d.c)
         .label(d => d.rank + ':' + d.name)
         .tooltipTitle(d => d.rank)
         .tooltipContent(d => d.name)
-        .showLabels(false)
-        .minSliceAngle(0.4)
+        .showLabels(true)
+        .minSliceAngle(0.2)
+        .maxLevels(10)
         .onClick(nodeClick)(document.getElementById('chart'));
+//  sunburstChart = Icicle()
+//         .data(data)
+//         .size(d => d.c.length || 1)
+//         .color(d => sunburstColors(d))
+//         .width(800)
+//         .height(500)
+//         .children(d => d.c)
+//         .tooltipTitle(d => d.rank)
+//         .tooltipContent(d => d.name)
+//         .minSegmentWidth(0.2)
+//         .onClick(nodeClick)(document.getElementById('chart'));
 
-                   
-        setTimeout(()=>{addLabel();}, 200);
+    setTimeout(() => { addLabel(); }, 200);
+}
+
+/**
+ * Creates a difference tree filtering a selected type of
+ * 0202
+ * @param {*} node 
+ * @returns 
+ */
+function filterDifferences (node) {
+   const cloneNode = {name: node.name,
+                    rank: node.rank,
+                    changes: node.changes,
+                    c: [],
+                    node: node.node}
+   if(node.c && node.c.length > 0){
+    node.c.forEach(child => {
+        if(interface_variables.added && child.changes.added > 0 ||
+           interface_variables.removed && child.changes.removed > 0 ||
+           interface_variables.split && child.changes.splitted > 0 ||
+           interface_variables.merge && child.changes.merged > 0 ||
+           interface_variables.move && child.changes.moved > 0 ||
+           interface_variables.rename && child.changes.renamed > 0){
+           const filter = filterDifferences(child)
+           cloneNode.c.push(filter);
+        }
+
+    });
+   }
+   return cloneNode;
+}
+
+function sunburstColors(node){
+    if(interface_variables.added && node.changes['added'] === 1){
+        return initOptions["add-color"];
+    }
+    if(interface_variables.removed && node.changes['removed'] === 1){
+        return initOptions["remove-color"];
+    }
+    if(interface_variables.split && node.changes['splitted'] === 1){
+        return initOptions["split-color"];
+    }
+    if(interface_variables.merge && node.changes['merged'] === 1){
+        return initOptions["merge-color"];
+    }
+    if(interface_variables.move && node.changes['moved'] === 1){
+        return initOptions["move-color"];
+    }
+    if(interface_variables.rename && node.changes['renamed'] === 1){
+        return initOptions["rename-color"];
+    }
+    return d3color(node.name);
 }
 
 function nodeClick(node) {
     if (node) {
+        console.log(node);
         sunburstChart.focusOnNode(node);
+    //    sunburstChart.zoomToNode(node);
         this.addLabel();
         sunburstSelection = true;
     }
@@ -379,6 +455,7 @@ function addLabel() {
         ? sunburstChart.focusOnNode()
         : sunburstChart.data();
     let currentState = `${node.rank}:${node.name}`;
+    console.log(node);
     node.selected = true;
     sunburstNode = node;
     click = true;
@@ -410,6 +487,23 @@ function windowResized() {
     canvas.position(x, y);
 }
 
+/**
+ * Creates a combination of filters in order to 
+ * cache the results of the differences tree
+ * to avoid calculate it every time
+ * @returns 
+ */
+function filterCombination(){
+    let res  = "";
+    res += interface_variables.added? '1': '0';
+    res += interface_variables.removed? '1': '0';
+    res += interface_variables.split? '1': '0';
+    res += interface_variables.merge? '1': '0';
+    res += interface_variables.move? '1': '0';
+    res += interface_variables.rename? '1': '0';
+    return res;
+}
+
 //processing function to draw on canvas, executed at a fixed rate, normaly 30 times per second
 function draw() {
     //smooth node focusing
@@ -424,9 +518,21 @@ function draw() {
 
     //if interface lines changed force update
     if (interface_variables.changedLines) {
-        changedLines = false;
+        interface_variables.changedLines = false;
         createBundles(left_pos, right_pos, initOptions.bundle_radius);
         //console.log("updated lines");
+    }
+
+    if(interface_variables.secondaryFilter){
+        interface_variables.secondaryFilter = false;
+        let currentFilters = filterCombination();
+        if(filteredTrees[currentFilters]){
+            drawSunburst (filteredTrees[currentFilters]);
+        } else {
+        const filterDiffs = filterDifferences(differences);
+        filteredTrees[currentFilters] = filterDiffs;
+        drawSunburst(filterDiffs); 
+        }
     }
 
     translate(xPointer, -yPointer);
