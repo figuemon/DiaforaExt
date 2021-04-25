@@ -21,7 +21,8 @@ differencesAdded = undefined;
 differencesRemoved = undefined;
 differencesMerged = undefined;
 differencesSplit = undefined;
-differencesRenamed  = undefined;
+differencesRenamed = undefined;
+changesMax = undefined;
 //todo tasks:
 /**
  * -Some nodes ares spliting and merging at the same time
@@ -66,7 +67,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
                     if (
                         node.f.length > 0 &&
                         equivalent.f[equivalent.f.length - 1].n !=
-                            node.f[node.f.length - 1].n
+                        node.f[node.f.length - 1].n
                     ) {
                         node.moved = true;
                         equivalent.moved = true;
@@ -92,7 +93,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
                     if (
                         node.f.length > 0 &&
                         equivalent.f[equivalent.f.length - 1].n !=
-                            node.f[node.f.length - 1].n
+                        node.f[node.f.length - 1].n
                     ) {
                         node.moved = true;
                         equivalent.moved = true;
@@ -120,7 +121,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
                         compare_author_date(node, synonym_node) &&
                         node.n != synonym.n
                     ) {
-                        if (!containsObject(node, synonym_node.equivalent)){
+                        if (!containsObject(node, synonym_node.equivalent)) {
                             node.equivalent.push(synonym_node);
                             synonym_node.equivalent.push(node);
                         }
@@ -140,7 +141,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
                         compare_author_date(node, synonym_node) &&
                         node.n != synonym.n
                     ) {
-                        if (!containsObject(node, synonym_node.equivalent)){
+                        if (!containsObject(node, synonym_node.equivalent)) {
                             node.equivalent.push(synonym_node);
                             synonym_node.equivalent.push(node);
                         }
@@ -236,24 +237,24 @@ function name_changes_right(node_list) {
 //executes task searching functions for each rank
 
 function calculate_all_merges(left_tree, rigth_tree) {
-   differenceTreeA = {
-    added:[],
-    removed:[],
-    renamed:[],
-    moved: [],
-    splitted:[],
-    merged:[]
-}
+    differenceTreeA = {
+        added: [],
+        removed: [],
+        renamed: [],
+        moved: [],
+        splitted: [],
+        merged: []
+    }
 
-differenceTreeB = {
+    differenceTreeB = {
 
-    added:[],
-    removed:[],
-    renamed:[],
-    moved: [],
-    splitted:[],
-    merged:[]
-}
+        added: [],
+        removed: [],
+        renamed: [],
+        moved: [],
+        splitted: [],
+        merged: []
+    }
     families.forEach(function(rank) {
         verificar_name_changes(left_tree[rank], rigth_tree[rank]);
         name_changes_left(left_tree[rank]);
@@ -269,13 +270,14 @@ differenceTreeB = {
  * @param {*} operation 
  * @returns 
  */
-function generateDiffTree(){
+function generateDiffTree() {
     differences = {};
     currentLevel = differences;
-    operations = ['added','removed','renamed','splitted','merged', 'moved'];
+    operations = ['added', 'removed', 'renamed', 'splitted', 'merged', 'moved'];
     operations.forEach(op => populateDiffTree(op, differences, currentLevel, differenceTreeA));
     operations.forEach(op => populateDiffTree(op, differences, currentLevel, differenceTreeB));
-    const result =  [];
+    const result = [];
+    changesMax = {};
     convertToTree(differences, result);
     return result.pop();
 }
@@ -285,6 +287,9 @@ function convertToTree(structure, root) {
     elems.forEach(element => {
         const diffNode = structure[element];
         diffNode.c = diffNode.c || [];
+        const rankMax = Object.values(diffNode.changes).reduce((a, b) => a + b);
+        changesMax[diffNode.rank] = changesMax[diffNode.rank] ?
+            changesMax[diffNode.rank] > rankMax ? changesMax[diffNode.rank] : rankMax : rankMax;
         convertToTree(diffNode.children, diffNode.c);
         root.push(diffNode);
     });
@@ -304,18 +309,17 @@ function populateDiffTree(operation, differences, currentLevel, tree) {
                     children: {}
                 };
                 currentLevel[element.n].changes[operation] = 1;
-            }
-            else {
-                 currentLevel[element.n].changes && currentLevel[element.n].changes[operation] > 0?
-                 currentLevel[element.n].changes[operation]++ : currentLevel[element.n].changes[operation] = 1;
+            } else {
+                currentLevel[element.n].changes && currentLevel[element.n].changes[operation] > 0 ?
+                    currentLevel[element.n].changes[operation]++ : currentLevel[element.n].changes[operation] = 1;
             }
             currentLevel = currentLevel[element.n].children;
         }
         if (!currentLevel[node.n]) {
             currentLevel[node.n] = { name: node.n, rank: node.r, node: node, changes: {}, children: {} };
-            currentLevel[node.n].changes[operation]=1;
+            currentLevel[node.n].changes[operation] = 1;
         } else {
-            currentLevel[node.n].changes[operation] > 0? currentLevel[node.n].changes[operation]++ : currentLevel[node.n].changes[operation] = 1;;
+            currentLevel[node.n].changes[operation] > 0 ? currentLevel[node.n].changes[operation]++ : currentLevel[node.n].changes[operation] = 1;;
         }
     });
 }
@@ -326,9 +330,7 @@ function compare_author(first_author, second_author) {
         return false;
     } else {
         for (
-            let author_slot = 0;
-            author_slot < first_author.length;
-            author_slot++
+            let author_slot = 0; author_slot < first_author.length; author_slot++
         ) {
             if (first_author[author_slot] != second_author[author_slot]) {
                 //console.log({first_author,second_author});
@@ -348,18 +350,14 @@ function compare_author_date(first_author, second_author) {
         return false;
     } else {
         for (
-            let author_slot = 0;
-            author_slot < first_author.a.length;
-            author_slot++
+            let author_slot = 0; author_slot < first_author.a.length; author_slot++
         ) {
             if (first_author.a[author_slot] != second_author.a[author_slot]) {
                 return false;
             }
         }
         for (
-            let author_slot = 0;
-            author_slot < first_author.ad.length;
-            author_slot++
+            let author_slot = 0; author_slot < first_author.ad.length; author_slot++
         ) {
             if (first_author.ad[author_slot] != second_author.ad[author_slot]) {
                 return false;

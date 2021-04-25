@@ -1,97 +1,61 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Diaforá Taxonomy Viewer</title>
-        <link
-            rel="icon"
-            type="image/vnd.microsoft.icon"
-            href="assets/favicon.ico"
-            sizes="16x16"
-        />
-        <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
-        <link href="/stylesheets/selector.css" rel="stylesheet" />
-        <link
-            rel="stylesheet"
-            href="/javascripts/sunburst-chart/sunburst.css"
-        />
-        <link rel="stylesheet" href="/javascripts/icicle-chart/icicle.css" />
-        <link rel="stylesheet" href="/stylesheets/style.css" />
-        <link rel="stylesheet" href="/stylesheets/maindash.css" />
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.js"></script>
-        <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css"
-        />
-        <script src="/lib/jquery.min.js"></script>
-        <script src="/lib/bootstrap.bundle.js"></script>
-        <script src="/javascripts/globalconf.js"></script>
-        <script src="/javascripts/drawMenu.js"></script>
-        <script src="/javascripts/generic.js"></script>
-        <script src="/javascripts/countChildren.js"></script>
-        <script src="/javascripts/preprocesamiento.js"></script>
-        <script src="/javascripts/lineSystem.js"></script>
-        <script src="/javascripts/filter.js"></script>
-        <script src="/javascripts/ordering.js"></script>
-        <script src="https://d3js.org/d3.v6.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
-        <script src="/javascripts/sunburst-chart/sunburst-chart.js"></script>
-        <script src="/javascripts/icicle-chart/icicle-chart.js"></script>
-    </head>
-    <body>
-        <script type="module">
-            import {
-                Runtime,
-                Inspector,
-            } from 'https://cdn.jsdelivr.net/npm/@observablehq/runtime@4/dist/runtime.js';
-            async function runChart() {
-                const notebook = await import(
-                    '/javascripts/observableHQ/packed-Circle-d3.js'
-                );
-                const define = notebook.default;
-                const alternativeView = new Runtime().module(define, name => {
-                    if (name === 'chart')
-                        return new Inspector(
-                            document.querySelector(
-                                '#observablehq-chart-9c71e317'
-                            )
-                        );
-                });
-                alternativeView.redefine('data', differences);
-            }
-            window.runChart = runChart;
-        </script>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a href="#"
-                ><div class="align-items-center no-gutters row">
-                    <div class="col">
-                        <img height="30px" src="assets/DiaforaIcon.png" />
-                    </div>
-                    <div class="col">
-                        <span class="mb-0 h1 ml-2 navbar-brand">Diaforá</span>
-                    </div>
+
+<head>
+    <title>Diaforá Taxonomy Viewer</title>
+    <link rel="icon" type="image/vnd.microsoft.icon" href="assets/favicon.ico" sizes="16x16" />
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
+    <link href="/stylesheets/selector.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/javascripts/sunburst-chart/sunburst.css" />
+    <link rel="stylesheet" href="/javascripts/icicle-chart/icicle.css" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link rel="stylesheet" href="/stylesheets/maindash.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css" />
+    <script src="/lib/jquery.min.js"></script>
+    <script src="/lib/bootstrap.bundle.js"></script>
+    <script src="/javascripts/globalconf.js"></script>
+    <script src="/javascripts/drawMenu.js"></script>
+    <script src="/javascripts/generic.js"></script>
+    <script src="/javascripts/countChildren.js"></script>
+    <script src="/javascripts/preprocesamiento.js"></script>
+    <script src="/javascripts/lineSystem.js"></script>
+    <script src="/javascripts/filter.js"></script>
+    <script src="/javascripts/ordering.js"></script>
+    <script src="https://d3js.org/d3.v6.js"></script>
+    <script src="https://d3js.org/d3-color.v2.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v2.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+    <script src="/javascripts/sunburst-chart/sunburst-chart.js"></script>
+    <script src="/javascripts/icicle-chart/icicle-chart.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a href="#">
+            <div class="align-items-center no-gutters row">
+                <div class="col">
+                    <img height="30px" src="assets/DiaforaIcon.png" />
                 </div>
-            </a>
-            <button
-                class="navbar-toggler"
-                type="button"
-                data-toggle="collapse"
-                data-target="#navbarColor02"
-                aria-controls="navbarColor02"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
+                <div class="col">
+                    <span class="mb-0 h1 ml-2 navbar-brand">Diaforá</span>
+                </div>
+            </div>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarColor02">
-                <ul class="navbar-nav mx-auto">
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label>Congruent</label>
-                            <label class="switch">
+        <div class="collapse navbar-collapse" id="navbarColor02">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label>Congruent</label>
+                        <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="congruece"
@@ -101,12 +65,12 @@
                                     class="slider_switch round congruence_slider_switch"
                                 ></span>
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label>Split</label>
-                            <label class="switch">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label>Split</label>
+                        <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="split"
@@ -116,12 +80,12 @@
                                     class="slider_switch round split_slider_switch"
                                 ></span>
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label>Merged</label>
-                            <label class="switch">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label>Merged</label>
+                        <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="merge"
@@ -131,12 +95,12 @@
                                     class="slider_switch round merge_slider_switch"
                                 ></span>
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label>Moved</label>
-                            <label class="switch">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label>Moved</label>
+                        <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="move"
@@ -146,12 +110,12 @@
                                     class="slider_switch round move_slider_switch"
                                 ></span>
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label>Renamed</label>
-                            <label class="switch">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label>Renamed</label>
+                        <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="rename"
@@ -161,12 +125,12 @@
                                     class="slider_switch round rename_slider_switch"
                                 ></span>
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label>Added</label>
-                            <label class="switch">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label>Added</label>
+                        <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="add"
@@ -176,12 +140,12 @@
                                     class="slider_switch round add_slider_switch"
                                 ></span>
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label>Excluded</label>
-                            <label class="switch">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label>Excluded</label>
+                        <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="removes"
@@ -191,20 +155,20 @@
                                     class="slider_switch round remove_slider_switch"
                                 ></span>
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label></label>
-                            <label class="switch">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label></label>
+                        <label class="switch">
                                 <input type="checkbox" name="space" />
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label>Lines</label>
-                            <label class="switch">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label>Lines</label>
+                        <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="lineas"
@@ -215,12 +179,12 @@
                                     class="slider_switch round other_slider_switch"
                                 ></span>
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label>Bars</label>
-                            <label class="switch">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label>Bars</label>
+                        <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="bars"
@@ -230,66 +194,49 @@
                                     class="slider_switch round other_slider_switch"
                                 ></span>
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="encircledBox">
-                            <label></label>
-                            <label class="switch">
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="encircledBox">
+                        <label></label>
+                        <label class="switch">
                                 <input type="checkbox" name="space" />
                             </label>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <div class="slidecontainer">
-                            <label>Edge bundling</label>
-                            <input
-                                type="range"
-                                min="0"
-                                max="100"
-                                value="50"
-                                class="slider"
-                                id="myRange"
-                                oninput="onSliderChange(this.value)"
-                                onchange="onSliderChange(this.value)"
-                            />
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <button
-                            class="buttonsHeader"
-                            type="button"
-                            title="Toggle Statistics"
-                            onclick="toggleGraphSize()"
-                        >
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <div class="slidecontainer">
+                        <label>Edge bundling</label>
+                        <input type="range" min="0" max="100" value="50" class="slider" id="myRange" oninput="onSliderChange(this.value)" onchange="onSliderChange(this.value)" />
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <button class="buttonsHeader" type="button" title="Toggle Statistics" onclick="toggleGraphSize()">
                             Statistics<i class="bi bi-graph-up"></i>
                         </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="buttonsHeader" onclick="onExpand()">
+                </li>
+                <li class="nav-item">
+                    <button class="buttonsHeader" onclick="onExpand()">
                             Expand
                             <i class="bi bi-arrows-angle-expand"></i>
                         </button>
-                    </li>
-                    <li class="nav-item">
-                        <!--Function comes from drawing system -->
-                        <button
-                            class="buttonsHeader"
-                            onclick="sort_and_update_lines()"
-                        >
+                </li>
+                <li class="nav-item">
+                    <!--Function comes from drawing system -->
+                    <button class="buttonsHeader" onclick="sort_and_update_lines()">
                             Sort
                             <i class="bi bi-sort-down-alt"></i>
                         </button>
-                    </li>
-                    <li class="nav-item">
-                        <!--Function comes from drawing system -->
-                        <button class="buttonsHeader" onclick="resetTrees()">
+                </li>
+                <li class="nav-item">
+                    <!--Function comes from drawing system -->
+                    <button class="buttonsHeader" onclick="resetTrees()">
                             Reset
                             <i class="bi bi-arrow-counterclockwise"></i>
                         </button>
-                    </li>
+                </li>
 
-                    <!-- <li class="nav-item">
+                <!-- <li class="nav-item">
                         <button type="button" class="matrix"  onclick="onMatrixClicked()"> <img src = "/images/matrixButton.png" ></img></button>
                         <button
                             type="button"
@@ -297,55 +244,45 @@
                             onclick="onMatrixClicked()"
                         ></button>
                     </li> -->
-                    <li class="nav-item">
-                        <!--Function comes from ordering menu script -->
-                        <button
-                            type="“button”"
-                            class="buttonsHeader"
-                            onclick="onExit()"
-                        >
+                <li class="nav-item">
+                    <!--Function comes from ordering menu script -->
+                    <button type="“button”" class="buttonsHeader" onclick="onExit()">
                             Exit
                             <i class="bi bi-x-octagon"></i>
                         </button>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <div class="main_body left top">
-            <div id="statistics" class="collapse show">
-                <label class="navbar-dark navbar-brand">Statistics</label>
-                <table id="table_taxon_id" class="table_stadistic"></table>
-                <hr class="separator" />
-                <table id="table_rank_id" class="table_stadistic"></table>
-            </div>
+                </li>
+            </ul>
         </div>
+    </nav>
+    <div class="main_body left top">
+        <div id="statistics" class="collapse show">
+            <label class="navbar-dark navbar-brand">Statistics</label>
+            <table id="table_taxon_id" class="table_stadistic"></table>
+            <hr class="separator" />
+            <table id="table_rank_id" class="table_stadistic"></table>
+        </div>
+    </div>
 
-        <div
-            id="sketch-holder"
-            class="main_body right top"
-            style="display: none;"
-        >
-            <div
-                id="tooltip"
-                style="position: absolute; display: none;z-index: 5;"
-            >
-                <canvas id="tooltipChart" width="150" height="150"></canvas>
-                <label id="tooltipText" class="toolTipText"></label>
-            </div>
-            <!-- Our sketch will go here! -->
-            <script src="/javascripts/drawTree.js"></script>
+    <div id="sketch-holder" class="main_body right top" style="display: none;">
+        <div id="tooltip" style="position: absolute; display: none;z-index: 5;">
+            <canvas id="tooltipChart" width="150" height="150"></canvas>
+            <label id="tooltipText" class="toolTipText"></label>
         </div>
-        <div id="context-holder" class="main_body right top">
-            <div id="chart" class="sunburst"></div>
-            <label id="treeContext" class="treeContext"></label>
-            <div id="observablehq-chart-9c71e317"></div>
-        </div>
+        <!-- Our sketch will go here! -->
+        <script src="/javascripts/drawTree.js"></script>
+    </div>
+    <div id="context-holder" class="main_body right top">
+        <div id="chart" class="sunburst"></div>
+        <label id="treeContext" class="treeContext"></label>
+        <div id="observablehq-chart-9c71e317"></div>
+    </div>
 
-        <!-- -->
-        <div class="infoSquare">
-            <p class="infoTitle"></p>
-            <p class="infoBody"></p>
-        </div>
-        <!-- -->
-    </body>
+    <!-- -->
+    <div class="infoSquare">
+        <p class="infoTitle"></p>
+        <p class="infoBody"></p>
+    </div>
+    <!-- -->
+</body>
+
 </html>

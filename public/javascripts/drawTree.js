@@ -6,8 +6,8 @@
  * -Lines not being displayed on infraespecies
  */
 
-//var trree = JSON.parse(sessionStorage.getItem("sessionTree1")).taxonomy;
-//var trree2 = JSON.parse(sessionStorage.getItem("sessionTree2")).taxonomy;
+//var trree = JSON.parse(sessionStorage.getItem('sessionTree1')).taxonomy;
+//var trree2 = JSON.parse(sessionStorage.getItem('sessionTree2')).taxonomy;
 var tree = JSON.parse(sessionStorage.getItem('sessionTree1'));
 var tree2 = JSON.parse(sessionStorage.getItem('sessionTree2'));
 var treeTax = tree.taxonomy;
@@ -98,8 +98,8 @@ var click = false; //
 
 var focusNode = undefined; //Last node selected by the user
 var focusClick = 0;
-var sunburstChart= undefined;
-const d3color = d3.scaleOrdinal(d3.schemePaired);
+var sunburstChart = undefined;
+const d3color = d3.scaleOrdinal(d3.schemeGreys[9]);
 var filteredTrees = {};
 
 //List of visible nodes for both trees by rank
@@ -163,34 +163,34 @@ function PopulateStatistics() {
         '</th><th>' +
         tree2.accesDate +
         '</th></tr>' +
-        (treeTax.totalKingdom != null
-            ? '<tr> <th>Kingdom</th><th>' +
+        (treeTax.totalKingdom != null ?
+            '<tr> <th>Kingdom</th><th>' +
             'Buscar' +
             '</th><th>' +
             'Buscar' +
-            '</th> </tr>'
-            : '') +
-        (treeTax.totalPhylum != null
-            ? '<tr> <th>Phylum</th><th>' +
+            '</th> </tr>' :
+            '') +
+        (treeTax.totalPhylum != null ?
+            '<tr> <th>Phylum</th><th>' +
             'Buscar' +
             '</th><th>' +
             'Buscar' +
-            '</th> </tr>'
-            : '') +
-        (treeTax.totalClass != null
-            ? '<tr> <th>Class</th><th>' +
+            '</th> </tr>' :
+            '') +
+        (treeTax.totalClass != null ?
+            '<tr> <th>Class</th><th>' +
             formatNumber(treeTax.totalClass) +
             '</th><th>' +
             formatNumber(treeTax2.totalClass) +
-            '</th> </tr>'
-            : '') +
-        (treeTax.totalFamily != null
-            ? '<tr> <th>Family</th><th>' +
+            '</th> </tr>' :
+            '') +
+        (treeTax.totalFamily != null ?
+            '<tr> <th>Family</th><th>' +
             formatNumber(treeTax.totalFamily) +
             '</th><th>' +
             formatNumber(treeTax2.totalFamily) +
-            '</th> </tr>'
-            : '') +
+            '</th> </tr>' :
+            '') +
         ('<tr> <th>Genus</th><th>' +
             formatNumber(treeTax.totalGenus) +
             '</th><th>' +
@@ -321,8 +321,8 @@ function setup() {
     initOptions['hover-color'] = color(120, 80, 87);
     initOptions['text-color'] = color(0, 0, 0);
     initOptions['hover-color-rect'] = color(48, 44, 66);
-    //initOptions["remove-color"] = color(255, 96, 96);
-    //initOptions["add-color"] = color(177, 255, 175);
+    //initOptions['remove-color'] = color(255, 96, 96);
+    //initOptions['add-color'] = color(177, 255, 175);
 
     //Inicialization of first and second treeTax
     countChildren(treeTax);
@@ -343,13 +343,13 @@ function setup() {
     //filte system
     var filter = new FilterSystem(treeTax, treeTax2);
     // drawSunburst(differences);
-    // filteredTrees["000000"]= differences;
-         var svg = d3.select(".d3Holder");
-         var format = d3.format(",d")
+    // filteredTrees['000000']= differences;
+    var svg = d3.select('.d3Holder');
+    var format = d3.format(',d')
         // var iciclePlot = createForceTree (differences,d3,975,1200);
-         // svg.append(()=>iciclePlot);
+        // svg.append(()=>iciclePlot);
         // console.log(iciclePlot);
-    runChart();
+        // runChart();
 }
 
 /**
@@ -357,32 +357,42 @@ function setup() {
  */
 function drawSunburst(data) {
     const container = document.getElementById('chart');
-    container.innerHTML = ""; // clean the container before drawing the interface
+    container.innerHTML = ''; // clean the container before drawing the interface
     sunburstChart = Sunburst()
         .data(data)
         .size(d => d.c.length || 1)
         .color(d => sunburstColors(d))
+        .strokeColor(d => "#282828")
         .width(500)
         .height(500)
         .children(d => d.c)
         .label(d => d.rank + ':' + d.name)
-        .tooltipTitle(d => d.rank)
-        .tooltipContent(d => d.name)
+        .tooltipTitle(d => d.rank + ' ' + d.name)
+        .tooltipContent(d => {
+            let details = "";
+            details += d.changes['added'] ? 'Added: ' + d.changes['added'] + '<br/>' : '';
+            details += d.changes['removed'] ? 'Excluded: ' + d.changes['removed'] + '<br/>' : '';
+            details += d.changes['splitted'] ? 'Splits: ' + d.changes['splitted'] + '<br/>' : '';
+            details += d.changes['merged'] ? 'Merges: ' + d.changes['merged'] + '<br/>' : '';
+            details += d.changes['renamed'] ? 'Renamed: ' + d.changes['renamed'] + '<br/>' : '';
+            return 'Changes: ' + Object.values(d.changes).reduce((a, b) => a + b) + '<br/>' +
+                details;
+        })
         .showLabels(true)
         .minSliceAngle(0.2)
         .maxLevels(10)
         .onClick(nodeClick)(document.getElementById('chart'));
-//  sunburstChart = Icicle()
-//         .data(data)
-//         .size(d => d.c.length || 1)
-//         .color(d => sunburstColors(d))
-//         .width(800)
-//         .height(500)
-//         .children(d => d.c)
-//         .tooltipTitle(d => d.rank)
-//         .tooltipContent(d => d.name)
-//         .minSegmentWidth(0.2)
-//         .onClick(nodeClick)(document.getElementById('chart'));
+    //  sunburstChart = Icicle()
+    //         .data(data)
+    //         .size(d => d.c.length || 1)
+    //         .color(d => sunburstColors(d))
+    //         .width(800)
+    //         .height(500)
+    //         .children(d => d.c)
+    //         .tooltipTitle(d => d.rank)
+    //         .tooltipContent(d => d.name)
+    //         .minSegmentWidth(0.2)
+    //         .onClick(nodeClick)(document.getElementById('chart'));
 
     setTimeout(() => { addLabel(); }, 200);
 }
@@ -393,67 +403,74 @@ function drawSunburst(data) {
  * @param {*} node 
  * @returns 
  */
-function filterDifferences (node) {
-   const cloneNode = {name: node.name,
-                    rank: node.rank,
-                    changes: node.changes,
-                    c: [],
-                    node: node.node}
-   if(node.c && node.c.length > 0){
-    node.c.forEach(child => {
-        if(interface_variables.added && child.changes.added > 0 ||
-           interface_variables.removed && child.changes.removed > 0 ||
-           interface_variables.split && child.changes.splitted > 0 ||
-           interface_variables.merge && child.changes.merged > 0 ||
-           interface_variables.move && child.changes.moved > 0 ||
-           interface_variables.rename && child.changes.renamed > 0){
-           const filter = filterDifferences(child)
-           cloneNode.c.push(filter);
-        }
+function filterDifferences(node) {
+    const cloneNode = {
+        name: node.name,
+        rank: node.rank,
+        changes: node.changes,
+        c: [],
+        node: node.node
+    }
+    if (node.c && node.c.length > 0) {
+        node.c.forEach(child => {
+            if (interface_variables.added && child.changes.added > 0 ||
+                interface_variables.removed && child.changes.removed > 0 ||
+                interface_variables.split && child.changes.splitted > 0 ||
+                interface_variables.merge && child.changes.merged > 0 ||
+                interface_variables.move && child.changes.moved > 0 ||
+                interface_variables.rename && child.changes.renamed > 0) {
+                const filter = filterDifferences(child)
+                cloneNode.c.push(filter);
+            }
 
-    });
-   }
-   return cloneNode;
+        });
+    }
+    return cloneNode;
 }
+var maxVal = 0;
 
-function sunburstColors(node){
-    if(interface_variables.added && node.changes['added'] === 1){
-        return initOptions["add-color"];
+function sunburstColors(node) {
+    if (interface_variables.added && node.changes['added'] === 1 && node.c.length == 0) {
+        return initOptions['add-color'];
     }
-    if(interface_variables.removed && node.changes['removed'] === 1){
-        return initOptions["remove-color"];
+    if (interface_variables.removed && node.changes['removed'] === 1 && node.c.length == 0) {
+        return initOptions['remove-color'];
     }
-    if(interface_variables.split && node.changes['splitted'] === 1){
-        return initOptions["split-color"];
+    if (interface_variables.split && node.changes['splitted'] === 1 && node.c.length == 0) {
+        return initOptions['split-color'];
     }
-    if(interface_variables.merge && node.changes['merged'] === 1){
-        return initOptions["merge-color"];
+    if (interface_variables.merge && node.changes['merged'] === 1 && node.c.length == 0) {
+        return initOptions['merge-color'];
     }
-    if(interface_variables.move && node.changes['moved'] === 1){
-        return initOptions["move-color"];
+    if (interface_variables.move && node.changes['moved'] === 1 && node.c.length == 0) {
+        return initOptions['move-color'];
     }
-    if(interface_variables.rename && node.changes['renamed'] === 1){
-        return initOptions["rename-color"];
+    if (interface_variables.rename && node.changes['renamed'] === 1 && node.c.length == 0) {
+        return initOptions['rename-color'];
+    } else {
+        const sum = Object.values(node.changes).reduce((a, b) => a + b);
+        const val = sum / changesMax[node.rank];
+        return d3.interpolateGreys(val);
     }
-    return d3color(node.name);
+
 }
 
 function nodeClick(node) {
     if (node) {
         console.log(node);
         sunburstChart.focusOnNode(node);
-    //    sunburstChart.zoomToNode(node);
+        //    sunburstChart.zoomToNode(node);
         this.addLabel();
         sunburstSelection = true;
     }
-    }
+}
 
 function addLabel() {
     let p = document.getElementById('treeContext');
     p.innerHTML = 'Test';
-    let node = sunburstChart.focusOnNode()
-        ? sunburstChart.focusOnNode()
-        : sunburstChart.data();
+    let node = sunburstChart.focusOnNode() ?
+        sunburstChart.focusOnNode() :
+        sunburstChart.data();
     let currentState = `${node.rank}:${node.name}`;
     console.log(node);
     node.selected = true;
@@ -493,14 +510,14 @@ function windowResized() {
  * to avoid calculate it every time
  * @returns 
  */
-function filterCombination(){
-    let res  = "";
-    res += interface_variables.added? '1': '0';
-    res += interface_variables.removed? '1': '0';
-    res += interface_variables.split? '1': '0';
-    res += interface_variables.merge? '1': '0';
-    res += interface_variables.move? '1': '0';
-    res += interface_variables.rename? '1': '0';
+function filterCombination() {
+    let res = '';
+    res += interface_variables.added ? '1' : '0';
+    res += interface_variables.removed ? '1' : '0';
+    res += interface_variables.split ? '1' : '0';
+    res += interface_variables.merge ? '1' : '0';
+    res += interface_variables.move ? '1' : '0';
+    res += interface_variables.rename ? '1' : '0';
     return res;
 }
 
@@ -520,18 +537,18 @@ function draw() {
     if (interface_variables.changedLines) {
         interface_variables.changedLines = false;
         createBundles(left_pos, right_pos, initOptions.bundle_radius);
-        //console.log("updated lines");
+        //console.log('updated lines');
     }
 
-    if(interface_variables.secondaryFilter){
+    if (interface_variables.secondaryFilter) {
         interface_variables.secondaryFilter = false;
         let currentFilters = filterCombination();
-        if(filteredTrees[currentFilters]){
-            drawSunburst (filteredTrees[currentFilters]);
+        if (filteredTrees[currentFilters]) {
+            drawSunburst(filteredTrees[currentFilters]);
         } else {
-        const filterDiffs = filterDifferences(differences);
-        filteredTrees[currentFilters] = filterDiffs;
-        drawSunburst(filterDiffs); 
+            const filterDiffs = filterDifferences(differences);
+            filteredTrees[currentFilters] = filterDiffs;
+            drawSunburst(filterDiffs);
         }
     }
 
@@ -590,8 +607,7 @@ function draw() {
         fill(initOptions['focus-color']);
         stroke(initOptions['focus-color']);
         strokeWeight(1);
-        rect(
-            -10,
+        rect(-10,
             focusNode.y + (initOptions.defaultSize * (1 - pc)) / 2,
             getWindowWidth() + 10,
             initOptions.defaultSize * 0.4
@@ -717,8 +733,8 @@ function getNodeSize(node, options) {
 
     if (node.desendece && options.use_log_scale && options.use_resume_bars)
         extra =
-            (Math.log(node.desendece) / Math.log(options.log_scale)) *
-            options.log_increment;
+        (Math.log(node.desendece) / Math.log(options.log_scale)) *
+        options.log_increment;
     else if (node.desendece && options.use_resume_bars)
         extra = options.defaultBarSize;
     //console.log({options,extra});
@@ -826,7 +842,7 @@ function optimizedDrawIndentedTree(listByRank, options, xpos, ypos, isRight) {
         );
     });
 
-    //console.log("Total draw nodes on render: ", totalDrawnNodes);
+    //console.log('Total draw nodes on render: ', totalDrawnNodes);
 }
 
 //This is the drawing functions
@@ -941,7 +957,7 @@ function drawHierarchyLevel(taxons, options, pointer, xpos, ypos, isRight) {
         }
     }
 
-    //console.log("amount of draw calls from render:",draws);
+    //console.log('amount of draw calls from render:',draws);
 
     return draws;
 }
@@ -982,9 +998,9 @@ function isOnScreen(node, yScreenPos, screenHeight) {
     if (node.y >= yScreenPos && node.y <= yScreenPos + screenHeight) {
         return true;
     }
-    //console.log(node.n+ ": "+node.y+"--"+(node.y+node.height)+"  is not on screen" + yScreenPos +"---" + (yScreenPos + screenHeight));
-    //console.log("node.y+node.height >= yScreenPos + screenHeight -->" + (node.y+node.height >= yScreenPos + screenHeight ));
-    //console.log("node.y <= yScreenPos + screenHeight -->" + (node.y <= yScreenPos + screenHeight));
+    //console.log(node.n+ ': '+node.y+'--'+(node.y+node.height)+'  is not on screen' + yScreenPos +'---' + (yScreenPos + screenHeight));
+    //console.log('node.y+node.height >= yScreenPos + screenHeight -->' + (node.y+node.height >= yScreenPos + screenHeight ));
+    //console.log('node.y <= yScreenPos + screenHeight -->' + (node.y <= yScreenPos + screenHeight));
     return false;
 }
 
@@ -1033,16 +1049,16 @@ function drawOnlyText(
         //this functions comes from drawMenu.js
         // Pending to delete, code to show a box with data
         /*if(showInfo){
-			let author = node.a == "" ? "" : `<br>Author:${node.a}`;
-			let date = (node.ad || node.ad == "") ? "" : `  Date:${node.da}`;
-			let synonim = node.equivalent ? "<br>Synonims: "+ node.equivalent.length : "";
-			let splits = "<br>Splits: "+ node.totalSplits ;
-			let merges = "----Merges: "+ node.totalMerges;
-			let removes = "<br>Removes: "+ node.totalRemoves;
-			let insertions = "----Insertions: "+ node.totalInsertions;
-			let renames = "<br>Renames: "+ node.totalRenames;
-			let moves = "----Moves: "+ node.totalMoves;
-			let pv = "<br>----P: "+ node.p;
+			let author = node.a == '' ? '' : `<br>Author:${node.a}`;
+			let date = (node.ad || node.ad == '') ? '' : `  Date:${node.da}`;
+			let synonim = node.equivalent ? '<br>Synonims: '+ node.equivalent.length : '';
+			let splits = '<br>Splits: '+ node.totalSplits ;
+			let merges = '----Merges: '+ node.totalMerges;
+			let removes = '<br>Removes: '+ node.totalRemoves;
+			let insertions = '----Insertions: '+ node.totalInsertions;
+			let renames = '<br>Renames: '+ node.totalRenames;
+			let moves = '----Moves: '+ node.totalMoves;
+			let pv = '<br>----P: '+ node.p;
 			//shows info on screen*/
         //}
 
@@ -1107,9 +1123,9 @@ function drawOnlyText(
                     '</th><th>' +
                     (node.equivalent[0].a != null ? node.equivalent[0].a : '') +
                     ' - ' +
-                    (node.equivalent[0].da != null
-                        ? node.equivalent[0].da
-                        : '') +
+                    (node.equivalent[0].da != null ?
+                        node.equivalent[0].da :
+                        '') +
                     '</th></tr>' +
                     '<tr><th>        </th><th>' +
                     node.ad +
@@ -1318,7 +1334,7 @@ function pushIntoUnfolded(node) {
         actualVisibleRank.unshift(node);
         //console.log(`unshifted ${node.n}`);
     } else if (head.y >= node.y) {
-        //console.log(`${node.y}>=${head.y}spliced - ${node.n}--${head.n}: ` + (headIndex)+"--"+headIndex);
+        //console.log(`${node.y}>=${head.y}spliced - ${node.n}--${head.n}: ` + (headIndex)+'--'+headIndex);
         actualVisibleRank.splice(headIndex, 0, node);
     } else {
         //console.log(`spliced + ${node.n}: `+ (headIndex + 1));
@@ -1366,7 +1382,7 @@ function isOverRect(xpos, ypos, rxpos, rypos, rwidth, rheight) {
 }
 
 function drawInside(node, xpos, ypos, options) {
-    //console.log(node.x+"--"+node.y+"--"+node.width+"--"+node.height );
+    //console.log(node.x+'--'+node.y+'--'+node.width+'--'+node.height );
     stroke(options['stroke-color']);
     noFill();
     if (!node.collapsed) {
@@ -1408,7 +1424,7 @@ function drawIndent(node, xpos, ypos, options, isRight) {
 
 //draws only a part of a node is not used
 function drawCutNode(node, initialY, finalY, options, xpos, ypos) {
-    //console.log(node.x+"--"+node.y+"--"+node.width+"--"+node.height );
+    //console.log(node.x+'--'+node.y+'--'+node.width+'--'+node.height );
     let yCoord = Math.max(node.y, initialY);
     //console.log(node.x,node.y);
     //calculate te rect that is inside the screen
@@ -1417,7 +1433,7 @@ function drawCutNode(node, initialY, finalY, options, xpos, ypos) {
         finalY - initialY
     );
     //console.log(newHeigth);
-    //fill(options["background-color"]);
+    //fill(options['background-color']);
     stroke(options['stroke-color']);
     strokeWeight(2);
     if (
@@ -1707,7 +1723,7 @@ function formatNumber(x) {
 //sets node but does not updates
 function setNode(node, isRight, collapsed) {
     if (node.collapsed == collapsed) return;
-    //console.log("setting: ",node.n, collapsed,node.equivalent.length);
+    //console.log('setting: ',node.n, collapsed,node.equivalent.length);
 
     let cleaning_function;
     let elder = getRoot(node);
