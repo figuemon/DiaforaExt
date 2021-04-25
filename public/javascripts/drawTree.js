@@ -545,10 +545,12 @@ function draw() {
         let currentFilters = filterCombination();
         if (filteredTrees[currentFilters]) {
             drawSunburst(filteredTrees[currentFilters]);
+            loadTree(filteredTrees[currentFilters]);
         } else {
             const filterDiffs = filterDifferences(differences);
             filteredTrees[currentFilters] = filterDiffs;
             drawSunburst(filterDiffs);
+            loadTree(filterDiffs);
         }
     }
 
