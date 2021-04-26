@@ -368,16 +368,7 @@ function drawSunburst(data) {
         .children(d => d.c)
         .label(d => d.rank + ':' + d.name)
         .tooltipTitle(d => d.rank + ' ' + d.name)
-        .tooltipContent(d => {
-            let details = "";
-            details += d.changes['added'] ? 'Added: ' + d.changes['added'] + '<br/>' : '';
-            details += d.changes['removed'] ? 'Excluded: ' + d.changes['removed'] + '<br/>' : '';
-            details += d.changes['splitted'] ? 'Splits: ' + d.changes['splitted'] + '<br/>' : '';
-            details += d.changes['merged'] ? 'Merges: ' + d.changes['merged'] + '<br/>' : '';
-            details += d.changes['renamed'] ? 'Renamed: ' + d.changes['renamed'] + '<br/>' : '';
-            return 'Changes: ' + Object.values(d.changes).reduce((a, b) => a + b) + '<br/>' +
-                details;
-        })
+        .tooltipContent(tooltipContent)
         .showLabels(true)
         .minSliceAngle(0.2)
         .maxLevels(10)
@@ -395,6 +386,18 @@ function drawSunburst(data) {
     //         .onClick(nodeClick)(document.getElementById('chart'));
 
     setTimeout(() => { addLabel(); }, 200);
+}
+
+function tooltipContent(d) {
+    let details = "";
+    details += d.changes['added'] ? 'Added: ' + d.changes['added'] + '<br/>' : '';
+    details += d.changes['removed'] ? 'Excluded: ' + d.changes['removed'] + '<br/>' : '';
+    details += d.changes['splitted'] ? 'Splits: ' + d.changes['splitted'] + '<br/>' : '';
+    details += d.changes['merged'] ? 'Merges: ' + d.changes['merged'] + '<br/>' : '';
+    details += d.changes['renamed'] ? 'Renamed: ' + d.changes['renamed'] + '<br/>' : '';
+    return 'Changes: ' + Object.values(d.changes).reduce((a, b) => a + b) + '<br/>' +
+        details;
+    d
 }
 
 /**
@@ -545,12 +548,12 @@ function draw() {
         let currentFilters = filterCombination();
         if (filteredTrees[currentFilters]) {
             drawSunburst(filteredTrees[currentFilters]);
-            loadTree(filteredTrees[currentFilters]);
+            loadTree(filteredTrees[currentFilters], tooltipContent);
         } else {
             const filterDiffs = filterDifferences(differences);
             filteredTrees[currentFilters] = filterDiffs;
             drawSunburst(filterDiffs);
-            loadTree(filterDiffs);
+            loadTree(filterDiffs, tooltipContent);
         }
     }
 

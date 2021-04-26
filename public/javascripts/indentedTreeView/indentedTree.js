@@ -8,6 +8,8 @@
 
     var svgTree;
 
+    var indentedTreeState = {};
+
     var margin = { top: 30, right: 20, bottom: 30, left: 20 },
         width = 960,
         barHeight = 20,
@@ -23,16 +25,44 @@
         .x(function(d) { return d.y; })
         .y(function(d) { return d.x; });
 
-    function loadTree(data) {
+    function loadTree(data, tooltipContent) {
+        d3.select(".treeContainer").html(""); //Clean previous tree
         svgTree = d3.select(".treeContainer").append("svg")
+            .attr("class", "svgIndentedTree")
             .attr("width", width) // + margin.left + margin.right)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        svgTree.node().classList.add("svgIndentedTree");
         root = d3.hierarchy(data, d => Array.isArray(d.c) ? d.c : undefined);
         root.x0 = 0;
         root.y0 = 0;
         update(root);
+
+        svgTree.append('g'); // tooltips
+        indentedTreeState.tooltip = d3.select(".treeContainer").append('div').attr('class', 'sunburst-tooltip');
+        d3.select(".treeContainer").on('mousemove', function(ev) {
+            var mousePos = d3Pointer(ev);
+            indentedTreeState.tooltip.style('left', mousePos[0] + 'px').style('top', mousePos[1] + 'px').style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
+        });
+        indentedTreeState.tooltipContent = tooltipContent;
+    }
+
+    function d3Pointer(event, node) {
+        event = sourceEvent(event);
+        if (node === undefined) node = event.currentTarget;
+        if (node) {
+            var svg = node.ownerSVGElement || node;
+            if (svg.createSVGPoint) {
+                var point = svg.createSVGPoint();
+                point.x = event.clientX, point.y = event.clientY;
+                point = point.matrixTransform(node.getScreenCTM().inverse());
+                return [point.x, point.y];
+            }
+            if (node.getBoundingClientRect) {
+                var rect = node.getBoundingClientRect();
+                return [event.clientX - rect.left - node.clientLeft, event.clientY - rect.top - node.clientTop];
+            }
+        }
+        return [event.pageX, event.pageY];
     }
 
     function searchForNodes(d, searchValue) {
@@ -140,8 +170,9 @@
             .attr("y", -barHeight / 2)
             .attr("height", barHeight)
             .attr("width", barWidth)
-            .style("fill", rectFill)
-            .on("mouseover", rectMouseOver)
+            .style("fill", (d) => rectFill(d))
+            .on("mouseover", (e, d) => { rectMouseOver(e, d) })
+            .on("mouseleave", (d) => hideTooltip(d))
             .on("click", (e, d) => { rectClick(d) });
 
         nodeEnter.append("text")
@@ -150,14 +181,17 @@
             .attr("dx", 5.5)
             .attr('fill', textFill)
             .text(function(d) { return (d.data.rank + " " + d.data.name) })
-        console.log(`scale(${.03})translate(${barWidth-5.5},-${barHeight/2})`)
-        nodeEnter.append("path")
-            .classed('info-icon', true)
-
-        .attr('transform', `translate(${barWidth-21.5},-${barHeight*.39}) scale(${.03})`)
-            .attr('fill', textFill)
-            .attr('d', infoSVGPath)
-            .attr('opacity', .35)
+        nodeEnter.append("text")
+            .attr("class", "fa")
+            .text('\uf2b9')
+            .attr("fill", "white")
+            .attr("dy", 5.5)
+            .attr("dx", barWidth - 20)
+            .attr("font-size", "15px")
+            // .attr('transform', `translate(${barWidth-20},-${barHeight*.89})`)
+            // .attr('fill', textFill)
+            // .attr('d', infoSVGPath)
+            // .attr('opacity', .35)
             .on("mouseover", infoMouseOver)
             .on("click", infoClick);
 
@@ -243,20 +277,52 @@
         alert(`Unit data for '${toTitleCase(d.data.data.label)}' will appear to the right`);
     }
 
-    function rectFill(d) {
-        return d._children ? "#34516D" : d.children ? "#5584b1" : "#dcdcdc";
+    function rectFill(node) {
+        if (interface_variables.added && node.data.changes['added'] === 1 && node.data.c.length == 0) {
+            return initOptions['add-color'];
+        }
+        if (interface_variables.removed && node.data.changes['removed'] === 1 && node.data.c.length == 0) {
+            return initOptions['remove-color'];
+        }
+        if (interface_variables.split && node.data.changes['splitted'] === 1 && node.data.c.length == 0) {
+            return initOptions['split-color'];
+        }
+        if (interface_variables.merge && node.data.changes['merged'] === 1 && node.data.c.length == 0) {
+            return initOptions['merge-color'];
+        }
+        if (interface_variables.move && node.data.changes['moved'] === 1 && node.data.c.length == 0) {
+            return initOptions['move-color'];
+        }
+        if (interface_variables.rename && node.data.changes['renamed'] === 1 && node.data.c.length == 0) {
+            return initOptions['rename-color'];
+        } else {
+
+            return node._children ? "#34516D" : node.children ? "#5584b1" : "#dcdcdc";
+        }
     }
 
     function textFill(d) {
         return d._children ? "#ffffff" : d.children ? "#ffffff" : "#000000";
     }
 
-    function rectMouseOver(d) {
-        d3.select(this).attr('cursor', (d) => d._children ? 'pointer' : d.children ? 'pointer' : "default");
+    function rectMouseOver(event, d) {
+        // d3.select(this).attr('cursor', (d) => d._children ? 'hand' : d.children ? 'pointer' : "default");
+        indentedTreeState.tooltip.style('display', 'inline');
+        indentedTreeState.tooltip.html("<div class=\"tooltip-title\">".concat(d.data.rank + " " + d.data.name).concat("</div>").concat(indentedTreeState.tooltipContent(d.data)));
+    }
+
+    function hideTooltip(d) {
+        indentedTreeState.tooltip.style('display', 'none');
     }
 
     function infoMouseOver(d) {
-        d3.select(this).attr('cursor', 'pointer');
+        d3.select(this).attr('cursor', 'hand');
+    }
+
+    function sourceEvent(event) {
+        let sourceEvent;
+        while (sourceEvent = event.sourceEvent) event = sourceEvent;
+        return event;
     }
 
     function expandAll(node) {

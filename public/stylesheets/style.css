@@ -479,3 +479,9 @@ input:checked+.slider_switch:before {
     background: rgba(0, 0, 0, 0.9);
     pointer-events: none;
 }
+
+.treeContainer {
+    height: 500px;
+    width: 100%;
+    overflow: auto;
+}
