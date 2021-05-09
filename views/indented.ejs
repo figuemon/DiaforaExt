@@ -11,11 +11,11 @@
     <link rel="stylesheet" href="/javascripts/indentedTreeView/indentedTree.css" />
     <link rel="stylesheet" href="/stylesheets/style.css" />
     <link rel="stylesheet" href="/stylesheets/maindash.css" />
-    <script src="https://kit.fontawesome.com/c25a5a0cde.js" crossorigin="anonymous"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css" />
+    <!-- <script src="https://kit.fontawesome.com/c25a5a0cde.js" crossorigin="anonymous"></script> -->
+    <script src="/javascripts/lib/jquery.min.js"></script>
+    <script src="/javascripts/lib/p5.js"></script>
+    <script src="/javascripts/lib/p5.dom.js"></script>
+    <link rel="stylesheet" href="/javascripts/lib/bootstrap-icons.css" />
     <script src="/lib/jquery.min.js"></script>
     <script src="/lib/bootstrap.bundle.js"></script>
     <script src="/javascripts/globalconf.js"></script>
@@ -26,12 +26,12 @@
     <script src="/javascripts/lineSystem.js"></script>
     <script src="/javascripts/filter.js"></script>
     <script src="/javascripts/ordering.js"></script>
-    <script src="https://d3js.org/d3.v6.js"></script>
-    <script src="https://d3js.org/d3-color.v2.min.js"></script>
-    <script src="https://d3js.org/d3-interpolate.v2.min.js"></script>
-    <script src="https://d3js.org/d3-scale-chromatic.v2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/emn178/chartjs-plugin-labels/src/chartjs-plugin-labels.js"></script>
+    <script src="/javascripts/lib/d3.v6.js"></script>
+    <script src="/javascripts/lib/d3-color.v2.min.js"></script>
+    <script src="/javascripts/lib/d3-interpolate.v2.min.js"></script>
+    <script src="/javascripts/lib/d3-scale-chromatic.v2.min.js"></script>
+    <script src="/javascripts/lib/Chart.js"></script>
+    <script src="/javascripts/lib/chartjs-plugin-labels.js"></script>
     <script src="/javascripts/sunburst-chart/sunburst-chart.js"></script>
     <script src="/javascripts/icicle-chart/icicle-chart.js"></script>
     <script src="/javascripts/indentedTreeView/indentedTree.js"></script>
@@ -267,10 +267,6 @@
     </div>
 
     <div id="sketch-holder" class="main_body right top" style="display: none;">
-        <div id="tooltip" style="position: absolute; display: none;z-index: 5;">
-            <canvas id="tooltipChart" width="150" height="150"></canvas>
-            <label id="tooltipText" class="toolTipText"></label>
-        </div>
         <!-- Our sketch will go here! -->
         <script src="/javascripts/drawTree.js"></script>
     </div>
@@ -278,6 +274,10 @@
         <div id="chart" class="sunburst"></div>
         <label id="treeContext" class="treeContext"></label>
         <div id="indentedTree" class="treeContainer"></div>
+    </div>
+    <div id="tooltip" style="position: absolute; display: none;z-index: 5;">
+        <canvas id="tooltipChart" width="150" height="150"></canvas>
+        <label id="tooltipText" class="toolTipText"></label>
     </div>
 
     <!-- -->

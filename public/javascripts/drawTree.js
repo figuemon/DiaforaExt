@@ -540,20 +540,19 @@ function draw() {
     if (interface_variables.changedLines) {
         interface_variables.changedLines = false;
         createBundles(left_pos, right_pos, initOptions.bundle_radius);
-        //console.log('updated lines');
     }
 
     if (interface_variables.secondaryFilter) {
         interface_variables.secondaryFilter = false;
         let currentFilters = filterCombination();
         if (filteredTrees[currentFilters]) {
-            drawSunburst(filteredTrees[currentFilters]);
-            loadTree(filteredTrees[currentFilters], tooltipContent);
+            // drawSunburst(filteredTrees[currentFilters]);
+            loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters);
         } else {
             const filterDiffs = filterDifferences(differences);
             filteredTrees[currentFilters] = filterDiffs;
-            drawSunburst(filterDiffs);
-            loadTree(filterDiffs, tooltipContent);
+            // drawSunburst(filterDiffs);
+            loadTree(filterDiffs, tooltipContent, currentFilters);
         }
     }
 

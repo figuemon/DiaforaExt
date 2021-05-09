@@ -1,7 +1,7 @@
 .node rect {
     fill: #fff;
     stroke: #ffffff;
-    stroke-width: 1.5px;
+    stroke-width: 1px;
 }
 
 .node .label {
@@ -9,10 +9,14 @@
     pointer-events: none;
 }
 
+.leafNode {
+    opacity: 0.2;
+}
+
 .link {
     fill: none;
-    stroke: #5584b1;
-    stroke-width: 1.5px;
+    stroke: rgb(136, 136, 136);
+    stroke-width: 1px;
 }
 
 input[type=number] {

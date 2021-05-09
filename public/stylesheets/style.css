@@ -6,7 +6,7 @@
     --main-color: #054357;
     --secondary-color: #CCCCCC;
     --accent-color: #FB7422;
-    --top-margin: 9.9%;
+    --top-margin: calc(0% + 57px);
     --remove-color: #D50000;
     --add-color: #38B03D;
     --split-color: #C700BA;
@@ -484,4 +484,5 @@ input:checked+.slider_switch:before {
     height: 500px;
     width: 100%;
     overflow: auto;
+    background-color: white;
 }

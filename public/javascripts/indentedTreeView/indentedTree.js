@@ -13,26 +13,51 @@
     var margin = { top: 30, right: 20, bottom: 30, left: 20 },
         width = 960,
         barHeight = 20,
-        barWidth = (width - margin.left - margin.right) * 0.35;
+        barWidth = 450 //(width - margin.left - margin.right) * 0.35;
 
+    var nodeSize = 17;
+
+    var links = [];
     var i = 0,
         duration = 400,
         root,
         data;
-    const infoSVGPath = "M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z";
+    const infoSVGPath = "M6 3.5A1.5 1.5 0 0 1 7.5 2h1A1.5 1.5 0 0 1 10 3.5v1A1.5 1.5 0 0 1 8.5 6v1H11a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-1 0V8h-5v.5a.5.5 0 0 1-1 0v-1A.5.5 0 0 1 5 7h2.5V6A1.5 1.5 0 0 1 6 4.5v-1zM8.5 5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1zM3 11.5A1.5 1.5 0 0 1 4.5 10h1A1.5 1.5 0 0 1 7 11.5v1A1.5 1.5 0 0 1 5.5 14h-1A1.5 1.5 0 0 1 3 12.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm4.5.5a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v1a1.5 1.5 0 0 1-1.5 1.5h-1A1.5 1.5 0 0 1 9 12.5v-1zm1.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z";
 
     var diagonal = d3.linkHorizontal()
         .x(function(d) { return d.y; })
         .y(function(d) { return d.x; });
 
-    function loadTree(data, tooltipContent) {
+    function connector(d) {
+        //curved 
+        /*return "M" + d.y + "," + d.x +
+           "C" + (d.y + d.parent.y) / 2 + "," + d.x +
+           " " + (d.y + d.parent.y) / 2 + "," + d.parent.x +
+           " " + d.parent.y + "," + d.parent.x;*/
+        //straight
+        const sourceIndex = d.source.index ? d.source.x / barHeight : 0;
+        const targetIndex = d.target.index ? d.target.x / barHeight : 0;
+
+        // return `M${0},${sourceIndex * barHeight}
+        //     V${ target * barHeight}
+        //     h${d.target.y}`
+        return `M${0},${d.source.x}
+                    V${ targetIndex * barHeight}
+                    h${d.target.y}`
+
+
+    }
+
+    function loadTree(data, tooltipContent, filters) {
+        const ds = d3.hierarchy(data, d => Array.isArray(d.c) ? d.c : undefined);
+        const sorted = ds.sort((a, b) => d3.descending(a.data.changes['splitted'], b.data.changes['splitted'])).eachBefore(d => d.index = i++);
         d3.select(".treeContainer").html(""); //Clean previous tree
         svgTree = d3.select(".treeContainer").append("svg")
             .attr("class", "svgIndentedTree")
             .attr("width", width) // + margin.left + margin.right)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        root = d3.hierarchy(data, d => Array.isArray(d.c) ? d.c : undefined);
+        root = sorted;
         root.x0 = 0;
         root.y0 = 0;
         update(root);
@@ -44,6 +69,7 @@
             indentedTreeState.tooltip.style('left', mousePos[0] + 'px').style('top', mousePos[1] + 'px').style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
         });
         indentedTreeState.tooltipContent = tooltipContent;
+
     }
 
     function d3Pointer(event, node) {
@@ -162,18 +188,54 @@
 
         var nodeEnter = node.enter().append("g")
             .attr("class", "node")
-            .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+            .attr("transform", function(d) { return "translate(" + source.y0 + "," + (source.x0 + 20) + ")"; })
             .style("opacity", 0);
 
         // Enter any new nodes at the parent's previous position.
         nodeEnter.append("rect")
             .attr("y", -barHeight / 2)
             .attr("height", barHeight)
-            .attr("width", barWidth)
+            .attr("width", (d) => barWidth - (d.y))
+            .classed("leafNode", (d) => isLeaf(d))
             .style("fill", (d) => rectFill(d))
             .on("mouseover", (e, d) => { rectMouseOver(e, d) })
             .on("mouseleave", (d) => hideTooltip(d))
             .on("click", (e, d) => { rectClick(d) });
+
+        var barindicator = nodeEnter.append("g")
+            .attr("width", barWidth / 2)
+            .attr("height", barHeight / 2)
+            .on("mouseover", (e, d) => { showTooltipForDistribution(e, d.data) })
+            .on("mouseleave", (d) => hideTooltipForDistribution(d));
+
+        barindicator.append(d => {
+                var rects = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                if (d.data.c.length > 0) {
+                    var keys = Object.keys(d.data.changes);
+                    var maxScope = Object.values(d.data.changes).reduce(function(a, b) {
+                        return a + b;
+                    });
+                    let currentXPos = (barWidth - barWidth / 2) - d.y;
+                    keys.forEach(function(element) {
+                        var percentage = d.data.changes[element] / maxScope;
+                        var distance = (barWidth / 3) * percentage;
+                        var displayP = Number(percentage * 100).toFixed(1);
+                        var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                        rect.setAttribute('width', distance);
+                        rect.setAttribute('height', barHeight / 4);
+                        rect.setAttribute('y', -barHeight / 4);
+                        rect.setAttribute('x', currentXPos);
+                        rect.setAttribute('style',
+                            `fill: ${colorsBars(element)}; stroke-width:0px;`
+                        );
+                        rects.appendChild(rect);
+                        currentXPos += distance;
+                    });
+                }
+                return rects;
+            }
+
+        );
 
         nodeEnter.append("text")
             .classed('label', true)
@@ -181,18 +243,22 @@
             .attr("dx", 5.5)
             .attr('fill', textFill)
             .text(function(d) { return (d.data.rank + " " + d.data.name) })
-        nodeEnter.append("text")
-            .attr("class", "fa")
-            .text('\uf2b9')
+        const taxIndicator = nodeEnter.append("rect")
+            .attr("y", -barHeight / 2)
+            .style("fill", "#004c0a")
+            .style("opacity", '0.7')
+            .attr("height", barHeight)
+            .attr("width", 30)
+            .on("mouseover", (e, d) => infoMouseOver(d))
+            .on("mouseleave", (d) => hideTooltip(d))
+            .attr("transform", (d) => `translate(${barWidth - (d.y+30)})`);
+        nodeEnter.append("path")
+            .classed('info-icon', true)
             .attr("fill", "white")
-            .attr("dy", 5.5)
-            .attr("dx", barWidth - 20)
-            .attr("font-size", "15px")
-            // .attr('transform', `translate(${barWidth-20},-${barHeight*.89})`)
-            // .attr('fill', textFill)
-            // .attr('d', infoSVGPath)
-            // .attr('opacity', .35)
-            .on("mouseover", infoMouseOver)
+            .attr('transform', (d) => `translate(${barWidth - (d.y + 21.5)},-${barHeight*.39})`)
+            .attr('d', infoSVGPath)
+            .on("mouseover", (e, d) => infoMouseOver(d))
+            .on("mouseleave", (d) => hideTooltip(d))
             .on("click", infoClick);
 
         // Transition nodes to their new position.
@@ -216,42 +282,63 @@
             .style("opacity", 0)
             .remove();
 
+
         // Update the links…
         var link = svgTree.selectAll(".link")
             .data(root.links(), function(d) { return d.target.id; });
-
 
         // Enter any new links at the parent's previous position.
         link.enter().insert("path", "g")
             .attr("class", "link")
             .attr("d", function(d) {
-                var o = { x: source.x0, y: source.y0 };
-                return diagonal({ source: o, target: o });
+                var o = { x: source.x0, y: source.y0, index: source.index };
+                return connector({ source: o, target: o });
             })
             .transition()
             .duration(duration)
-            .attr("d", diagonal);
+            .attr("d", connector);
 
         // Transition links to their new position.
         link.transition()
             .duration(duration)
-            .attr("d", diagonal);
+            .attr("d", connector);
 
-        // Transition exiting nodes to the parent's new position.
         link.exit().transition()
             .duration(duration)
             .attr("d", function(d) {
-                var o = { x: source.x, y: source.y };
-                return diagonal({ source: o, target: o });
+                var o = { x: source.x, y: source.y, index: source.index };
+                return connector({ source: o, target: o });
             })
             .remove();
-
         // Stash the old positions for transition.
         root.each(function(d) {
             d.x0 = d.x;
             d.y0 = d.y;
         });
     }
+
+    function colorsBars(d) {
+        switch (d) {
+            case "added":
+                return "#38B03D";
+
+            case "splitted":
+                return "#C700BA";
+
+            case "merged":
+                return "#FFA452";
+
+            case "renamed":
+                return "#1700E7";
+
+            case "removed":
+                return "#D50000";
+
+            default:
+                return "#09D3D3";
+        }
+    }
+
 
     // Toggle children on click.
     function rectClick(d) {
@@ -297,12 +384,16 @@
             return initOptions['rename-color'];
         } else {
 
-            return node._children ? "#34516D" : node.children ? "#5584b1" : "#dcdcdc";
+            return node._children ? "#a3a3a3" : node.children ? "#949494" : "#dcdcdc";
         }
     }
 
+    function isLeaf(d) {
+        return d.data.c.length == 0;
+    }
+
     function textFill(d) {
-        return d._children ? "#ffffff" : d.children ? "#ffffff" : "#000000";
+        return d._children ? "#000000" : d.children ? "#000000" : "#000000";
     }
 
     function rectMouseOver(event, d) {
@@ -316,7 +407,14 @@
     }
 
     function infoMouseOver(d) {
-        d3.select(this).attr('cursor', 'hand');
+        // d3.select(this).attr('cursor', 'hand');
+        let taxonomy = "";
+        d.data.node.f.forEach(item => {
+            taxonomy += item.r + ": " + item.n + "<br/>";
+        });
+        taxonomy += d.data.rank + ": " + d.data.name;
+        indentedTreeState.tooltip.style('display', 'inline');
+        indentedTreeState.tooltip.html("<div class=\"tooltip-title\">".concat("Taxonomy: ").concat("</div>").concat(taxonomy));
     }
 
     function sourceEvent(event) {
@@ -477,3 +575,111 @@ function nodeHasChildren(node, d) {
     })
     return hasChildren;
 }
+
+
+/**
+ * Shows a tooltip with information
+ * OnHover a node
+ * @param {*} evt 
+ * @param {*} text 
+ */
+function showTooltipForDistribution(evt, node) {
+    if(verifyContentChart(node) > 0){
+    const data = createTooltipData(node);
+    let tooltip = document.getElementById("tooltip");
+    tooltip.style.display = "block";
+    tooltip.style.left = evt.x + 40 + 'px';
+    tooltip.style.top = evt.y + 10 + 'px';
+    var ctx = $('#tooltipChart');
+    var myDoughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
+        options: {
+            plugins: {
+                labels: {
+                    render: 'percentage',
+                    fontSize: 10,
+                    fontStyle: 'bold',
+                    fontColor: '#000',
+                    fontFamily: '"Lucida Console", Monaco, monospace',
+                    overlap: false,
+                  },
+                 title: {
+                    display: true,
+                    text: `${node.r}: ${node.n}`
+      }
+            }
+        }
+
+    }); 
+    let tooltipText = document.getElementById("tooltipText");
+    tooltipText.innerHTML = `${node.r}:${node.n}`;
+    currentTooltipNode = node;
+    }
+  }
+  
+  /**
+   *  Hides the distribution tooltip
+   */
+  function hideTooltipForDistribution() {
+     var tooltip = document.getElementById("tooltip");
+     tooltip.style.display = "none";
+     currentTooltipNode = undefined;
+  }
+
+  /**
+   *  Display the tooltip if the node contains changes
+   * @param {*} node 
+   * @returns 
+   */
+  function verifyContentChart(node) {
+      return  Object.values(node.changes).reduce(function(a, b) {
+            return a + b;
+        });
+  }
+
+  /**
+   * Creates the tooltip content
+   * @param {*} node 
+   * @returns 
+   */
+  function createTooltipData(node){
+      return  {
+        labels: [
+            'Splits',
+            'Merges',
+            'Removes',
+            'Added',
+            'Renames',
+            'Moves'
+        ],
+        datasets: [{
+            label: '# of Votes',
+            data: [
+                node.changes['splitted'], 
+                node.changes['merged'], 
+                node.changes['removed'], 
+                node.changes['added'], 
+                node.changes['renamed'],
+                node.changes['moved'],  
+            ],
+            backgroundColor: [
+                initOptions["split-color"],
+                initOptions["merge-color"],
+                initOptions["remove-color"],
+                initOptions["add-color"],
+                initOptions["rename-color"],
+                initOptions["move-color"]
+            ],
+            borderColor: [
+                initOptions["split-color"],
+                initOptions["merge-color"],
+                initOptions["remove-color"],
+                initOptions["add-color"],
+                initOptions["rename-color"],
+                initOptions["move-color"]
+            ],
+            borderWidth: 1
+        }]
+    };
+  }
