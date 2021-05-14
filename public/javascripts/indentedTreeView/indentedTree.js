@@ -29,47 +29,61 @@
         .y(function(d) { return d.x; });
 
     function connector(d) {
-        //curved 
+        //curved
         /*return "M" + d.y + "," + d.x +
            "C" + (d.y + d.parent.y) / 2 + "," + d.x +
            " " + (d.y + d.parent.y) / 2 + "," + d.parent.x +
            " " + d.parent.y + "," + d.parent.x;*/
         //straight
-        const sourceIndex = d.source.index ? d.source.x / barHeight : 0;
-        const targetIndex = d.target.index ? d.target.x / barHeight : 0;
+        const sourceIndex = d.source.x / barHeight;
+        const targetIndex = d.target.x / barHeight;
+        const depth = d.source.depth || 0;
 
         // return `M${0},${sourceIndex * barHeight}
         //     V${ target * barHeight}
         //     h${d.target.y}`
-        return `M${0},${d.source.x}
+        return `M${depth * 10},${d.source.x}
                     V${ targetIndex * barHeight}
-                    h${d.target.y}`
+                    h${d.target.y - (depth * 10) }`
 
 
     }
 
+    function applyFilters(d, filters) {
+        let sum = 0;
+        sum += filters[0] === "1" ? d.data.changes['added'] : 0;
+        sum += filters[1] === "1" ? d.data.changes['removed'] : 0;
+        sum += filters[2] === "1" ? d.data.changes['splitted'] : 0;
+        sum += filters[3] === "1" ? d.data.changes['merged'] : 0;
+        sum += filters[4] === "1" ? d.data.changes['moved'] : 0;
+        sum += filters[5] === "1" ? d.data.changes['renamed'] : 0;
+        return sum;
+    }
+
     function loadTree(data, tooltipContent, filters) {
-        const ds = d3.hierarchy(data, d => Array.isArray(d.c) ? d.c : undefined);
-        const sorted = ds.sort((a, b) => d3.descending(a.data.changes['splitted'], b.data.changes['splitted'])).eachBefore(d => d.index = i++);
         d3.select(".treeContainer").html(""); //Clean previous tree
-        svgTree = d3.select(".treeContainer").append("svg")
-            .attr("class", "svgIndentedTree")
-            .attr("width", width) // + margin.left + margin.right)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        root = sorted;
-        root.x0 = 0;
-        root.y0 = 0;
-        update(root);
+        if (filters != "000000") {
+            const ds = d3.hierarchy(data, d => Array.isArray(d.c) ? d.c : undefined);
+            const sorted = ds.sort((a, b) => applyFilters(b, filters) - applyFilters(a, filters));
 
-        svgTree.append('g'); // tooltips
-        indentedTreeState.tooltip = d3.select(".treeContainer").append('div').attr('class', 'sunburst-tooltip');
-        d3.select(".treeContainer").on('mousemove', function(ev) {
-            var mousePos = d3Pointer(ev);
-            indentedTreeState.tooltip.style('left', mousePos[0] + 'px').style('top', mousePos[1] + 'px').style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
-        });
-        indentedTreeState.tooltipContent = tooltipContent;
+            svgTree = d3.select(".treeContainer").append("svg")
+                .attr("class", "svgIndentedTree")
+                .attr("width", width) // + margin.left + margin.right)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            root = sorted;
+            root.x0 = 0;
+            root.y0 = 0;
+            update(root);
 
+            svgTree.append('g'); // tooltips
+            indentedTreeState.tooltip = d3.select(".treeContainer").append('div').attr('class', 'sunburst-tooltip');
+            d3.select(".treeContainer").on('mousemove', function(ev) {
+                var mousePos = d3Pointer(ev);
+                indentedTreeState.tooltip.style('left', mousePos[0] + 'px').style('top', mousePos[1] + 'px').style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
+            });
+            indentedTreeState.tooltipContent = tooltipContent;
+        }
     }
 
     function d3Pointer(event, node) {
@@ -243,6 +257,43 @@
             .attr("dx", 5.5)
             .attr('fill', textFill)
             .text(function(d) { return (d.data.rank + " " + d.data.name) })
+
+        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['splitted'].name)
+            .append('circle')
+            .attr('cx', 100)
+            .attr('cy', 1)
+            .attr('r', '3px')
+            .style('fill', colorsBars('splitted'));
+        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['merged'].name)
+            .append('circle')
+            .attr('cx', 104)
+            .attr('cy', 1)
+            .attr('r', '3px')
+            .style('fill', colorsBars('merged'));
+        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['moved'].name)
+            .append('circle')
+            .attr('cx', 108)
+            .attr('cy', 1)
+            .attr('r', '3px')
+            .style('fill', colorsBars('moved'));
+        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['renamed'].name)
+            .append('circle')
+            .attr('cx', 112)
+            .attr('cy', 1)
+            .attr('r', '3px')
+            .style('fill', colorsBars('renamed'));
+        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['added'].name)
+            .append('circle')
+            .attr('cx', 116)
+            .attr('cy', 1)
+            .attr('r', '3px')
+            .style('fill', colorsBars('added'));
+        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['removed'].name)
+            .append('circle')
+            .attr('cx', 120)
+            .attr('cy', 1)
+            .attr('r', '3px')
+            .style('fill', colorsBars('removed'));
         const taxIndicator = nodeEnter.append("rect")
             .attr("y", -barHeight / 2)
             .style("fill", "#004c0a")
@@ -580,8 +631,8 @@ function nodeHasChildren(node, d) {
 /**
  * Shows a tooltip with information
  * OnHover a node
- * @param {*} evt 
- * @param {*} text 
+ * @param {*} evt
+ * @param {*} text
  */
 function showTooltipForDistribution(evt, node) {
     if(verifyContentChart(node) > 0){
@@ -606,18 +657,17 @@ function showTooltipForDistribution(evt, node) {
                   },
                  title: {
                     display: true,
-                    text: `${node.r}: ${node.n}`
-      }
+                    text: `${node.r}: ${node.n}`,
+                    position: 'top'
+                }
             }
         }
 
-    }); 
-    let tooltipText = document.getElementById("tooltipText");
-    tooltipText.innerHTML = `${node.r}:${node.n}`;
+    });
     currentTooltipNode = node;
     }
   }
-  
+
   /**
    *  Hides the distribution tooltip
    */
@@ -629,8 +679,8 @@ function showTooltipForDistribution(evt, node) {
 
   /**
    *  Display the tooltip if the node contains changes
-   * @param {*} node 
-   * @returns 
+   * @param {*} node
+   * @returns
    */
   function verifyContentChart(node) {
       return  Object.values(node.changes).reduce(function(a, b) {
@@ -640,8 +690,8 @@ function showTooltipForDistribution(evt, node) {
 
   /**
    * Creates the tooltip content
-   * @param {*} node 
-   * @returns 
+   * @param {*} node
+   * @returns
    */
   function createTooltipData(node){
       return  {
@@ -654,14 +704,14 @@ function showTooltipForDistribution(evt, node) {
             'Moves'
         ],
         datasets: [{
-            label: '# of Votes',
+            label: 'Changes Distribution',
             data: [
-                node.changes['splitted'], 
-                node.changes['merged'], 
-                node.changes['removed'], 
-                node.changes['added'], 
+                node.changes['splitted'],
+                node.changes['merged'],
+                node.changes['removed'],
+                node.changes['added'],
                 node.changes['renamed'],
-                node.changes['moved'],  
+                node.changes['moved'],
             ],
             backgroundColor: [
                 initOptions["split-color"],

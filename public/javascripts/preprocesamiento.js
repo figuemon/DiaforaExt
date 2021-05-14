@@ -23,6 +23,7 @@ differencesMerged = undefined;
 differencesSplit = undefined;
 differencesRenamed = undefined;
 changesMax = undefined;
+maxPerChange = {};
 //todo tasks:
 /**
  * -Some nodes ares spliting and merging at the same time
@@ -290,6 +291,12 @@ function convertToTree(structure, root) {
         const rankMax = Object.values(diffNode.changes).reduce((a, b) => a + b);
         changesMax[diffNode.rank] = changesMax[diffNode.rank] ?
             changesMax[diffNode.rank] > rankMax ? changesMax[diffNode.rank] : rankMax : rankMax;
+        if (diffNode.rank === "Family") {
+            Object.keys(diffNode.changes).forEach(element => {
+                maxPerChange[element] = maxPerChange[element] && maxPerChange[element].changes[element] >
+                    diffNode.changes[element] ? maxPerChange[element] : diffNode;
+            });
+        }
         convertToTree(diffNode.children, diffNode.c);
         root.push(diffNode);
     });
