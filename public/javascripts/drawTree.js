@@ -12,6 +12,7 @@ var tree = JSON.parse(sessionStorage.getItem('sessionTree1'));
 var tree2 = JSON.parse(sessionStorage.getItem('sessionTree2'));
 var treeTax = tree.taxonomy;
 var treeTax2 = tree2.taxonomy;
+var detailedNode;
 
 countChildren(treeTax);
 countChildren(treeTax2);
@@ -355,16 +356,19 @@ function setup() {
 /**
  * Sunburst Drawing
  */
-function drawSunburst(data) {
+function drawSunburst(data, filters) {
     const container = document.getElementById('chart');
     container.innerHTML = ''; // clean the container before drawing the interface
+    if (filters === "000000") {
+        return;
+    }
     sunburstChart = Sunburst()
         .data(data)
         .size(d => d.c.length || 1)
-        .color(d => sunburstColors(d))
+        .color(d => sunburstColors(d, filters))
         .strokeColor(d => "#282828")
-        .width(500)
-        .height(500)
+        .width(400)
+        .height(400)
         .children(d => d.c)
         .label(d => d.rank + ':' + d.name)
         .tooltipTitle(d => d.rank + ' ' + d.name)
@@ -433,22 +437,28 @@ function filterDifferences(node) {
 var maxVal = 0;
 
 function sunburstColors(node) {
-    if (interface_variables.added && node.changes['added'] === 1 && node.c.length == 0) {
+    if (interface_variables.added && (node.changes['added'] === 1 && node.c.length == 0 ||
+            node.rank === "Family" && node.name == maxPerChange['added'].name)) {
         return initOptions['add-color'];
     }
-    if (interface_variables.removed && node.changes['removed'] === 1 && node.c.length == 0) {
+    if (interface_variables.removed && (node.changes['removed'] === 1 && node.c.length == 0 ||
+            node.rank === "Family" && node.name == maxPerChange['removed'].name)) {
         return initOptions['remove-color'];
     }
-    if (interface_variables.split && node.changes['splitted'] === 1 && node.c.length == 0) {
+    if (interface_variables.split && (node.changes['splitted'] === 1 && node.c.length == 0 ||
+            node.rank === "Family" && node.name == maxPerChange['splitted'].name)) {
         return initOptions['split-color'];
     }
-    if (interface_variables.merge && node.changes['merged'] === 1 && node.c.length == 0) {
+    if (interface_variables.merge && (node.changes['merged'] === 1 && node.c.length == 0 ||
+            node.rank === "Family" && node.name == maxPerChange['merged'].name)) {
         return initOptions['merge-color'];
     }
-    if (interface_variables.move && node.changes['moved'] === 1 && node.c.length == 0) {
+    if (interface_variables.move && (node.changes['moved'] === 1 && node.c.length == 0 ||
+            node.rank === "Family" && node.name == maxPerChange['moved'].name)) {
         return initOptions['move-color'];
     }
-    if (interface_variables.rename && node.changes['renamed'] === 1 && node.c.length == 0) {
+    if (interface_variables.rename && (node.changes['renamed'] === 1 && node.c.length == 0 ||
+            node.rank === "Family" && node.name == maxPerChange['renamed'].name)) {
         return initOptions['rename-color'];
     } else {
         const sum = Object.values(node.changes).reduce((a, b) => a + b);
@@ -458,10 +468,50 @@ function sunburstColors(node) {
 
 }
 
+function getChangeType(node) {
+    if (interface_variables.added && node.changes['added'] === 1 && node.c.length == 0) {
+        return 'added';
+    }
+    if (interface_variables.removed && node.changes['removed'] === 1 && node.data.c.length == 0) {
+        return 'removed';
+    }
+    if (interface_variables.split && node.changes['splitted'] === 1 && node.c.length == 0) {
+        return 'splitted'
+    }
+    if (interface_variables.merge && node.changes['merged'] === 1 && node.c.length == 0) {
+        return 'merged';
+    }
+    if (interface_variables.move && node.changes['moved'] === 1 && node.c.length == 0) {
+        return 'moved';
+    }
+    if (interface_variables.rename && node.changes['renamed'] === 1 && node.c.length == 0) {
+        return 'moved';
+    } else {
+        return 'unknown';
+    }
+}
+
+function isLeaf(d) {
+    return d.c.length == 0;
+}
+
+function loadChangeDetailsSection(d) {
+    if (isLeaf(d) && loadChangesDetails) {
+        let change = getChangeType(d);
+        loadChangesDetails(d.node, change);
+    } else {
+        hideDetailsSection();
+    }
+}
+
 function nodeClick(node) {
     if (node) {
         console.log(node);
-        sunburstChart.focusOnNode(node);
+        debugger;
+        loadChangeDetailsSection(node);
+        if (!isLeaf(node)) {
+            sunburstChart.focusOnNode(node);
+        }
         //    sunburstChart.zoomToNode(node);
         this.addLabel();
         sunburstSelection = true;
@@ -524,6 +574,91 @@ function filterCombination() {
     return res;
 }
 
+function getTaxonomy(node) {
+    let taxonomy = "";
+    node.f.forEach(item => {
+        taxonomy += item.r + ": " + item.n + "<br/>";
+    });
+    taxonomy += node.r + ": " + node.n;
+    return taxonomy;
+}
+
+function changeDetailTableForNode(node) {
+    return `
+    </table>
+ <table style="width:90%">
+  <tr>
+    <th>Taxa</th>
+    <td>${node.r} ${node.n}</td>
+  </tr>
+  <tr>
+    <th>Author</th>
+    <td>${node.a.join(', ')}</td>
+  </tr>
+  <tr>
+    <th>Date</th>
+    <td>${node.ad.join(', ')}</td>
+  </tr>
+  <tr>
+    <th>Taxonomy</th>
+    <td>
+     ${getTaxonomy(node)}
+    </td>
+    
+  </tr>
+</table>
+<hr class="separator">
+`;
+}
+
+function loadChangesDetails(node, changeType) {
+    let details = document.getElementById('changeDetails');
+    let treeContainer = document.getElementById('indentedTree');
+    if (node != detailedNode) {
+        detailedNode = node;
+        treeContainer.style.height = "500px"
+        details.style.display = "block";
+        let tree1Title = document.getElementById("tree1-title");
+        let tree2Title = document.getElementById("tree2-title");
+        tree1Title.innerHTML = `${tree.author}-${tree.date}`;
+        tree2Title.innerHTML = `${tree2.author}-${tree2.date}`;
+        let changesTitle = document.getElementById('change-title');
+        let oldTaxonomy = document.getElementById('oldTaxonomy');
+        let newTaxonomy = document.getElementById('newTaxonomy');
+        changesTitle.innerHTML = "";
+        oldTaxonomy.innerHTML = "";
+        newTaxonomy.innerHTML = "";
+        changesTitle.innerHTML = `Change details for: ${node.r +" "+ node.n}`;
+        if (changeType === "splitted" || changeType === "moved") {
+            oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
+            node.equivalent.forEach(eq => {
+                newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(eq))
+            });
+        }
+        if (changeType === "merged" || changeType === "renamed") {
+            newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
+            node.equivalent.forEach(eq => {
+                oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(eq))
+            });
+        } else {
+            newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
+        }
+    } else {
+        if (details.style.display === "none") {
+            details.style.display = "block";
+        } else {
+            details.style.display = "none";
+            treeContainer.style.height = "100%"
+        }
+    }
+}
+
+function hideDetailsSection() {
+    let details = document.getElementById('changeDetails');
+    let treeContainer = document.getElementById('indentedTree');
+    details.style.display = "none";
+    treeContainer.style.height = "100%"
+}
 //processing function to draw on canvas, executed at a fixed rate, normaly 30 times per second
 function draw() {
     //smooth node focusing
@@ -545,14 +680,14 @@ function draw() {
     if (interface_variables.secondaryFilter) {
         interface_variables.secondaryFilter = false;
         let currentFilters = filterCombination();
-        if (filteredTrees[currentFilters]) {
-            // drawSunburst(filteredTrees[currentFilters]);
-            loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters);
+        if (currentFilters != "000000" && filteredTrees[currentFilters]) {
+            //drawSunburst(filteredTrees[currentFilters], currentFilters);
+            loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters, loadChangesDetails);
         } else {
             const filterDiffs = filterDifferences(differences);
             filteredTrees[currentFilters] = filterDiffs;
-            // drawSunburst(filterDiffs);
-            loadTree(filterDiffs, tooltipContent, currentFilters);
+            // drawSunburst(filterDiffs, currentFilters);
+            loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
         }
     }
 

@@ -1,5 +1,5 @@
 const visualizationUrl = 'indented';
-const downloadUrl = host+'/download';
+const downloadUrl = host + '/download';
 
 function onDownload() {
     window.location.replace(downloadUrl);
@@ -34,7 +34,7 @@ function VerificarDatos() {
                 readFile(file2, function(resultFile2) {
                     sessionStorage.setItem('sessionTree2', resultFile2);
 
-                    window.location.replace(window.location.href  + visualizationUrl);
+                    window.location.replace(window.location.href + visualizationUrl);
                 });
             });
             //window.sessionStorage.file1 = file1;
@@ -42,12 +42,12 @@ function VerificarDatos() {
             errorText.innerHTML = '';
             //window.location.replace(visualizationUrl);
         } else {
-            errorText.innerHTML = 'Por favor selecione 2 jerarquias';
+            errorText.innerHTML = 'Please select two taxonomies';
         }
         //console.log("sessionStorage!!!");
     } else {
         errorText.innerHTML =
-            'Su navegador no es compatible con nuestro programa :(';
+            'Your Web Browser may be incompatible with this software';
     }
     /*}
 	catch{

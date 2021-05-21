@@ -271,20 +271,46 @@
         <script src="/javascripts/drawTree.js"></script>
     </div>
     <div id="context-holder" class="main_body right top">
-        <div id="chart" class="sunburst"></div>
         <label id="treeContext" class="treeContext"></label>
-        <div id="indentedTree" class="treeContainer"></div>
     </div>
-    <div id="tooltip" style="position: absolute; display: none;z-index: 5;">
-        <canvas id="tooltipChart" width="250" height="250"></canvas>
-    </div>
+    <div id="differenceView" class="main_body right top">
+        <div id="chart" class="sunburst"></div>
+        <div id="indentedTree" class="treeContainer "></div>
+        <div id="changeDetails" class="change-details" style="display: none;">
+            <div id="changeDetails" class="change-details right">
+                <div class="general-title">
+                    <span id="change-title">Change details for: Species X</span
+                        >
+                    </div>
+                    <div class="tree-titles">
+                        <div class="column">
+                            <span id="tree1-title"
+                                >tree.author +""+ tree.date</span
+                            >
+                        </div>
+                        <div class="column">
+                            <span id="tree2-title"
+                                >tree.author +""+ tree.date</span
+                            >
+                        </div>
+                    </div>
+                    <div id="oldTaxonomy" class="old-tax"></div>
+                    <div id="newTaxonomy" class="new-tax"></div>
+                </div>
+            </div>
+            <div
+                id="tooltip"
+                style="position: absolute; display: none;z-index: 5;"
+            >
+                <canvas id="tooltipChart" width="250" height="250"></canvas>
+            </div>
+        </div>
 
-    <!-- -->
-    <div class="infoSquare">
-        <p class="infoTitle"></p>
-        <p class="infoBody"></p>
-    </div>
-    <!-- -->
-</body>
-
+        <!-- -->
+        <div class="infoSquare">
+            <p class="infoTitle"></p>
+            <p class="infoBody"></p>
+        </div>
+        <!-- -->
+    </body>
 </html>

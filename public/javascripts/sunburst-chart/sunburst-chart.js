@@ -5021,8 +5021,8 @@
                 return path$1.toString();
             }
 
-            function radialTextTransform(d) {
-                var middleAngle = (state.angleScale(d.x0) + state.angleScale(d.x1) - Math.PI) / 2;
+            function radialTextTransform(d, transform = 2) {
+                var middleAngle = (state.angleScale(d.x0) + state.angleScale(d.x1) - Math.PI) / transform;
                 var r = Math.max(0, (state.radiusScale(d.y0) + state.radiusScale(d.y1)) / 2);
                 var x = r * Math.cos(middleAngle);
                 var y = r * Math.sin(middleAngle);

@@ -60,7 +60,7 @@
         return sum;
     }
 
-    function loadTree(data, tooltipContent, filters) {
+    function loadTree(data, tooltipContent, filters, detailsFn) {
         d3.select(".treeContainer").html(""); //Clean previous tree
         if (filters != "000000") {
             const ds = d3.hierarchy(data, d => Array.isArray(d.c) ? d.c : undefined);
@@ -74,7 +74,7 @@
             root = sorted;
             root.x0 = 0;
             root.y0 = 0;
-            update(root);
+            update(root, detailsFn);
 
             svgTree.append('g'); // tooltips
             indentedTreeState.tooltip = d3.select(".treeContainer").append('div').attr('class', 'sunburst-tooltip');
@@ -156,7 +156,7 @@
         return filteredData;
     }
 
-    function update(source) {
+    function update(source, detailsFn) {
 
         //expand all button click
         d3.select('.btn-expand-all')
@@ -210,7 +210,7 @@
             .attr("y", -barHeight / 2)
             .attr("height", barHeight)
             .attr("width", (d) => barWidth - (d.y))
-            .classed("leafNode", (d) => isLeaf(d))
+            .classed("leafNode", (d) => isLeaf(d.data))
             .style("fill", (d) => rectFill(d))
             .on("mouseover", (e, d) => { rectMouseOver(e, d) })
             .on("mouseleave", (d) => hideTooltip(d))
@@ -400,6 +400,7 @@
             d.children = d._children;
             d._children = null;
         }
+        loadChangeDetailsSection(d.data);
         update(d);
     }
 
@@ -437,10 +438,6 @@
 
             return node._children ? "#a3a3a3" : node.children ? "#949494" : "#dcdcdc";
         }
-    }
-
-    function isLeaf(d) {
-        return d.data.c.length == 0;
     }
 
     function textFill(d) {
