@@ -60,7 +60,7 @@
         return sum;
     }
 
-    function loadTree(data, tooltipContent, filters, detailsFn) {
+    async function loadTree(data, tooltipContent, filters, detailsFn) {
         d3.select(".treeContainer").html(""); //Clean previous tree
         if (filters != "000000") {
             const ds = d3.hierarchy(data, d => Array.isArray(d.c) ? d.c : undefined);

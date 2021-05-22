@@ -472,7 +472,7 @@ function getChangeType(node) {
     if (interface_variables.added && node.changes['added'] === 1 && node.c.length == 0) {
         return 'added';
     }
-    if (interface_variables.removed && node.changes['removed'] === 1 && node.data.c.length == 0) {
+    if (interface_variables.removed && node.changes['removed'] === 1 && node.c.length == 0) {
         return 'removed';
     }
     if (interface_variables.split && node.changes['splitted'] === 1 && node.c.length == 0) {
@@ -629,6 +629,7 @@ function loadChangesDetails(node, changeType) {
         oldTaxonomy.innerHTML = "";
         newTaxonomy.innerHTML = "";
         changesTitle.innerHTML = `Change details for: ${node.r +" "+ node.n}`;
+        debugger;
         if (changeType === "splitted" || changeType === "moved") {
             oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
             node.equivalent.forEach(eq => {
@@ -659,24 +660,12 @@ function hideDetailsSection() {
     details.style.display = "none";
     treeContainer.style.height = "100%"
 }
-//processing function to draw on canvas, executed at a fixed rate, normaly 30 times per second
-function draw() {
-    //smooth node focusing
-    dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
-    dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
 
-    left_pos = { x: initOptions.separation, y: 0 + dispLefTree };
-    right_pos = {
-        x: getWindowWidth() - initOptions.separation,
-        y: 0 + dispRightTree,
-    };
-
-    //if interface lines changed force update
-    if (interface_variables.changedLines) {
-        interface_variables.changedLines = false;
-        createBundles(left_pos, right_pos, initOptions.bundle_radius);
-    }
-
+function hideLoader() {
+    hideDetailsSection();
+    document.getElementById('busyLoader').style.display = 'none';
+}
+async function LoadPrototypes() {
     if (interface_variables.secondaryFilter) {
         interface_variables.secondaryFilter = false;
         let currentFilters = filterCombination();
@@ -690,68 +679,100 @@ function draw() {
             loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
         }
     }
+}
+//processing function to draw on canvas, executed at a fixed rate, normaly 30 times per second
+function draw() {
+    // //smooth node focusing
+    // dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
+    // dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
 
-    translate(xPointer, -yPointer);
-    background(255);
-    fill(0);
+    // left_pos = { x: initOptions.separation, y: 0 + dispLefTree };
+    // right_pos = {
+    //     x: getWindowWidth() - initOptions.separation,
+    //     y: 0 + dispRightTree,
+    // };
 
-    //draws based on the current window size
-    let base_y = getWindowWidth() / 2 - initOptions.width / 2;
+    // //if interface lines changed force update
+    // if (interface_variables.changedLines) {
+    //     interface_variables.changedLines = false;
+    //     createBundles(left_pos, right_pos, initOptions.bundle_radius);
+    // }
 
-    //Draw function, this draws the indented-treeTax
-    optimizedDrawIndentedTree(
-        treeTax.visible_lbr,
-        initOptions,
-        initOptions.separation,
-        dispLefTree,
-        false
-    );
-    optimizedDrawIndentedTree(
-        treeTax2.visible_lbr,
-        initOptions,
-        getWindowWidth() - initOptions.separation,
-        dispRightTree,
-        true
-    );
+    // if (interface_variables.secondaryFilter) {
+    //     interface_variables.secondaryFilter = false;
+    //     let currentFilters = filterCombination();
+    //     if (currentFilters != "000000" && filteredTrees[currentFilters]) {
+    //         //drawSunburst(filteredTrees[currentFilters], currentFilters);
+    //         loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters, loadChangesDetails);
+    //     } else {
+    //         const filterDiffs = filterDifferences(differences);
+    //         filteredTrees[currentFilters] = filterDiffs;
+    //         // drawSunburst(filterDiffs, currentFilters);
+    //         loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
+    //     }
+    // }
 
-    //bundling comes from draw_menu js
-    //Draw current visible lines
-    ls_drawLines(
-        initOptions,
-        yPointer,
-        left_pos,
-        right_pos,
-        interface_variables.bundling
-    );
+    // translate(xPointer, -yPointer);
+    // background(255);
+    // fill(0);
 
-    //check if we are using bars
-    //this is basicaly a switch when changed executes code
-    if (initOptions.use_resume_bars != interface_variables.bars) {
-        initOptions.use_resume_bars = interface_variables.bars;
-        //update the treeTax if we are not using bars
-        recalculateTree(treeTax, initOptions, function() {
-            return;
-        });
-        recalculateTree(treeTax2, initOptions, function() {
-            return;
-        });
-    }
+    // //draws based on the current window size
+    // let base_y = getWindowWidth() / 2 - initOptions.width / 2;
 
-    //set click flag to false
-    click = false;
+    // //Draw function, this draws the indented-treeTax
+    // optimizedDrawIndentedTree(
+    //     treeTax.visible_lbr,
+    //     initOptions,
+    //     initOptions.separation,
+    //     dispLefTree,
+    //     false
+    // );
+    // optimizedDrawIndentedTree(
+    //     treeTax2.visible_lbr,
+    //     initOptions,
+    //     getWindowWidth() - initOptions.separation,
+    //     dispRightTree,
+    //     true
+    // );
 
-    //mark focused node, little gray rect on screen
-    if (focusNode) {
-        let pc = 0.4;
-        fill(initOptions['focus-color']);
-        stroke(initOptions['focus-color']);
-        strokeWeight(1);
-        rect(-10,
-            focusNode.y + (initOptions.defaultSize * (1 - pc)) / 2,
-            getWindowWidth() + 10,
-            initOptions.defaultSize * 0.4
-        );
-    }
+    // //bundling comes from draw_menu js
+    // //Draw current visible lines
+    // ls_drawLines(
+    //     initOptions,
+    //     yPointer,
+    //     left_pos,
+    //     right_pos,
+    //     interface_variables.bundling
+    // );
+
+    // //check if we are using bars
+    // //this is basicaly a switch when changed executes code
+    // if (initOptions.use_resume_bars != interface_variables.bars) {
+    //     initOptions.use_resume_bars = interface_variables.bars;
+    //     //update the treeTax if we are not using bars
+    //     recalculateTree(treeTax, initOptions, function() {
+    //         return;
+    //     });
+    //     recalculateTree(treeTax2, initOptions, function() {
+    //         return;
+    //     });
+    // }
+
+    // //set click flag to false
+    // click = false;
+
+    // //mark focused node, little gray rect on screen
+    // if (focusNode) {
+    //     let pc = 0.4;
+    //     fill(initOptions['focus-color']);
+    //     stroke(initOptions['focus-color']);
+    //     strokeWeight(1);
+    //     rect(-10,
+    //         focusNode.y + (initOptions.defaultSize * (1 - pc)) / 2,
+    //         getWindowWidth() + 10,
+    //         initOptions.defaultSize * 0.4
+    //     );
+    // }
 }
 
 //initialize required values on the json treeTax

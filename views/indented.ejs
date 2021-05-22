@@ -6,6 +6,7 @@
     <link rel="icon" type="image/vnd.microsoft.icon" href="assets/favicon.ico" sizes="16x16" />
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
     <link href="/stylesheets/selector.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/stylesheets/spinners.css" />
     <link rel="stylesheet" href="/javascripts/sunburst-chart/sunburst.css" />
     <link rel="stylesheet" href="/javascripts/icicle-chart/icicle.css" />
     <link rel="stylesheet" href="/javascripts/indentedTreeView/indentedTree.css" />
@@ -311,6 +312,12 @@
             <p class="infoTitle"></p>
             <p class="infoBody"></p>
         </div>
+
         <!-- -->
     </body>
+    <div id="busyLoader" class="overlay" style="display: none;">
+        <div class="three-quarters-loader center-loader">
+            Loading...
+        </div>
+    </div>
 </html>

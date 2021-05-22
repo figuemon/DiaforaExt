@@ -46,7 +46,7 @@ function onBoxChange() {
 
 function onRemovedChange() {
     interface_variables.removed = !interface_variables.removed;
-    interface_variables.secondaryFilter = true;
+    optionMenuChange();
 }
 
 function onBarsChange() {
@@ -55,7 +55,17 @@ function onBarsChange() {
 
 function onAddedChange() {
     interface_variables.added = !interface_variables.added;
+    optionMenuChange();
+}
+
+function optionMenuChange() {
     interface_variables.secondaryFilter = true;
+    document.getElementById('busyLoader').style.display = 'block';
+    setTimeout(() => {
+        LoadPrototypes().then(e => {
+            hideLoader();
+        });
+    }, 5);
 }
 
 //task activating functionss
@@ -63,27 +73,29 @@ function onCongruenceChange() {
     interface_variables.congruence = !interface_variables.congruence;
     interface_variables.changedLines = true;
 }
+
 function onMergeChange() {
     interface_variables.merge = !interface_variables.merge;
     interface_variables.changedLines = true;
-    interface_variables.secondaryFilter = true;
+    optionMenuChange();
 }
+
 function onSplitChange() {
     interface_variables.split = !interface_variables.split;
     interface_variables.changedLines = true;
-    interface_variables.secondaryFilter = true;
+    optionMenuChange();
 }
 
 function onRenameChange() {
     interface_variables.rename = !interface_variables.rename;
     interface_variables.changedLines = true;
-    interface_variables.secondaryFilter = true;
+    optionMenuChange();
 }
 
 function onMoveChange() {
     interface_variables.move = !interface_variables.move;
     interface_variables.changedLines = true;
-    interface_variables.secondaryFilter = true;
+    optionMenuChange();
 }
 
 function onSliderChange(value) {
@@ -102,16 +114,15 @@ function onExpand() {
  *  When the statistics panel is hidden the 
  *  graph area shoul be maximized
  */
-function toggleGraphSize(){
+function toggleGraphSize() {
     const sketchHolder = $('#sketch-holder');
-   if(sketchHolder.hasClass('right')){
-    $('#statistics').collapse('hide');
-    sketchHolder.removeClass('right');
-    sketchHolder.addClass('fullwidth');
-   }
-   else {
-    $('#statistics').collapse('show');
-    sketchHolder.removeClass('fullwidth');
-    sketchHolder.addClass('right');
-   }
+    if (sketchHolder.hasClass('right')) {
+        $('#statistics').collapse('hide');
+        sketchHolder.removeClass('right');
+        sketchHolder.addClass('fullwidth');
+    } else {
+        $('#statistics').collapse('show');
+        sketchHolder.removeClass('fullwidth');
+        sketchHolder.addClass('right');
+    }
 }
