@@ -1,29 +1,16 @@
 const visualizationUrl = 'indented';
-const downloadUrl = host + '/download';
+const downloadUrl = 'download';
 
 function onDownload() {
-    window.location.replace(downloadUrl);
+    window.location.replace(window.location.href + downloadUrl);
 }
 
 function VerificarDatos() {
-    //try{
     var errorText = document.getElementById('error_text');
     var fileInput1 = document.getElementById('file1');
     var fileInput2 = document.getElementById('file2');
     var file1 = fileInput1.files[0];
     var file2 = fileInput2.files[0];
-    //console.log(file1);
-    //console.log(file1);
-    //var file1 = e1.options[e1.selectedIndex].value;
-    //var file2 = e2.options[e2.selectedIndex].value;
-    //var n = file1.lastIndexOf(".");
-    //console.log("File 1>>"+file1);
-    //console.log("File 2>>"+file2);
-    //console.log(window.opener);
-    //window.opener.file1 = file1;
-    //window.opener.file2 = file2;
-    //window.opener.getElementById('ExclusionStatsValue').innerHTML = "25";
-    //window.close();
 
     if (typeof Storage !== 'undefined') {
         // Code for localStorage/sessionStorage.

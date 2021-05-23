@@ -23,6 +23,7 @@ differencesMerged = undefined;
 differencesSplit = undefined;
 differencesRenamed = undefined;
 changesMax = undefined;
+var filteredTrees = {};
 maxPerChange = {};
 //todo tasks:
 /**
@@ -272,6 +273,7 @@ function calculate_all_merges(left_tree, rigth_tree) {
  * @returns 
  */
 function generateDiffTree() {
+    filteredTrees = {};
     differences = {};
     currentLevel = differences;
     operations = ['added', 'removed', 'renamed', 'splitted', 'merged', 'moved'];

@@ -7,6 +7,7 @@
     <link rel="icon" type="image/vnd.microsoft.icon" href="assets/favicon.ico" sizes="16x16">
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
     <link href="/stylesheets/selector.css" rel="stylesheet">
+    <link href="/stylesheets/about.css" rel="stylesheet">
     <script src="/lib/jquery.min.js"></script>
     <script src="/lib/bootstrap.bundle.js"></script>
     <script src="/javascripts/globalconf.js"></script>
@@ -17,7 +18,7 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a href="#">
+        <a href="/">
             <div class="align-items-center no-gutters row">
                 <div class="col">
                     <img height="30px" src="assets/DiaforaIcon.png">
@@ -38,42 +39,26 @@
 			  </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/about">About us</a>
+                    <a class="nav-link" href="#">About us</a>
                 </li>
             </ul>
-            <!-- <form class="form-inline my-2 my-lg-0">
-			<input class="form-control mr-sm-2" type="text" placeholder="Search">
-			<button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
-		  </form> -->
         </div>
     </nav>
     <div class="jumbotron jumbotron-fluid">
         <div class="bg"></div>
         <div class="container jumbo-item">
-            <h1 class="display-4 jumbo-item">Welcome to Diaforá</h1>
-            <p class="lead jumbo-item  col-md-8 col-md-offset-2 center">A taxonomic comparison tool.</p>
+            <h1 class="display-4 jumbo-item">About Us</h1>
         </div>
     </div>
-    <div class="container-fluid">
-        <h1 class="">Select Taxonomies</h1>
-        <p id="error_text" class="alert_display"></p>
-        <div id="content" class="selection_body">
-            <table class="table">
-                <td width="30%"><label id="label">First Taxonomy</label></td>
-                <td><input id="file1" class="file_input" type="file" name="Taxonomy1" value="Taxonomy" accept=".json"></input>
-                    </br>
-                </td>
-                <tr>
-                    <td width="30%"><label id="label">Second Taxonomy</label></td>
-                    <td><input id="file2" class="file_input" type="file" name="Taxonomy2" value="Taxonomy" accept=".json"></input>
-                        </br>
-                    </td>
-            </table>
-            <div class="row" style="margin-left: 50%;">
-                <button onclick="VerificarDatos()" id="Save" class="btn btn-secondary mr-2 important_button">Load</button>
-                <button onclick="onDownload()" class="btn btn-secondary mr-2 important_button">Download from Col</button>
-            </div>
-        </div>
+    <div class="about-text">
+        Diaforá is an initiative from the Intituto Tecnológico de Costa Rica
+        <a href="https://www.tec.ac.cr/">ITCR</a> to provide a visualization tool for taxonomic information. We aim that Diaforá will be helpful for taxonomist and biologist or enthusiast that are engaged with the comparison and correction of taxonomic
+        trees in their databases.
+    </div>
+    <a href="https://www.tec.ac.cr/">
+        <img class="logo-tec" src="assets/images/logo-tec.png" alt="ITCR">
+    </a>
+    </div>
     </div>
 </body>
 

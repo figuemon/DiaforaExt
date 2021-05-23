@@ -29,21 +29,14 @@
         .y(function(d) { return d.x; });
 
     function connector(d) {
-        //curved
-        /*return "M" + d.y + "," + d.x +
-           "C" + (d.y + d.parent.y) / 2 + "," + d.x +
-           " " + (d.y + d.parent.y) / 2 + "," + d.parent.x +
-           " " + d.parent.y + "," + d.parent.x;*/
-        //straight
-        const sourceIndex = d.source.x / barHeight;
-        const targetIndex = d.target.x / barHeight;
+        const sourceIndex = d.source.x;
+        const targetIndex = d.target.x;
         const depth = d.source.depth || 0;
-
-        // return `M${0},${sourceIndex * barHeight}
-        //     V${ target * barHeight}
-        //     h${d.target.y}`
-        return `M${depth * 10},${d.source.x}
-                    V${ targetIndex * barHeight}
+        const childIndex = d.source.children ? d.source.children.indexOf(d.target) : 0;
+        const initialOffset = d.source.children && childIndex > 0 ?
+            d.source.children[childIndex - 1].x : sourceIndex;
+        return `M${depth * 10},${initialOffset}
+                    V${ targetIndex }
                     h${d.target.y - (depth * 10) }`
 
 
@@ -84,6 +77,7 @@
             });
             indentedTreeState.tooltipContent = tooltipContent;
         }
+
     }
 
     function d3Pointer(event, node) {
@@ -258,39 +252,39 @@
             .attr('fill', textFill)
             .text(function(d) { return (d.data.rank + " " + d.data.name) })
 
-        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['splitted'].name)
+        nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['splitted'] && d.data.name == maxPerChange['splitted'].name)
             .append('circle')
-            .attr('cx', 100)
+            .attr('cx', 345)
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('splitted'));
-        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['merged'].name)
+        nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['merged'] && d.data.name == maxPerChange['merged'].name)
             .append('circle')
-            .attr('cx', 104)
+            .attr('cx', 353)
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('merged'));
-        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['moved'].name)
+        nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['moved'] && d.data.name == maxPerChange['moved'].name)
             .append('circle')
-            .attr('cx', 108)
+            .attr('cx', 361)
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('moved'));
-        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['renamed'].name)
+        nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['renamed'] && d.data.name == maxPerChange['renamed'].name)
             .append('circle')
-            .attr('cx', 112)
+            .attr('cx', 369)
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('renamed'));
-        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['added'].name)
+        nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['added'] && d.data.name == maxPerChange['added'].name)
             .append('circle')
-            .attr('cx', 116)
+            .attr('cx', 377)
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('added'));
-        nodeEnter.filter((d) => d.data.rank === "Family" && d.data.name == maxPerChange['removed'].name)
+        nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['removed'] && d.data.name == maxPerChange['removed'].name)
             .append('circle')
-            .attr('cx', 120)
+            .attr('cx', 385)
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('removed'));
@@ -401,7 +395,9 @@
             d._children = null;
         }
         loadChangeDetailsSection(d.data);
-        update(d);
+        if (d.data.c.length > 0) {
+            update(d);
+        }
     }
 
     function infoClick(d) {
@@ -636,8 +632,8 @@ function showTooltipForDistribution(evt, node) {
     const data = createTooltipData(node);
     let tooltip = document.getElementById("tooltip");
     tooltip.style.display = "block";
-    tooltip.style.left = evt.x + 40 + 'px';
-    tooltip.style.top = evt.y + 10 + 'px';
+    tooltip.style.left = evt.offsetX + 40 + 'px';
+    tooltip.style.top = evt.offsetY + 10 + 'px';
     var ctx = $('#tooltipChart');
     var myDoughnutChart = new Chart(ctx, {
         type: 'doughnut',

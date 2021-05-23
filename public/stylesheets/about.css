@@ -1,0 +1,17 @@
+.about-text {
+    height: 100%;
+    left: 25%;
+    right: 25%;
+    color: white;
+    position: absolute;
+    font-size: large;
+    font-family: sans-serif;
+}
+
+.logo-tec {
+    left: 50%;
+    top: 90%;
+    height: 80px;
+    width: 147px;
+    position: absolute;
+}

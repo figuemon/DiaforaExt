@@ -65,7 +65,7 @@ function optionMenuChange() {
         LoadPrototypes().then(e => {
             hideLoader();
         });
-    }, 5);
+    }, 10);
 }
 
 //task activating functionss

@@ -25,10 +25,10 @@ let levelList2 = createRankList(treeTax2);
 // console.log(treeTax);
 // console.log(treeTax2);
 
-//checks if bot trees are valid for visualization
+//checks if both trees are valid for visualization
 //this treeTax comes from a file selected by the user and is modified by preprocesamiento.js and contChildren.js
 if (!treeTax || !treeTax2) {
-    window.location.replace(loadingUrl);
+    window.location.replace('/');
 }
 
 //all options that can influece how the visualization is displayed
@@ -101,7 +101,6 @@ var focusNode = undefined; //Last node selected by the user
 var focusClick = 0;
 var sunburstChart = undefined;
 const d3color = d3.scaleOrdinal(d3.schemeGreys[9]);
-var filteredTrees = {};
 
 //List of visible nodes for both trees by rank
 //Only nodes on this list will be rendered, they are added or removed when user open or closes a node
@@ -507,7 +506,6 @@ function loadChangeDetailsSection(d) {
 function nodeClick(node) {
     if (node) {
         console.log(node);
-        debugger;
         loadChangeDetailsSection(node);
         if (!isLeaf(node)) {
             sunburstChart.focusOnNode(node);
@@ -629,7 +627,6 @@ function loadChangesDetails(node, changeType) {
         oldTaxonomy.innerHTML = "";
         newTaxonomy.innerHTML = "";
         changesTitle.innerHTML = `Change details for: ${node.r +" "+ node.n}`;
-        debugger;
         if (changeType === "splitted" || changeType === "moved") {
             oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
             node.equivalent.forEach(eq => {
@@ -803,7 +800,9 @@ function initializeIndentedTree(originalTree, options, growDirection) {
     originalTree.visible_lbr[originalTree.r.toLowerCase()].push(originalTree);
     pushIntoUnfolded(originalTree);
     originalTree.c.forEach(function(child_node) {
-        pushIntoUnfolded(child_node);
+        if (child_node) {
+            pushIntoUnfolded(child_node);
+        }
     });
 }
 

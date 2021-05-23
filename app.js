@@ -8,6 +8,7 @@ var logger = require('morgan');
 var downloadRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var indentedRouter = require('./routes/indented');
+var aboutRouter = require('./routes/about');
 var fileSelectionRouter = require('./routes/fileSelection');
 var graphicsRouter = require('./routes/graphics');
 
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', fileSelectionRouter);
+app.use('/about', aboutRouter);
 app.use('/download', downloadRouter);
 app.use('/users', usersRouter);
 app.use('/indented', indentedRouter);
@@ -36,18 +38,18 @@ app.use('/graphics', graphicsRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
 
-  next(createError(404));
+    next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error');
 });
 
 
@@ -66,7 +68,7 @@ module.exports = app;
 var host = process.env.HOST || '127.0.0.1';
 // Listen on a specific port via the PORT environment variable
 var port = 5757;
- 
+
 var cors_proxy = require('cors-anywhere');
 cors_proxy.createServer({
     originWhitelist: [], // Allow all origins
@@ -75,8 +77,3 @@ cors_proxy.createServer({
 }).listen(port, host, function() {
     console.log('Running CORS Anywhere on ' + host + ':' + port);
 });
-
-
-
-
-

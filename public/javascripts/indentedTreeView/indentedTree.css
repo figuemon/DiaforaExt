@@ -15,8 +15,9 @@
 
 .link {
     fill: none;
-    stroke: rgb(136, 136, 136);
+    stroke: black;
     stroke-width: 1px;
+    opacity: 1;
 }
 
 input[type=number] {
