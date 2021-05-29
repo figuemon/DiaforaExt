@@ -37,6 +37,7 @@
     <script src="/javascripts/icicle-chart/icicle-chart.js"></script>
     <script src="/javascripts/indentedTreeView/indentedTree.js"></script>
 </head>
+<script></script>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -56,10 +57,11 @@
 
         <div class="collapse navbar-collapse" id="navbarColor02">
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label>Congruent</label>
-                        <label class="switch">
+                <% if (query.mode !== '1') { %>
+                    <li class="nav-item">
+                        <div class="encircledBox">
+                            <label>Congruent</label>
+                            <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="congruece"
@@ -69,12 +71,13 @@
                                     class="slider_switch round congruence_slider_switch"
                                 ></span>
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label>Split</label>
-                        <label class="switch">
+                        </div>
+                    </li>
+                    <%}%>
+                        <li class="nav-item">
+                            <div class="encircledBox">
+                                <label>Split</label>
+                                <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="split"
@@ -84,12 +87,12 @@
                                     class="slider_switch round split_slider_switch"
                                 ></span>
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label>Merged</label>
-                        <label class="switch">
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="encircledBox">
+                                <label>Merged</label>
+                                <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="merge"
@@ -99,12 +102,12 @@
                                     class="slider_switch round merge_slider_switch"
                                 ></span>
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label>Moved</label>
-                        <label class="switch">
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="encircledBox">
+                                <label>Moved</label>
+                                <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="move"
@@ -114,12 +117,12 @@
                                     class="slider_switch round move_slider_switch"
                                 ></span>
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label>Renamed</label>
-                        <label class="switch">
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="encircledBox">
+                                <label>Renamed</label>
+                                <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="rename"
@@ -129,12 +132,12 @@
                                     class="slider_switch round rename_slider_switch"
                                 ></span>
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label>Added</label>
-                        <label class="switch">
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="encircledBox">
+                                <label>Added</label>
+                                <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="add"
@@ -144,12 +147,12 @@
                                     class="slider_switch round add_slider_switch"
                                 ></span>
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label>Excluded</label>
-                        <label class="switch">
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="encircledBox">
+                                <label>Excluded</label>
+                                <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="removes"
@@ -159,20 +162,20 @@
                                     class="slider_switch round remove_slider_switch"
                                 ></span>
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label></label>
-                        <label class="switch">
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="encircledBox">
+                                <label></label>
+                                <label class="switch">
                                 <input type="checkbox" name="space" />
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label>Lines</label>
-                        <label class="switch">
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="encircledBox">
+                                <label>Lines</label>
+                                <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="lineas"
@@ -183,12 +186,12 @@
                                     class="slider_switch round other_slider_switch"
                                 ></span>
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label>Bars</label>
-                        <label class="switch">
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="encircledBox">
+                                <label>Bars</label>
+                                <label class="switch">
                                 <input
                                     type="checkbox"
                                     name="bars"
@@ -198,49 +201,53 @@
                                     class="slider_switch round other_slider_switch"
                                 ></span>
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="encircledBox">
-                        <label></label>
-                        <label class="switch">
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="encircledBox">
+                                <label></label>
+                                <label class="switch">
                                 <input type="checkbox" name="space" />
                             </label>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <div class="slidecontainer">
-                        <label>Edge bundling</label>
-                        <input type="range" min="0" max="100" value="50" class="slider" id="myRange" oninput="onSliderChange(this.value)" onchange="onSliderChange(this.value)" />
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <button class="buttonsHeader" type="button" title="Toggle Statistics" onclick="toggleGraphSize()">
+                            </div>
+                        </li>
+                        <% if (query.mode !== '1') { %>
+                            <li class="nav-item">
+                                <div class="slidecontainer">
+                                    <label>Edge bundling</label>
+                                    <input type="range" min="0" max="100" value="50" class="slider" id="myRange" oninput="onSliderChange(this.value)" onchange="onSliderChange(this.value)" />
+                                </div>
+                            </li>
+                            <%}%>
+                                <li class="nav-item">
+                                    <button class="buttonsHeader" type="button" title="Toggle Statistics" onclick="toggleGraphSize()">
                             Statistics<i class="bi bi-graph-up"></i>
                         </button>
-                </li>
-                <li class="nav-item">
-                    <button class="buttonsHeader" onclick="onExpand()">
+                                </li>
+                                <% if (query.mode !== '1') { %>
+
+                                    <li class="nav-item">
+                                        <button class="buttonsHeader" onclick="onExpand()">
                             Expand
                             <i class="bi bi-arrows-angle-expand"></i>
                         </button>
-                </li>
-                <li class="nav-item">
-                    <!--Function comes from drawing system -->
-                    <button class="buttonsHeader" onclick="sort_and_update_lines()">
+                                    </li>
+                                    <li class="nav-item">
+                                        <!--Function comes from drawing system -->
+                                        <button class="buttonsHeader" onclick="sort_and_update_lines()">
                             Sort
                             <i class="bi bi-sort-down-alt"></i>
                         </button>
-                </li>
-                <li class="nav-item">
-                    <!--Function comes from drawing system -->
-                    <button class="buttonsHeader" onclick="resetTrees()">
+                                    </li>
+                                    <li class="nav-item">
+                                        <!--Function comes from drawing system -->
+                                        <button class="buttonsHeader" onclick="resetTrees()">
                             Reset
                             <i class="bi bi-arrow-counterclockwise"></i>
                         </button>
-                </li>
-
-                <!-- <li class="nav-item">
+                                    </li>
+                                    <%}%>
+                                        <!-- <li class="nav-item">
                         <button type="button" class="matrix"  onclick="onMatrixClicked()"> <img src = "/images/matrixButton.png" ></img></button>
                         <button
                             type="button"
@@ -248,13 +255,13 @@
                             onclick="onMatrixClicked()"
                         ></button>
                     </li> -->
-                <li class="nav-item">
-                    <!--Function comes from ordering menu script -->
-                    <button type="“button”" class="buttonsHeader" onclick="onExit()">
+                                        <li class="nav-item">
+                                            <!--Function comes from ordering menu script -->
+                                            <button type="“button”" class="buttonsHeader" onclick="onExit()">
                             Exit
                             <i class="bi bi-x-octagon"></i>
                         </button>
-                </li>
+                                        </li>
             </ul>
         </div>
     </nav>

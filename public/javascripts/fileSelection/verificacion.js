@@ -20,8 +20,12 @@ function VerificarDatos() {
                 sessionStorage.setItem('sessionTree1', resultFile1);
                 readFile(file2, function(resultFile2) {
                     sessionStorage.setItem('sessionTree2', resultFile2);
-
-                    window.location.replace(window.location.href + visualizationUrl);
+                    let nextURLArr = window.location.href.split('?');
+                    let nextURL = nextURLArr[0] + visualizationUrl;
+                    if (nextURLArr.length == 2) {
+                        nextURL += `?${nextURLArr[1]}`;
+                    }
+                    window.location.replace(nextURL);
                 });
             });
             //window.sessionStorage.file1 = file1;

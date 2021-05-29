@@ -19,7 +19,12 @@ var interface_variables = {
 
 //Used when the buttton exit is cliked
 function onExit() {
-    window.location.replace('/');
+    let nextURLArr = window.location.href.split('?');
+    let nextURL = '/';
+    if (nextURLArr.length == 2) {
+        nextURL += `?${nextURLArr[1]}`;
+    }
+    window.location.replace(nextURL);
 }
 
 //writes to info square

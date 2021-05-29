@@ -13,7 +13,7 @@
     var margin = { top: 30, right: 20, bottom: 30, left: 20 },
         width = 960,
         barHeight = 20,
-        barWidth = 450 //(width - margin.left - margin.right) * 0.35;
+        barWidth = 460 //(width - margin.left - margin.right) * 0.35;
 
     var nodeSize = 17;
 
@@ -211,7 +211,7 @@
             .on("click", (e, d) => { rectClick(d) });
 
         var barindicator = nodeEnter.append("g")
-            .attr("width", barWidth / 2)
+            .attr("width", barWidth / 3.5)
             .attr("height", barHeight / 2)
             .on("mouseover", (e, d) => { showTooltipForDistribution(e, d.data) })
             .on("mouseleave", (d) => hideTooltipForDistribution(d));
@@ -223,10 +223,10 @@
                     var maxScope = Object.values(d.data.changes).reduce(function(a, b) {
                         return a + b;
                     });
-                    let currentXPos = (barWidth - barWidth / 2) - d.y;
+                    let currentXPos = (barWidth * 0.55) - d.y - 10;
                     keys.forEach(function(element) {
                         var percentage = d.data.changes[element] / maxScope;
-                        var distance = (barWidth / 3) * percentage;
+                        var distance = (barWidth / 3.5) * percentage;
                         var displayP = Number(percentage * 100).toFixed(1);
                         var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
                         rect.setAttribute('width', distance);
@@ -254,37 +254,44 @@
 
         nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['splitted'] && d.data.name == maxPerChange['splitted'].name)
             .append('circle')
-            .attr('cx', 345)
+            .attr('cx', 340)
+            .attr('stroke', 'black')
             .attr('cy', 1)
+            .attr('stroke', 'black')
             .attr('r', '3px')
             .style('fill', colorsBars('splitted'));
         nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['merged'] && d.data.name == maxPerChange['merged'].name)
             .append('circle')
-            .attr('cx', 353)
+            .attr('cx', 348)
+            .attr('stroke', 'black')
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('merged'));
         nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['moved'] && d.data.name == maxPerChange['moved'].name)
             .append('circle')
-            .attr('cx', 361)
+            .attr('cx', 356)
+            .attr('stroke', 'black')
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('moved'));
         nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['renamed'] && d.data.name == maxPerChange['renamed'].name)
             .append('circle')
-            .attr('cx', 369)
+            .attr('cx', 364)
+            .attr('stroke', 'black')
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('renamed'));
         nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['added'] && d.data.name == maxPerChange['added'].name)
             .append('circle')
-            .attr('cx', 377)
+            .attr('cx', 372)
+            .attr('stroke', 'black')
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('added'));
         nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['removed'] && d.data.name == maxPerChange['removed'].name)
             .append('circle')
-            .attr('cx', 385)
+            .attr('cx', 380)
+            .attr('stroke', 'black')
             .attr('cy', 1)
             .attr('r', '3px')
             .style('fill', colorsBars('removed'));
