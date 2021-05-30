@@ -100,7 +100,7 @@ var click = false; //
 var focusNode = undefined; //Last node selected by the user
 var focusClick = 0;
 var sunburstChart = undefined;
-const d3color = d3.scaleOrdinal(d3.schemeGreys[9]);
+const d3color = d3.scaleOrdinal(d3.schemePurples[9]);
 
 //List of visible nodes for both trees by rank
 //Only nodes on this list will be rendered, they are added or removed when user open or closes a node
@@ -436,28 +436,28 @@ function filterDifferences(node) {
 var maxVal = 0;
 
 function sunburstColors(node) {
-    if (interface_variables.added && (node.changes['added'] === 1 && node.c.length == 0 ||
-            node.rank === "Family" && node.name == maxPerChange['added'].name)) {
+    if (interface_variables.added && ((node.changes['added'] === 1 && node.c.length == 0) ||
+            (node.rank === "Family" && node.name == maxPerChange['added'].name))) {
         return initOptions['add-color'];
     }
-    if (interface_variables.removed && (node.changes['removed'] === 1 && node.c.length == 0 ||
-            node.rank === "Family" && node.name == maxPerChange['removed'].name)) {
+    if (interface_variables.removed && ((node.changes['removed'] === 1 && node.c.length == 0) ||
+            (node.rank === "Family" && node.name == maxPerChange['removed'].name))) {
         return initOptions['remove-color'];
     }
-    if (interface_variables.split && (node.changes['splitted'] === 1 && node.c.length == 0 ||
-            node.rank === "Family" && node.name == maxPerChange['splitted'].name)) {
+    if (interface_variables.split && ((node.changes['splitted'] === 1 && node.c.length == 0) ||
+            (node.rank === "Family" && node.name == maxPerChange['splitted'].name))) {
         return initOptions['split-color'];
     }
-    if (interface_variables.merge && (node.changes['merged'] === 1 && node.c.length == 0 ||
-            node.rank === "Family" && node.name == maxPerChange['merged'].name)) {
+    if (interface_variables.merge && ((node.changes['merged'] === 1 && node.c.length == 0) ||
+            (node.rank === "Family" && node.name == maxPerChange['merged'].name))) {
         return initOptions['merge-color'];
     }
-    if (interface_variables.move && (node.changes['moved'] === 1 && node.c.length == 0 ||
-            node.rank === "Family" && node.name == maxPerChange['moved'].name)) {
+    if (interface_variables.move && ((node.changes['moved'] === 1 && node.c.length == 0) ||
+            (node.rank === "Family" && node.name == maxPerChange['moved'].name))) {
         return initOptions['move-color'];
     }
-    if (interface_variables.rename && (node.changes['renamed'] === 1 && node.c.length == 0 ||
-            node.rank === "Family" && node.name == maxPerChange['renamed'].name)) {
+    if (interface_variables.rename && ((node.changes['renamed'] === 1 && node.c.length == 0) ||
+            (node.rank === "Family" && node.name == maxPerChange['renamed'].name))) {
         return initOptions['rename-color'];
     } else {
         const sum = Object.values(node.changes).reduce((a, b) => a + b);
@@ -667,13 +667,13 @@ async function LoadPrototypes() {
         interface_variables.secondaryFilter = false;
         let currentFilters = filterCombination();
         if (currentFilters != "000000" && filteredTrees[currentFilters]) {
-            //drawSunburst(filteredTrees[currentFilters], currentFilters);
-            loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters, loadChangesDetails);
+            drawSunburst(filteredTrees[currentFilters], currentFilters);
+            //loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters, loadChangesDetails);
         } else {
             const filterDiffs = filterDifferences(differences);
             filteredTrees[currentFilters] = filterDiffs;
-            // drawSunburst(filterDiffs, currentFilters);
-            loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
+            drawSunburst(filterDiffs, currentFilters);
+            //loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
         }
     }
 }
