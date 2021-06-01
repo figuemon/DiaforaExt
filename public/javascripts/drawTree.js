@@ -437,34 +437,39 @@ var maxVal = 0;
 
 function sunburstColors(node) {
     if (interface_variables.added && ((node.changes['added'] === 1 && node.c.length == 0) ||
-            (node.rank === "Family" && node.name == maxPerChange['added'].name))) {
+            (validateMaxFamilyGroup(node, 'added')))) {
         return initOptions['add-color'];
     }
     if (interface_variables.removed && ((node.changes['removed'] === 1 && node.c.length == 0) ||
-            (node.rank === "Family" && node.name == maxPerChange['removed'].name))) {
+            (validateMaxFamilyGroup(node, 'removed')))) {
         return initOptions['remove-color'];
     }
     if (interface_variables.split && ((node.changes['splitted'] === 1 && node.c.length == 0) ||
-            (node.rank === "Family" && node.name == maxPerChange['splitted'].name))) {
+            (validateMaxFamilyGroup(node, 'splitted')))) {
         return initOptions['split-color'];
     }
     if (interface_variables.merge && ((node.changes['merged'] === 1 && node.c.length == 0) ||
-            (node.rank === "Family" && node.name == maxPerChange['merged'].name))) {
+            (validateMaxFamilyGroup(node, 'merged')))) {
         return initOptions['merge-color'];
     }
     if (interface_variables.move && ((node.changes['moved'] === 1 && node.c.length == 0) ||
-            (node.rank === "Family" && node.name == maxPerChange['moved'].name))) {
+            (validateMaxFamilyGroup('moved')))) {
         return initOptions['move-color'];
     }
     if (interface_variables.rename && ((node.changes['renamed'] === 1 && node.c.length == 0) ||
-            (node.rank === "Family" && node.name == maxPerChange['renamed'].name))) {
+            (validateMaxFamilyGroup('renamed')))) {
         return initOptions['rename-color'];
     } else {
         const sum = Object.values(node.changes).reduce((a, b) => a + b);
-        const val = sum / changesMax[node.rank];
+        const val = sum / changesMax[node.rank] * 0.9;
         return d3.interpolateGreys(val);
     }
 
+}
+
+function validateMaxFamilyGroup(node, typeChange) {
+    return node.rank === "Family" && maxPerChange[typeChange] &&
+        node.name == maxPerChange[typeChange].name;
 }
 
 function getChangeType(node) {
@@ -505,7 +510,7 @@ function loadChangeDetailsSection(d) {
 
 function nodeClick(node) {
     if (node) {
-        console.log(node);
+        // console.log(node);
         loadChangeDetailsSection(node);
         if (!isLeaf(node)) {
             sunburstChart.focusOnNode(node);
@@ -523,7 +528,7 @@ function addLabel() {
         sunburstChart.focusOnNode() :
         sunburstChart.data();
     let currentState = `${node.rank}:${node.name}`;
-    console.log(node);
+    //console.log(node);
     node.selected = true;
     sunburstNode = node;
     click = true;
@@ -667,14 +672,20 @@ async function LoadPrototypes() {
         interface_variables.secondaryFilter = false;
         let currentFilters = filterCombination();
         if (currentFilters != "000000" && filteredTrees[currentFilters]) {
-            drawSunburst(filteredTrees[currentFilters], currentFilters);
-            //loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters, loadChangesDetails);
+            drawDifferenceVisualization(filteredTrees[currentFilters], currentFilters);
         } else {
             const filterDiffs = filterDifferences(differences);
             filteredTrees[currentFilters] = filterDiffs;
-            drawSunburst(filterDiffs, currentFilters);
-            //loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
+            drawDifferenceVisualization(filterDiffs, currentFilters);
         }
+    }
+}
+
+function drawDifferenceVisualization(structure, filters) {
+    if (protoType == 1)
+        drawSunburst(structure, filters);
+    else {
+        loadTree(structure, tooltipContent, filters, loadChangesDetails);
     }
 }
 //processing function to draw on canvas, executed at a fixed rate, normaly 30 times per second

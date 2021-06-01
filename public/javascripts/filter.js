@@ -16,7 +16,7 @@ class FilterSystem {
         proccesByLevel(tree1, this.addKey);
         proccesByLevel(tree2, this.addKey);
 
-        console.log(this);
+        //console.log(this);
     }
 
     addKey(node) {
@@ -169,11 +169,9 @@ function similar_text(first, second) {
     for (p = 0; p < firstLength; p++) {
         for (q = 0; q < secondLength; q++) {
             for (
-                l = 0;
-                p + l < firstLength &&
+                l = 0; p + l < firstLength &&
                 q + l < secondLength &&
-                first.charAt(p + l) === second.charAt(q + l);
-                l++
+                first.charAt(p + l) === second.charAt(q + l); l++
             );
             if (l > max) {
                 max = l;
