@@ -366,8 +366,8 @@ function drawSunburst(data, filters) {
         .size(d => d.c.length || 1)
         .color(d => sunburstColors(d, filters))
         .strokeColor(d => "#282828")
-        .width(400)
-        .height(400)
+        .width(450)
+        .height(450)
         .children(d => d.c)
         .label(d => d.rank + ':' + d.name)
         .tooltipTitle(d => d.rank + ' ' + d.name)
@@ -643,7 +643,10 @@ function loadChangesDetails(node, changeType) {
             node.equivalent.forEach(eq => {
                 oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(eq))
             });
-        } else {
+        }
+        if (changeType === "removed")
+            oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
+        else {
             newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
         }
     } else {

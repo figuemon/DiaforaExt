@@ -412,7 +412,7 @@ input:checked+.slider_switch:before {
 .sunburst {
     position: absolute;
     left: 20%;
-    top: 10px;
+    top: -50px;
     z-index: 2;
 }
 

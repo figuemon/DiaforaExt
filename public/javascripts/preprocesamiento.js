@@ -304,35 +304,48 @@ function convertToTree(structure, root) {
     });
 }
 
+function nodeUID(node) {
+    return node.n + node.a.join(',') + node.ad.join(',');
+}
+
 function populateDiffTree(operation, differences, currentLevel, tree) {
     tree[operation].forEach(node => {
         currentLevel = differences;
         for (let index = 0; index < node.f.length; index++) {
             const element = node.f[index];
-            if (!currentLevel[element.n]) {
-                currentLevel[element.n] = {
+            if (!currentLevel[nodeUID(element)]) {
+                currentLevel[nodeUID(element)] = {
                     name: element.n,
                     rank: element.r,
                     changes: {},
                     node: element,
                     children: {}
                 };
-                currentLevel[element.n].changes[operation] = 1;
+                currentLevel[nodeUID(element)].changes[operation] = 1;
             } else {
-                currentLevel[element.n].changes && currentLevel[element.n].changes[operation] > 0 ?
-                    currentLevel[element.n].changes[operation]++ : currentLevel[element.n].changes[operation] = 1;
+                const currNode = currentLevel[nodeUID(element)];
+                currNode.changes && currNode.changes[operation] > 0 ?
+                    currNode.changes[operation]++ : currNode.changes[operation] = 1;
             }
-            currentLevel = currentLevel[element.n].children;
+            currentLevel = currentLevel[nodeUID(element)].children;
         }
-        if (!currentLevel[node.n]) {
-            currentLevel[node.n] = { name: node.n, rank: node.r, node: node, changes: {}, children: {} };
-            currentLevel[node.n].changes[operation] = 1;
+        if (!currentLevel[nodeUID(node)]) {
+            currentLevel[nodeUID(node)] = { name: node.n, rank: node.r, node: node, changes: {}, children: {} };
+            currentLevel[nodeUID(node)].changes[operation] = 1;
         } else {
-            currentLevel[node.n].changes[operation] > 0 ? currentLevel[node.n].changes[operation]++ : currentLevel[node.n].changes[operation] = 1;;
+            currentLevel[nodeUID(node)].changes[operation] > 0 ? currentLevel[nodeUID(node)].changes[operation]++ : currentLevel[nodeUID(node)].changes[operation] = 1;;
         }
     });
 }
 
+/**
+ * Remove spaces and points
+ * @param {*} value 
+ * @returns 
+ */
+function normalizeAuthorData(value) {
+    return value.replaceAll(' ', '').replaceAll('.', '');
+}
 //compare actor of nodes
 function compare_author(first_author, second_author) {
     if (first_author.length != second_author.length) {
@@ -341,8 +354,10 @@ function compare_author(first_author, second_author) {
         for (
             let author_slot = 0; author_slot < first_author.length; author_slot++
         ) {
-            if (first_author[author_slot] != second_author[author_slot]) {
-                //console.log({first_author,second_author});
+            const firstA = normalizeAuthorData(first_author[author_slot]);
+            const secondA = normalizeAuthorData(second_author[author_slot]);
+            if (!firstA.includes(secondA) || stringSimilarity.compareTwoStrings(firstA, secondA) < 0.6) {
+                // console.log({ firstA, secondA });
                 return false;
             }
         }
@@ -353,15 +368,18 @@ function compare_author(first_author, second_author) {
 //compares author date of two nodes
 function compare_author_date(first_author, second_author) {
     if (
-        first_author.a.length != second_author.a.length ||
-        first_author.ad.length != second_author.ad.length
+        first_author.a.length != second_author.a.length || // Same amount of authors
+        first_author.ad.length != second_author.ad.length // Same date length
     ) {
         return false;
     } else {
         for (
             let author_slot = 0; author_slot < first_author.a.length; author_slot++
         ) {
-            if (first_author.a[author_slot] != second_author.a[author_slot]) {
+            const firstA = normalizeAuthorData(first_author.a[author_slot]);
+            const secondA = normalizeAuthorData(second_author.a[author_slot]);
+            if (!firstA.includes(secondA) || stringSimilarity.compareTwoStrings(firstA, secondA) < 0.6) {
+                console.log({ firstA, secondA });
                 return false;
             }
         }
