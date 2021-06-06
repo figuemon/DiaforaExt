@@ -357,13 +357,13 @@ function compare_author(first_author, second_author) {
             const firstA = normalizeAuthorData(first_author[author_slot]);
             const secondA = normalizeAuthorData(second_author[author_slot]);
             //if (!firstA.includes(secondA) || stringSimilarity.compareTwoStrings(firstA, secondA) < 0.6) {
-            if (firstA !== secondA)
-            // console.log({ firstA, secondA });
+            if (firstA !== secondA) {
+                // console.log({ firstA, secondA });
                 return false;
+            }
         }
+        return true;
     }
-    return true;
-}
 }
 
 //compares author date of two nodes
