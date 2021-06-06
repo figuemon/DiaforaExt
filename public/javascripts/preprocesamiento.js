@@ -356,13 +356,14 @@ function compare_author(first_author, second_author) {
         ) {
             const firstA = normalizeAuthorData(first_author[author_slot]);
             const secondA = normalizeAuthorData(second_author[author_slot]);
-            if (!firstA.includes(secondA) || stringSimilarity.compareTwoStrings(firstA, secondA) < 0.6) {
-                // console.log({ firstA, secondA });
+            //if (!firstA.includes(secondA) || stringSimilarity.compareTwoStrings(firstA, secondA) < 0.6) {
+            if (firstA !== secondA)
+            // console.log({ firstA, secondA });
                 return false;
-            }
         }
-        return true;
     }
+    return true;
+}
 }
 
 //compares author date of two nodes
@@ -378,20 +379,21 @@ function compare_author_date(first_author, second_author) {
         ) {
             const firstA = normalizeAuthorData(first_author.a[author_slot]);
             const secondA = normalizeAuthorData(second_author.a[author_slot]);
-            if (!firstA.includes(secondA) || stringSimilarity.compareTwoStrings(firstA, secondA) < 0.6) {
+            // if (!firstA.includes(secondA) || stringSimilarity.compareTwoStrings(firstA, secondA) < 0.6) {
+            if (firstA !== secondA)
                 console.log({ firstA, secondA });
-                return false;
-            }
+            return false;
         }
-        for (
-            let author_slot = 0; author_slot < first_author.ad.length; author_slot++
-        ) {
-            if (first_author.ad[author_slot] != second_author.ad[author_slot]) {
-                return false;
-            }
-        }
-        return true;
     }
+    for (
+        let author_slot = 0; author_slot < first_author.ad.length; author_slot++
+    ) {
+        if (first_author.ad[author_slot] != second_author.ad[author_slot]) {
+            return false;
+        }
+    }
+    return true;
+}
 }
 
 //helper function

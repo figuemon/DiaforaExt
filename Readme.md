@@ -3,7 +3,7 @@
 ## Requirements
 
 * Python 3
-* The list of package dependencies is in the `requirements.txt` file.
+* The list of package dependencies isr in the `requirements.txt` file.
 
 ## How to use the app
 
