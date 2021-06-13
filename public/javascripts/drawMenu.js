@@ -12,6 +12,7 @@ var interface_variables = {
     split: false,
     rename: false,
     move: false,
+    authorChanged: false,
     bundling: 0.5,
     changedLines: false,
     secondaryFilter: false
@@ -60,6 +61,11 @@ function onBarsChange() {
 
 function onAddedChange() {
     interface_variables.added = !interface_variables.added;
+    optionMenuChange();
+}
+
+function onAuthorChange() {
+    interface_variables.authorChanged = !interface_variables.authorChanged;
     optionMenuChange();
 }
 

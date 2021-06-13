@@ -216,8 +216,15 @@ function name_changes_right(node_list) {
             let same_author = compare_author(node.a, eq_node.a);
 
             //check for  rename ----------------------------------------------------------------------------------
-            if (node.n == eq_node.n && same_author) {
+            if (node.n == eq_node.n) {
                 node.rename = false;
+                if (!same_author) {
+                    node.authorChanged = true;
+                    differenceTreeB.authorChanged.push(node);
+                    node.f.forEach(function(familiar) {
+                        familiar.totalAuthorChanges++;
+                    });
+                }
             } else {
                 node.rename = true;
                 differenceTreeB.renamed.push(node);
@@ -245,7 +252,8 @@ function calculate_all_merges(left_tree, rigth_tree) {
         renamed: [],
         moved: [],
         splitted: [],
-        merged: []
+        merged: [],
+        authorChanged: []
     }
 
     differenceTreeB = {
@@ -255,7 +263,8 @@ function calculate_all_merges(left_tree, rigth_tree) {
         renamed: [],
         moved: [],
         splitted: [],
-        merged: []
+        merged: [],
+        authorChanged: []
     }
     families.forEach(function(rank) {
         verificar_name_changes(left_tree[rank], rigth_tree[rank]);
@@ -276,7 +285,7 @@ function generateDiffTree() {
     filteredTrees = {};
     differences = {};
     currentLevel = differences;
-    operations = ['added', 'removed', 'renamed', 'splitted', 'merged', 'moved'];
+    operations = ['added', 'removed', 'renamed', 'splitted', 'merged', 'moved', 'authorChanged'];
     operations.forEach(op => populateDiffTree(op, differences, currentLevel, differenceTreeA));
     operations.forEach(op => populateDiffTree(op, differences, currentLevel, differenceTreeB));
     const result = [];
@@ -354,8 +363,8 @@ function compare_author(first_author, second_author) {
         for (
             let author_slot = 0; author_slot < first_author.length; author_slot++
         ) {
-            const firstA = normalizeAuthorData(first_author[author_slot]);
-            const secondA = normalizeAuthorData(second_author[author_slot]);
+            const firstA = first_author[author_slot]; // normalizeAuthorData(first_author[author_slot]);
+            const secondA = second_author[author_slot]; //normalizeAuthorData(second_author[author_slot]);
             //if (!firstA.includes(secondA) || stringSimilarity.compareTwoStrings(firstA, secondA) < 0.6) {
             if (firstA !== secondA) {
                 // console.log({ firstA, secondA });
@@ -377,11 +386,11 @@ function compare_author_date(first_author, second_author) {
         for (
             let author_slot = 0; author_slot < first_author.a.length; author_slot++
         ) {
-            const firstA = normalizeAuthorData(first_author.a[author_slot]);
-            const secondA = normalizeAuthorData(second_author.a[author_slot]);
-            // if (!firstA.includes(secondA) || stringSimilarity.compareTwoStrings(firstA, secondA) < 0.6) {
-            if (firstA !== secondA) {
-                console.log({ firstA, secondA });
+            const firstA = first_author.a[author_slot]; //normalizeAuthorData(first_author.a[author_slot]);
+            const secondA = second_author.a[author_slot]; //normalizeAuthorData(second_author.a[author_slot]);
+            //if (!firstA.includes(secondA) || stringSimilarity.compareTwoStrings(firstA, secondA) < 0.6) {
+            if (firstA !== secondA && first_author.n !== second_author.n) {
+                //     ////console.log({ firstA, secondA });
                 return false;
             }
         }

@@ -4600,6 +4600,9 @@
                         case "removed":
                             return "#D50000";
 
+                        case "authorChanged":
+                            return "#ff66ff";
+
                         default:
                             return "#09D3D3";
                     }

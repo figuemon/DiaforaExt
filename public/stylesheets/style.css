@@ -13,6 +13,7 @@
     --merge-color: #FFA452;
     --rename-color: #1700E7;
     --move-color: #09D3D3;
+    --author-color: #ff66ff;
     --equal-color: #e8e8e8;
     --focus-color: #50500020;
     --other-color: #4c4c4c;
@@ -164,6 +165,11 @@ p {
     position: relative;
     width: 5%;
     text-align: center;
+}
+
+.encircledBox label {
+    white-space: nowrap;
+    font-size: small;
 }
 
 
@@ -362,6 +368,10 @@ input:checked+.split_slider_switch {
 
 input:checked+.rename_slider_switch {
     background-color: var(--rename-color);
+}
+
+input:checked+.author_slider_switch {
+    background-color: var(--author-color);
 }
 
 input:checked+.move_slider_switch {

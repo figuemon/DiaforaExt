@@ -67,6 +67,7 @@ var initOptions = {
     'move-color': '#09D3D3', //color of move nodes used in lines and text
     'equal-color': '#e8e8e8', //color of congruence nodes used in lines and text
     'focus-color': '#50500020', //color of text when a node is clicked
+    'author-color': '#ff66ff',
     atractionForce: 0.01, // force by pixel distance causes movement of nodes
     bundle_radius: 60, //radius in pixel to create bundles
     dirtyNodes: false, //flag marked when a node is moved in the children array of its parent
@@ -275,6 +276,11 @@ function PopulateStatistics() {
         '</th><th>' +
         formatNumber(treeTax2.totalRemoves) +
         '</th></tr>' +
+        '<tr><th>Author Changes</th><th>' +
+        formatNumber(treeTax.totalAuthorChanges) +
+        '</th><th>' +
+        formatNumber(treeTax2.totalAuthorChanges) +
+        '</th></tr>' +
         '<tr><th>Taxa changed</th><th>' +
         formatNumber(totalChanges) +
         '</th><th>' +
@@ -358,7 +364,7 @@ function setup() {
 function drawSunburst(data, filters) {
     const container = document.getElementById('chart');
     container.innerHTML = ''; // clean the container before drawing the interface
-    if (filters === "000000") {
+    if (filters === "0000000") {
         return;
     }
     sunburstChart = Sunburst()
@@ -398,6 +404,7 @@ function tooltipContent(d) {
     details += d.changes['splitted'] ? 'Splits: ' + d.changes['splitted'] + '<br/>' : '';
     details += d.changes['merged'] ? 'Merges: ' + d.changes['merged'] + '<br/>' : '';
     details += d.changes['renamed'] ? 'Renamed: ' + d.changes['renamed'] + '<br/>' : '';
+    details += d.changes['authorChanged'] ? 'Author Changed: ' + d.changes['authorChanged'] + '<br/>' : '';
     return 'Changes: ' + Object.values(d.changes).reduce((a, b) => a + b) + '<br/>' +
         details;
     d
@@ -424,6 +431,7 @@ function filterDifferences(node) {
                 interface_variables.split && child.changes.splitted > 0 ||
                 interface_variables.merge && child.changes.merged > 0 ||
                 interface_variables.move && child.changes.moved > 0 ||
+                interface_variables.authorChanged && child.changes.authorChanged > 0 ||
                 interface_variables.rename && child.changes.renamed > 0) {
                 const filter = filterDifferences(child)
                 cloneNode.c.push(filter);
@@ -453,12 +461,16 @@ function sunburstColors(node) {
         return initOptions['merge-color'];
     }
     if (interface_variables.move && ((node.changes['moved'] === 1 && node.c.length == 0) ||
-            (validateMaxFamilyGroup('moved')))) {
+            (validateMaxFamilyGroup(node, 'moved')))) {
         return initOptions['move-color'];
     }
     if (interface_variables.rename && ((node.changes['renamed'] === 1 && node.c.length == 0) ||
-            (validateMaxFamilyGroup('renamed')))) {
+            (validateMaxFamilyGroup(node, 'renamed')))) {
         return initOptions['rename-color'];
+    }
+    if (interface_variables.authorChanged && ((node.changes['authorChanged'] === 1 && node.c.length == 0) ||
+            (validateMaxFamilyGroup(node, 'authorChanged')))) {
+        return initOptions['author-color'];
     } else {
         const sum = Object.values(node.changes).reduce((a, b) => a + b);
         const val = sum / changesMax[node.rank] * 0.9;
@@ -490,6 +502,9 @@ function getChangeType(node) {
     }
     if (interface_variables.rename && node.changes['renamed'] === 1 && node.c.length == 0) {
         return 'moved';
+    }
+    if (interface_variables.authorChanged && node.changes['authorChanged'] === 1 && node.c.length == 0) {
+        return 'authorChanged';
     } else {
         return 'unknown';
     }
@@ -574,6 +589,7 @@ function filterCombination() {
     res += interface_variables.merge ? '1' : '0';
     res += interface_variables.move ? '1' : '0';
     res += interface_variables.rename ? '1' : '0';
+    res += interface_variables.authorChanged ? '1' : '0';
     return res;
 }
 
@@ -638,7 +654,7 @@ function loadChangesDetails(node, changeType) {
                 newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(eq))
             });
         }
-        if (changeType === "merged" || changeType === "renamed") {
+        if (changeType === "merged" || changeType === "renamed" || changeType === "authorChanged") {
             newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
             node.equivalent.forEach(eq => {
                 oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(eq))
@@ -674,7 +690,7 @@ async function LoadPrototypes() {
     if (interface_variables.secondaryFilter) {
         interface_variables.secondaryFilter = false;
         let currentFilters = filterCombination();
-        if (currentFilters != "000000" && filteredTrees[currentFilters]) {
+        if (currentFilters != "0000000" && filteredTrees[currentFilters]) {
             drawDifferenceVisualization(filteredTrees[currentFilters], currentFilters);
         } else {
             const filterDiffs = filterDifferences(differences);

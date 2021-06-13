@@ -50,12 +50,13 @@
         sum += filters[3] === "1" ? d.data.changes['merged'] : 0;
         sum += filters[4] === "1" ? d.data.changes['moved'] : 0;
         sum += filters[5] === "1" ? d.data.changes['renamed'] : 0;
+        sum += filters[6] === "1" ? d.data.changes['authorChanged'] : 0;
         return sum;
     }
 
     async function loadTree(data, tooltipContent, filters, detailsFn) {
         d3.select(".treeContainer").html(""); //Clean previous tree
-        if (filters != "000000") {
+        if (filters != "0000000") {
             const ds = d3.hierarchy(data, d => Array.isArray(d.c) ? d.c : undefined);
             const sorted = ds.sort((a, b) => applyFilters(b, filters) - applyFilters(a, filters));
 
@@ -73,7 +74,8 @@
             indentedTreeState.tooltip = d3.select(".treeContainer").append('div').attr('class', 'sunburst-tooltip');
             d3.select(".treeContainer").on('mousemove', function(ev) {
                 var mousePos = d3Pointer(ev);
-                indentedTreeState.tooltip.style('left', mousePos[0] + 'px').style('top', mousePos[1] + 'px').style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
+                indentedTreeState.tooltip.style('position', 'fixed');
+                indentedTreeState.tooltip.style('left', ev.x + 'px').style('top', ev.y + 'px'); //.style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
             });
             indentedTreeState.tooltipContent = tooltipContent;
         }
@@ -171,7 +173,7 @@
 
         var nodes = root.descendants();
 
-        var height = Math.max(500, nodes.length * barHeight + margin.top + margin.bottom);
+        var height = Math.max(500, nodes.length * barHeight + margin.top + margin.bottom + 200);
 
         d3.select(".svgIndentedTree").transition()
             .duration(duration)
@@ -211,8 +213,8 @@
             .on("click", (e, d) => { rectClick(d) });
 
         var barindicator = nodeEnter.append("g")
-            .attr("width", barWidth / 3.5)
-            .attr("height", barHeight / 2)
+            .attr("width", barWidth / 4)
+            .attr("height", barHeight / 1.5)
             .on("mouseover", (e, d) => { showTooltipForDistribution(e, d.data) })
             .on("mouseleave", (d) => hideTooltipForDistribution(d));
 
@@ -226,11 +228,11 @@
                     let currentXPos = (barWidth * 0.55) - d.y - 10;
                     keys.forEach(function(element) {
                         var percentage = d.data.changes[element] / maxScope;
-                        var distance = (barWidth / 3.5) * percentage;
+                        var distance = (barWidth / 4) * percentage;
                         var displayP = Number(percentage * 100).toFixed(1);
                         var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
                         rect.setAttribute('width', distance);
-                        rect.setAttribute('height', barHeight / 4);
+                        rect.setAttribute('height', barHeight / 2);
                         rect.setAttribute('y', -barHeight / 4);
                         rect.setAttribute('x', currentXPos);
                         rect.setAttribute('style',
@@ -386,6 +388,9 @@
             case "removed":
                 return "#D50000";
 
+            case "authorChanged":
+                return "#ff66ff";
+
             default:
                 return "#09D3D3";
         }
@@ -437,8 +442,10 @@
         }
         if (interface_variables.rename && node.data.changes['renamed'] === 1 && node.data.c.length == 0) {
             return initOptions['rename-color'];
+        }
+        if (interface_variables.authorChanged && node.data.changes['authorChanged'] === 1 && node.data.c.length == 0) {
+            return initOptions['author-color'];
         } else {
-
             return node._children ? "#a3a3a3" : node.children ? "#949494" : "#dcdcdc";
         }
     }
@@ -458,7 +465,7 @@
     }
 
     function infoMouseOver(d) {
-        // d3.select(this).attr('cursor', 'hand');
+        //d3.select(this).attr('cursor', 'hand');
         let taxonomy = "";
         d.data.node.f.forEach(item => {
             taxonomy += item.r + ": " + item.n + "<br/>";
@@ -639,8 +646,8 @@ function showTooltipForDistribution(evt, node) {
     const data = createTooltipData(node);
     let tooltip = document.getElementById("tooltip");
     tooltip.style.display = "block";
-    tooltip.style.left = evt.offsetX + 40 + 'px';
-    tooltip.style.top = evt.offsetY + 10 + 'px';
+    tooltip.style.left = evt.x + 'px';
+    tooltip.style.top = evt.y + 'px';
     var ctx = $('#tooltipChart');
     var myDoughnutChart = new Chart(ctx, {
         type: 'doughnut',
@@ -701,7 +708,8 @@ function showTooltipForDistribution(evt, node) {
             'Removes',
             'Added',
             'Renames',
-            'Moves'
+            'Moves',
+            'Author Changed'
         ],
         datasets: [{
             label: 'Changes Distribution',
@@ -712,6 +720,7 @@ function showTooltipForDistribution(evt, node) {
                 node.changes['added'],
                 node.changes['renamed'],
                 node.changes['moved'],
+                node.changes['authorChanged'],
             ],
             backgroundColor: [
                 initOptions["split-color"],
@@ -719,7 +728,8 @@ function showTooltipForDistribution(evt, node) {
                 initOptions["remove-color"],
                 initOptions["add-color"],
                 initOptions["rename-color"],
-                initOptions["move-color"]
+                initOptions["move-color"],
+                initOptions['author-color']
             ],
             borderColor: [
                 initOptions["split-color"],
@@ -727,7 +737,8 @@ function showTooltipForDistribution(evt, node) {
                 initOptions["remove-color"],
                 initOptions["add-color"],
                 initOptions["rename-color"],
-                initOptions["move-color"]
+                initOptions["move-color"],
+                initOptions['author-color']
             ],
             borderWidth: 1
         }]

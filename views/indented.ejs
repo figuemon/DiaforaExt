@@ -124,6 +124,21 @@
                         </li>
                         <li class="nav-item">
                             <div class="encircledBox">
+                                <label>Author</label>
+                                <label class="switch">
+                                <input
+                                    type="checkbox"
+                                    name="authorChanged"
+                                    onclick="onAuthorChange()"
+                                />
+                                <span
+                                    class="slider_switch round author_slider_switch"
+                                ></span>
+                            </label>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <div class="encircledBox">
                                 <label>Renamed</label>
                                 <label class="switch">
                                 <input
@@ -311,7 +326,7 @@
             </div>
             <div
                 id="tooltip"
-                style="position: absolute; display: none;z-index: 5;"
+                style="position: fixed; display: none;z-index: 5;"
             >
                 <canvas id="tooltipChart" width="250" height="250"></canvas>
             </div>

@@ -155,6 +155,7 @@ function countChildren(root) {
         node.totalInsertions = 0;
         node.totalMoves = 0;
         node.totalRenames = 0;
+        node.totalAuthorChanges = 0;
         node.tw = 0; //textWidth
         node.p = 0;
     });
