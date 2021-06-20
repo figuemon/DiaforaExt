@@ -659,8 +659,7 @@ function loadChangesDetails(node, changeType) {
             node.equivalent.forEach(eq => {
                 oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(eq))
             });
-        }
-        if (changeType === "removed")
+        } else if (changeType === "removed")
             oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
         else {
             newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
