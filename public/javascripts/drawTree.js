@@ -661,7 +661,7 @@ function loadChangesDetails(node, changeType) {
             });
         } else if (changeType === "removed")
             oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
-        else {
+        else if (changeType === "added") {
             newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
         }
     } else {

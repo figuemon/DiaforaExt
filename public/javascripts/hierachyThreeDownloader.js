@@ -57,7 +57,7 @@ class TaxonomyTree {
             //if the total ammount of api requests does not exceds the limit
             window.setInterval(function() {
                 actualTree.resolveRequests(actualTree);
-            }, 100);
+            }, 50);
         }
         //returns content from tree cache
         //run after the query is done
@@ -78,7 +78,7 @@ class TaxonomyTree {
             workDone = false;
             let nextCall = actualTree.pendingApiCalls.pop();
             actualTree.apiCallById(nextCall.id, nextCall.start, nextCall);
-            this.sleep(50);
+            this.sleep(20);
         }
 
         //we finished downloading the three, is time to build
