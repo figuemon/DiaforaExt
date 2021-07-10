@@ -495,12 +495,13 @@ input:checked+.slider_switch:before {
 }
 
 .treeContainer {
-    height: 100%;
+    height: 92%;
     width: 100%;
-    overflow: auto;
+    overflow-y: auto;
     background-color: white;
-    position: fixed;
-    top: var(--top-margin);
+    position: absolute;
+    top: 0px;
+    overflow-x: hidden;
 }
 
 .change-details {
@@ -580,7 +581,7 @@ input:checked+.slider_switch:before {
 .search-diff {
     display: inline-flex;
     width: 280px;
-    right: 0px;
+    right: 20px;
     position: absolute;
 }
 

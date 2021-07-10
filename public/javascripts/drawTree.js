@@ -688,7 +688,7 @@ function hideDetailsSection() {
     let details = document.getElementById('changeDetails');
     let treeContainer = document.getElementById('indentedTree');
     details.style.display = "none";
-    treeContainer.style.height = "100%"
+    treeContainer.style.height = "92%"
 }
 
 function hideLoader() {
