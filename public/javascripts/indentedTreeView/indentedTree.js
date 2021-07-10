@@ -701,46 +701,42 @@ function showTooltipForDistribution(evt, node) {
    * @returns
    */
   function createTooltipData(node){
+      var labels = [];
+      var data = [];
+      var colors = [];
+      var changes = {
+          'splitted': 'Splits',
+          'merged': 'Merges',
+          'removed': 'Removes',
+          'added': 'Added',
+          'renamed': 'Renames',
+          'moved': 'Moves',
+          'AuthorChanged': 'Author Changed'
+      };
+          var colorByKey = {
+          'splitted':initOptions["split-color"],
+          'merged':  initOptions["merge-color"],
+          'removed': initOptions["remove-color"],
+          'added':   initOptions["add-color"],
+          'renamed': initOptions["rename-color"],
+          'moved':   initOptions["move-color"],
+          'AuthorChanged': initOptions['author-color']
+      };
+      Object.keys(changes).forEach(changeType =>{
+          if(node.changes[changeType] > 0){
+            labels.push(changes[changeType]);
+            data.push(node.changes[changeType]);
+            colors.push(colorByKey[changeType]); 
+        }
+    });
       return  {
-        labels: [
-            'Splits',
-            'Merges',
-            'Removes',
-            'Added',
-            'Renames',
-            'Moves',
-            'Author Changed'
-        ],
+        labels: labels,
         datasets: [{
             label: 'Changes Distribution',
-            data: [
-                node.changes['splitted'],
-                node.changes['merged'],
-                node.changes['removed'],
-                node.changes['added'],
-                node.changes['renamed'],
-                node.changes['moved'],
-                node.changes['authorChanged'],
-            ],
-            backgroundColor: [
-                initOptions["split-color"],
-                initOptions["merge-color"],
-                initOptions["remove-color"],
-                initOptions["add-color"],
-                initOptions["rename-color"],
-                initOptions["move-color"],
-                initOptions['author-color']
-            ],
-            borderColor: [
-                initOptions["split-color"],
-                initOptions["merge-color"],
-                initOptions["remove-color"],
-                initOptions["add-color"],
-                initOptions["rename-color"],
-                initOptions["move-color"],
-                initOptions['author-color']
-            ],
+            data: data,
+            backgroundColor: colors,
+            borderColor: colors,
             borderWidth: 1
         }]
-    };
+    }
   }
