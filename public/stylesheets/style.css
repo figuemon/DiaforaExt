@@ -576,3 +576,35 @@ input:checked+.slider_switch:before {
     top: 50%;
     left: 50%;
 }
+
+.search-diff {
+    display: inline-flex;
+    width: 280px;
+    right: 0px;
+    position: absolute;
+}
+
+.search-diff input {
+    box-shadow: 0 0 5pt 0.5pt #D3D3D3;
+}
+
+.search-btn {
+    background: #393B40;
+    border-color: #393B40;
+}
+
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+}
+
+
+/* IE 6 doesn't support max-height
+   * we use height instead, but this forces the menu to always be this tall
+   */
+
+* html .ui-autocomplete {
+    height: 100px;
+}

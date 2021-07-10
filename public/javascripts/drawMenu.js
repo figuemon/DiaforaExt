@@ -69,6 +69,15 @@ function onAuthorChange() {
     optionMenuChange();
 }
 
+
+function onSearch() {
+    const searchText = document.getElementById('tags').value;
+    const currentElement = $("text:contains('" + searchText + "'):last");
+    if (currentElement.length > 0) {
+        currentElement[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
 function optionMenuChange() {
     interface_variables.secondaryFilter = true;
     document.getElementById('busyLoader').style.display = 'block';

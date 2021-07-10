@@ -356,6 +356,16 @@ function setup() {
         // svg.append(()=>iciclePlot);
         // console.log(iciclePlot);
         // runChart();
+
+    $("#tags").autocomplete({
+        source: Object.keys(taxaNames),
+        minLength: 4,
+    });
+    $("#tags").keypress(function(event) {
+        if (event.keyCode === 13) {
+            $("#search-btn").click();
+        }
+    });
 }
 
 /**
@@ -1289,6 +1299,7 @@ function drawOnlyText(
                     node.totalMoves +
                     node.totalRenames +
                     node.totalInsertions +
+                    node.totalAuthorChanges +
                     node.totalRemoves;
                 totalChanges2 =
                     node.equivalent[0].totalSplits +
@@ -1296,6 +1307,7 @@ function drawOnlyText(
                     node.equivalent[0].totalMoves +
                     node.equivalent[0].totalRenames +
                     node.equivalent[0].totalInsertions +
+                    node.equivalent[0].totalAuthorChanges +
                     node.equivalent[0].totalRemoves;
 
                 document.getElementById('table_rank_id').innerHTML =

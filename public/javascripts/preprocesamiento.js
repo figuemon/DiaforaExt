@@ -25,6 +25,7 @@ differencesRenamed = undefined;
 changesMax = undefined;
 var filteredTrees = {};
 maxPerChange = {};
+var taxaNames = {};
 //todo tasks:
 /**
  * -Some nodes ares spliting and merging at the same time
@@ -41,6 +42,7 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
 
     //initialization and mapping of every node in the hierarchy
     left_nodes.forEach(function(node) {
+        taxaNames[node.n] = true;
         if (!left_map[node.n]) {
             left_map[node.n] = [];
         }
@@ -50,6 +52,9 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
     });
 
     rigth_nodes.forEach(function(node) {
+        if (!taxaNames[node.n]) {
+            taxaNames[node.n] = true;
+        }
         if (!rigth_map[node.n]) {
             rigth_map[node.n] = [];
         }
