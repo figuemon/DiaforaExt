@@ -366,6 +366,8 @@ function setup() {
             $("#search-btn").click();
         }
     });
+
+
 }
 
 /**

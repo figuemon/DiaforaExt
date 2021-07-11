@@ -40,6 +40,7 @@
     <script src="/javascripts/indentedTreeView/indentedTree.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.0/split.min.js"></script>
 </head>
 <script>
     var protoType = <%= query.protoType? query.protoType : 0 %>;
@@ -315,7 +316,7 @@
                     </button>
             </div>
         </div>
-        <div id="changeDetails" class="change-details" style="display: none;">
+        <div id="changeDetails" class="change-details" style="display:none">
             <div id="changeDetails" class="change-details right">
                 <div class="general-title">
                     <span id="change-title">Change details for: Species X</span

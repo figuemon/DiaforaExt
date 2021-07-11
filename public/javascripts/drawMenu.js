@@ -1,5 +1,7 @@
 const loadingUrl = host;
-
+var cacheSearch = '';
+var currentSelectedItem = undefined;
+var lastSearchIndex = 0;
 //this variables are accesed all over the code to enable or disable features
 var interface_variables = {
     lines: true,
@@ -72,9 +74,20 @@ function onAuthorChange() {
 
 function onSearch() {
     const searchText = document.getElementById('tags').value;
-    const currentElement = $("text:contains('" + searchText + "'):last");
+    if (currentSelectedItem) {
+        $(currentSelectedItem).attr('fill', 'black');
+    }
+    if (cacheSearch != searchText) {
+        cacheSearch = searchText;
+        lastSearchIndex = 0;
+    }
+    const currentElement = $("text:contains('" + searchText + "')");
     if (currentElement.length > 0) {
-        currentElement[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        lastSearchIndex = lastSearchIndex < currentElement.length ? lastSearchIndex : 0;
+        currentElement[lastSearchIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+        $(currentElement[lastSearchIndex]).attr('fill', 'blue');
+        currentSelectedItem = currentElement[lastSearchIndex];
+        lastSearchIndex++;
     }
 }
 
