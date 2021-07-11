@@ -81,14 +81,35 @@ function onSearch() {
         cacheSearch = searchText;
         lastSearchIndex = 0;
     }
-    const currentElement = $("text:contains('" + searchText + "')");
-    if (currentElement.length > 0) {
-        lastSearchIndex = lastSearchIndex < currentElement.length ? lastSearchIndex : 0;
-        currentElement[lastSearchIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
-        $(currentElement[lastSearchIndex]).attr('fill', 'blue');
-        currentSelectedItem = currentElement[lastSearchIndex];
-        lastSearchIndex++;
+    if (protoType == 1 && sunburstChart) { // Circular visualization
+        let currentFilters = filterCombination();
+        const dataStructure = filteredTrees[currentFilters];
+        const node = searchTree(dataStructure, searchText);
+        sunburstChart.focusOnNode(node);
+    } else {
+        const currentElement = $("text:contains('" + searchText + "')");
+        if (currentElement.length > 0) {
+            lastSearchIndex = lastSearchIndex < currentElement.length ? lastSearchIndex : 0;
+            currentElement[lastSearchIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            $(currentElement[lastSearchIndex]).attr('fill', 'blue');
+            currentSelectedItem = currentElement[lastSearchIndex];
+            lastSearchIndex++;
+        }
     }
+}
+
+function searchTree(element, matchingTitle) {
+    if (element.name == matchingTitle) {
+        return element;
+    } else if (element.c != null) {
+        var i;
+        var result = null;
+        for (i = 0; result == null && i < element.c.length; i++) {
+            result = searchTree(element.c[i], matchingTitle);
+        }
+        return result;
+    }
+    return null;
 }
 
 function optionMenuChange() {
