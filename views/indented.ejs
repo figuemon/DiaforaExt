@@ -40,7 +40,6 @@
     <script src="/javascripts/indentedTreeView/indentedTree.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.0/split.min.js"></script>
 </head>
 <script>
     var protoType = <%= query.protoType? query.protoType : 0 %>;
@@ -305,7 +304,7 @@
     </div>
     <div id="differenceView" class="main_body right top">
         <div id="chart" class="sunburst"></div>
-        <div id="indentedTree" class="treeContainer "></div>
+        <div id="indentedTree" class="topPane treeContainer "></div>
         <div class="input-group mb-3 search-diff">
             <div class="ui-widget">
                 <input id="tags" class="form-control" placeholder="Search taxa" />
@@ -316,8 +315,11 @@
                     </button>
             </div>
         </div>
-        <div id="changeDetails" class="change-details" style="display:none">
-            <div id="changeDetails" class="change-details right">
+        <div id="changeDetailsContainer" class="bottomPane change-details" style="display:none">
+            <div class="splitter">
+                <i class="splitterIcon bi bi-arrow-down-up"></i>
+            </div>
+            <div id="changeDetails" class="details-table">
                 <div class="general-title">
                     <span id="change-title">Change details for: Species X</span
                         >

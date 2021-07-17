@@ -506,9 +506,9 @@ input:checked+.slider_switch:before {
 
 .change-details {
     bottom: 0px;
-    height: calc(100% - 500px);
-    top: 500px;
-    position: fixed;
+    height: 40%;
+    width: 100%;
+    position: absolute;
     background: #393B40;
     text-shadow: 2px 2px 4px black;
 }
@@ -608,4 +608,23 @@ input:checked+.slider_switch:before {
 
 * html .ui-autocomplete {
     height: 100px;
+}
+
+.splitter {
+    width: 100%;
+    height: 16px;
+    background-color: firebrick;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.splitterIcon {
+    left: 45%;
+    position: absolute;
+}
+
+.details-table {
+    width: 100%;
+    height: calc(80% - 16px);
 }

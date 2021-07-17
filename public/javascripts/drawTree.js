@@ -301,8 +301,35 @@ function getWindowWidth() {
     return windowWidth - windowWidth * 0.2;
 }
 
+//  Splitter Actions to increase or decrease the details panel
+// 
+function resizer(e) {
+    const topPane = document.querySelector(".topPane");
+    const bottomPane = document.querySelector(".bottomPane");
+    window.addEventListener('mousemove', mousemove);
+    window.addEventListener('mouseup', mouseup);
+
+    let prevY = e.y;
+    const topPanel = topPane.getBoundingClientRect();
+    const bottomPanel = bottomPane.getBoundingClientRect();
+
+    function mousemove(e) {
+        let newY = prevY - e.y;
+        topPane.style.height = topPanel.height - newY + "px";
+        bottomPane.style.height = bottomPanel.height + newY + "px";
+    }
+
+    function mouseup() {
+        window.removeEventListener('mousemove', mousemove);
+        window.removeEventListener('mouseup', mouseup);
+    }
+}
+
 //processing function executed before the first draw
 function setup() {
+    const splitter = document.querySelector(".splitter");
+    splitter.addEventListener('mousedown', resizer);
+
     // console.log({
     //     dispLefTree,
     //     dispRightTree,
@@ -368,6 +395,7 @@ function setup() {
     });
 
 
+
 }
 
 /**
@@ -419,7 +447,6 @@ function tooltipContent(d) {
     details += d.changes['authorChanged'] ? 'Author Changed: ' + d.changes['authorChanged'] + '<br/>' : '';
     return 'Changes: ' + Object.values(d.changes).reduce((a, b) => a + b) + '<br/>' +
         details;
-    d
 }
 
 /**
@@ -643,11 +670,11 @@ function changeDetailTableForNode(node) {
 }
 
 function loadChangesDetails(node, changeType) {
-    let details = document.getElementById('changeDetails');
+    let details = document.getElementById('changeDetailsContainer');
     let treeContainer = document.getElementById('indentedTree');
     if (node != detailedNode) {
         detailedNode = node;
-        treeContainer.style.height = "500px"
+        treeContainer.style.height = "60%"
         details.style.display = "block";
         let tree1Title = document.getElementById("tree1-title");
         let tree2Title = document.getElementById("tree2-title");
@@ -687,7 +714,7 @@ function loadChangesDetails(node, changeType) {
 }
 
 function hideDetailsSection() {
-    let details = document.getElementById('changeDetails');
+    let details = document.getElementById('changeDetailsContainer');
     let treeContainer = document.getElementById('indentedTree');
     details.style.display = "none";
     treeContainer.style.height = "92%"
