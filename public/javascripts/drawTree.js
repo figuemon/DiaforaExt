@@ -306,6 +306,7 @@ function getWindowWidth() {
 function resizer(e) {
     const topPane = document.querySelector(".topPane");
     const bottomPane = document.querySelector(".bottomPane");
+    const indentedTree = document.querySelector("#indentedTree");
     window.addEventListener('mousemove', mousemove);
     window.addEventListener('mouseup', mouseup);
 
@@ -317,11 +318,17 @@ function resizer(e) {
         let newY = prevY - e.y;
         topPane.style.height = topPanel.height - newY + "px";
         bottomPane.style.height = bottomPanel.height + newY + "px";
+        if (indentedTree) {
+            indentedTree.style.overflowY = 'hidden';
+        }
     }
 
     function mouseup() {
         window.removeEventListener('mousemove', mousemove);
         window.removeEventListener('mouseup', mouseup);
+        if (indentedTree) {
+            indentedTree.style.overflowY = 'auto';
+        }
     }
 }
 
