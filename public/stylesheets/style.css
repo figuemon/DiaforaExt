@@ -13,7 +13,7 @@
     --merge-color: #FFA452;
     --rename-color: #1700E7;
     --move-color: #09D3D3;
-    --author-color: #ff66ff;
+    --author-color: #996600;
     --equal-color: #e8e8e8;
     --focus-color: #50500020;
     --other-color: #4c4c4c;
@@ -627,4 +627,8 @@ input:checked+.slider_switch:before {
 .details-table {
     width: 100%;
     height: calc(80% - 16px);
+}
+
+.sunburst-viz {
+    left: 30%;
 }

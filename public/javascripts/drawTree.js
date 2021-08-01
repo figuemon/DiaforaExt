@@ -67,7 +67,7 @@ var initOptions = {
     'move-color': '#09D3D3', //color of move nodes used in lines and text
     'equal-color': '#e8e8e8', //color of congruence nodes used in lines and text
     'focus-color': '#50500020', //color of text when a node is clicked
-    'author-color': '#ff66ff',
+    'author-color': '#996600',
     atractionForce: 0.01, // force by pixel distance causes movement of nodes
     bundle_radius: 60, //radius in pixel to create bundles
     dirtyNodes: false, //flag marked when a node is moved in the children array of its parent
@@ -304,9 +304,13 @@ function getWindowWidth() {
 //  Splitter Actions to increase or decrease the details panel
 // 
 function resizer(e) {
-    const topPane = document.querySelector(".topPane");
     const bottomPane = document.querySelector(".bottomPane");
-    const indentedTree = document.querySelector("#indentedTree");
+    const vizContainer = protoType !== 1 ?
+        document.querySelector("#indentedTree") :
+        document.querySelector('#sunburstChart');
+    const topPane = vizContainer;
+
+
     window.addEventListener('mousemove', mousemove);
     window.addEventListener('mouseup', mouseup);
 
@@ -318,16 +322,16 @@ function resizer(e) {
         let newY = prevY - e.y;
         topPane.style.height = topPanel.height - newY + "px";
         bottomPane.style.height = bottomPanel.height + newY + "px";
-        if (indentedTree) {
-            indentedTree.style.overflowY = 'hidden';
+        if (vizContainer) {
+            vizContainer.style.overflowY = 'hidden';
         }
     }
 
     function mouseup() {
         window.removeEventListener('mousemove', mousemove);
         window.removeEventListener('mouseup', mouseup);
-        if (indentedTree) {
-            indentedTree.style.overflowY = 'auto';
+        if (vizContainer) {
+            vizContainer.style.overflowY = 'auto';
         }
     }
 }
@@ -409,7 +413,7 @@ function setup() {
  * Sunburst Drawing
  */
 function drawSunburst(data, filters) {
-    const container = document.getElementById('chart');
+    const container = document.getElementById('sunburstChart');
     container.innerHTML = ''; // clean the container before drawing the interface
     if (filters === "0000000") {
         return;
@@ -428,7 +432,7 @@ function drawSunburst(data, filters) {
         .showLabels(true)
         .minSliceAngle(0.2)
         .maxLevels(10)
-        .onClick(nodeClick)(document.getElementById('chart'));
+        .onClick(nodeClick)(document.getElementById('sunburstChart'));
     //  sunburstChart = Icicle()
     //         .data(data)
     //         .size(d => d.c.length || 1)
@@ -678,7 +682,9 @@ function changeDetailTableForNode(node) {
 
 function loadChangesDetails(node, changeType) {
     let details = document.getElementById('changeDetailsContainer');
-    let treeContainer = document.getElementById('indentedTree');
+    let treeContainer = protoType !== 1 ?
+        document.querySelector("#indentedTree") :
+        document.querySelector('#sunburstChart');
     if (node != detailedNode) {
         detailedNode = node;
         treeContainer.style.height = "60%"
@@ -722,7 +728,9 @@ function loadChangesDetails(node, changeType) {
 
 function hideDetailsSection() {
     let details = document.getElementById('changeDetailsContainer');
-    let treeContainer = document.getElementById('indentedTree');
+    let treeContainer = protoType !== 1 ?
+        document.querySelector("#indentedTree") :
+        document.querySelector('#sunburstChart');
     details.style.display = "none";
     treeContainer.style.height = "92%"
 }
@@ -746,9 +754,15 @@ async function LoadPrototypes() {
 }
 
 function drawDifferenceVisualization(structure, filters) {
-    if (protoType == 1)
+    const alt_vizContainer = protoType === 1 ?
+        document.querySelector("#indentedTree") :
+        document.querySelector('#sunburstChart');
+    alt_vizContainer.style.display = 'none';
+    if (protoType == 1) {
+        document.querySelector('#sunburstChart').style.display = 'block';
         drawSunburst(structure, filters);
-    else {
+    } else {
+        document.querySelector('#indentedTree').style.display = 'block';
         loadTree(structure, tooltipContent, filters, loadChangesDetails);
     }
 }

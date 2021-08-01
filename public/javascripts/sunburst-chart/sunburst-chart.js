@@ -4759,7 +4759,7 @@
             state.radiusScaleExponent > 0 && state.radiusScale.exponent(state.radiusScaleExponent);
             var adjustHeight = state.height + 100;
             var adjustWidth = state.height + 100;
-            state.svg.style('width', adjustWidth + 'px').style('height', adjustHeight + 'px').attr('viewBox', "".concat(-adjustWidth / 2, " ").concat(-adjustHeight / 2, " ").concat(adjustWidth, " ").concat(adjustHeight)); //  .startAngle(d => state.angleScale(d.x0))
+            state.svg.style('width', adjustWidth + 'px').style('height', adjustHeight + 'px').attr('viewBox', "".concat(-adjustWidth / 2, " ").concat(-(adjustHeight / 2) + 30, " ").concat(adjustWidth, " ").concat(adjustHeight)); //  .startAngle(d => state.angleScale(d.x0))
             // .endAngle(d => state.angleScale(d.x1))
             // .innerRadius(d => Math.max(0, state.radiusScale(d.y0)))
             // .outerRadius(d => Math.max(0, state.radiusScale(d.y1)));

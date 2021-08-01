@@ -55,12 +55,12 @@
     }
 
     async function loadTree(data, tooltipContent, filters, detailsFn) {
-        d3.select(".treeContainer").html(""); //Clean previous tree
+        d3.select("#indentedTree").html(""); //Clean previous tree
         if (filters != "0000000") {
             const ds = d3.hierarchy(data, d => Array.isArray(d.c) ? d.c : undefined);
             const sorted = ds.sort((a, b) => applyFilters(b, filters) - applyFilters(a, filters));
 
-            svgTree = d3.select(".treeContainer").append("svg")
+            svgTree = d3.select("#indentedTree").append("svg")
                 .attr("class", "svgIndentedTree")
                 .attr("width", width) // + margin.left + margin.right)
                 .append("g")
@@ -71,8 +71,8 @@
             update(root, detailsFn);
 
             svgTree.append('g'); // tooltips
-            indentedTreeState.tooltip = d3.select(".treeContainer").append('div').attr('class', 'sunburst-tooltip');
-            d3.select(".treeContainer").on('mousemove', function(ev) {
+            indentedTreeState.tooltip = d3.select("#indentedTree").append('div').attr('class', 'sunburst-tooltip');
+            d3.select("#indentedTree").on('mousemove', function(ev) {
                 var mousePos = d3Pointer(ev);
                 indentedTreeState.tooltip.style('position', 'fixed');
                 indentedTreeState.tooltip.style('left', ev.x + 'px').style('top', ev.y + 'px'); //.style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
@@ -251,8 +251,21 @@
             .classed('label', true)
             .attr("dy", 3.5)
             .attr("dx", 5.5)
-            .attr('fill', textFill)
-            .text(function(d) { return (d.data.rank + " " + d.data.name) })
+            .attr('fill', textFill);
+
+        var nodeT = svgTree.selectAll("g.node")
+            .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+        nodeT.select('text').text(function(d) {
+            const nodeText = d.data.rank + " " + d.data.name;
+            if (d.children) {
+                return '+ ' + nodeText;
+            } else if (d._children) {
+                return '- ' + nodeText;
+            } else {
+                return nodeText;
+            }
+        });
 
         nodeEnter.filter((d) => d.data.rank === "Family" && maxPerChange['splitted'] && d.data.name == maxPerChange['splitted'].name)
             .append('circle')
@@ -389,7 +402,7 @@
                 return "#D50000";
 
             case "authorChanged":
-                return "#ff66ff";
+                return "#996600";
 
             default:
                 return "#09D3D3";
@@ -407,9 +420,9 @@
             d._children = null;
         }
         loadChangeDetailsSection(d.data);
-        if (d.data.c.length > 0) {
-            update(d);
-        }
+
+        update(d);
+
     }
 
     function infoClick(d) {

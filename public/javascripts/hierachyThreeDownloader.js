@@ -78,7 +78,7 @@ class TaxonomyTree {
             workDone = false;
             let nextCall = actualTree.pendingApiCalls.pop();
             actualTree.apiCallById(nextCall.id, nextCall.start, nextCall);
-            this.sleep(20);
+            this.sleep(10);
         }
 
         //we finished downloading the three, is time to build
@@ -427,8 +427,10 @@ class TaxonomyTree {
                     } else {
                         this.pendingNames.push(procesedTaxon.name.toLowerCase());
                     }
-                    this.cache[result.n.toLowerCase()] = result;
-                    results.push(result);
+                    if (typeof result.n === 'string') {
+                        this.cache[result.n.toLowerCase()] = result;
+                        results.push(result);
+                    }
                     //add to the list of name pending to be added on the three
                     //this.pendingNames.push(result.n);
 
