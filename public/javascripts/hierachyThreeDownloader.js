@@ -78,7 +78,7 @@ class TaxonomyTree {
             workDone = false;
             let nextCall = actualTree.pendingApiCalls.pop();
             actualTree.apiCallById(nextCall.id, nextCall.start, nextCall);
-            this.sleep(10);
+            // this.sleep(10);
         }
 
         //we finished downloading the three, is time to build

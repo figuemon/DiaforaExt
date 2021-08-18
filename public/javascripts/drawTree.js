@@ -160,9 +160,9 @@ function PopulateStatistics() {
         tree2.date +
         '</th></tr>' +
         '<tr><th>Rank</th><th>' +
-        tree.accesDate +
+        tree.taxonomy.r +
         '</th><th>' +
-        tree2.accesDate +
+        tree2.taxonomy.r +
         '</th></tr>' +
         (treeTax.totalKingdom != null ?
             '<tr> <th>Kingdom</th><th>' +

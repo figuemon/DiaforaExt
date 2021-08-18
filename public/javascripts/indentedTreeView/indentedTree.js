@@ -69,7 +69,6 @@
             root.x0 = 0;
             root.y0 = 0;
             update(root, detailsFn);
-
             svgTree.append('g'); // tooltips
             indentedTreeState.tooltip = d3.select("#indentedTree").append('div').attr('class', 'sunburst-tooltip');
             d3.select("#indentedTree").on('mousemove', function(ev) {
@@ -259,9 +258,9 @@
         nodeT.select('text').text(function(d) {
             const nodeText = d.data.rank + " " + d.data.name;
             if (d.children) {
-                return '+ ' + nodeText;
-            } else if (d._children) {
                 return '- ' + nodeText;
+            } else if (d._children) {
+                return '+ ' + nodeText;
             } else {
                 return nodeText;
             }
