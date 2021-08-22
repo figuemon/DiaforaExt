@@ -10,7 +10,7 @@
 
     var indentedTreeState = {};
 
-    var margin = { top: 30, right: 20, bottom: 30, left: 20 },
+    var margin = { top: 60, right: 20, bottom: 30, left: 20 },
         width = 960,
         barHeight = 20,
         barWidth = 460 //(width - margin.left - margin.right) * 0.35;

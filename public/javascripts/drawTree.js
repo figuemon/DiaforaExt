@@ -22,9 +22,6 @@ let levelList = createRankList(treeTax);
 let levelList2 = createRankList(treeTax2);
 //calculate_all_merges(levelList, levelList2);
 
-// console.log(treeTax);
-// console.log(treeTax2);
-
 //checks if both trees are valid for visualization
 //this treeTax comes from a file selected by the user and is modified by preprocesamiento.js and contChildren.js
 if (!treeTax || !treeTax2) {
@@ -51,7 +48,7 @@ var initOptions = {
     hierarchy_distance: 700, //distance betwen hierarchys deprecated
     width: 350, //indented-treeTax height
     height: 500, //indented-treeTax height
-    separation: 100, //Separation betwen indented-treeTax and the size of the screen
+    separation: 10, //Separation betwen indented-treeTax and the size of the screen
     'background-color': undefined, //color of the background
     'stroke-color': undefined,
     'indent-stroke': 0.5, // weight of indent iine
@@ -142,6 +139,8 @@ treeTax2.visible_lbr = {
     infraspecies: [],
     subspecies: [],
 };
+
+var maxVal = 0;
 
 function PopulateStatistics() {
     document.getElementById('table_taxon_id').innerHTML =
@@ -298,48 +297,19 @@ function PopulateStatistics() {
 
 /*This function reasign value of windowWith due to the division*/
 function getWindowWidth() {
-    return windowWidth - windowWidth * 0.2;
+    var holder = document.getElementById('sketch-holder');
+    return holder.offsetWidth;
 }
 
-//  Splitter Actions to increase or decrease the details panel
-// 
-function resizer(e) {
-    const bottomPane = document.querySelector(".bottomPane");
-    const vizContainer = protoType !== 1 ?
-        document.querySelector("#indentedTree") :
-        document.querySelector('#sunburstChart');
-    const topPane = vizContainer;
 
-
-    window.addEventListener('mousemove', mousemove);
-    window.addEventListener('mouseup', mouseup);
-
-    let prevY = e.y;
-    const topPanel = topPane.getBoundingClientRect();
-    const bottomPanel = bottomPane.getBoundingClientRect();
-
-    function mousemove(e) {
-        let newY = prevY - e.y;
-        topPane.style.height = topPanel.height - newY + "px";
-        bottomPane.style.height = bottomPanel.height + newY + "px";
-        if (vizContainer) {
-            vizContainer.style.overflowY = 'hidden';
-        }
-    }
-
-    function mouseup() {
-        window.removeEventListener('mousemove', mousemove);
-        window.removeEventListener('mouseup', mouseup);
-        if (vizContainer) {
-            vizContainer.style.overflowY = 'auto';
-        }
+function preload() {
+    while (!goldeninit) {
+        // Loop until goldeninit is started;
     }
 }
 
 //processing function executed before the first draw
 function setup() {
-    const splitter = document.querySelector(".splitter");
-    splitter.addEventListener('mousedown', resizer);
 
     // console.log({
     //     dispLefTree,
@@ -349,9 +319,10 @@ function setup() {
     // });
 
     //make canvas size dynamic
+    var holder = document.getElementById('sketch-holder');
+
     canvas = createCanvas(
-        getWindowWidth() * totalCanvasWidth,
-        windowHeight * totalCanvasHeight
+        holder.offsetWidth, holder.offsetHeight
     );
     canvas.parent('sketch-holder');
     var x = 0;
@@ -404,8 +375,6 @@ function setup() {
             $("#search-btn").click();
         }
     });
-
-
 
 }
 
@@ -491,7 +460,7 @@ function filterDifferences(node) {
     }
     return cloneNode;
 }
-var maxVal = 0;
+
 
 function sunburstColors(node) {
     if (interface_variables.added && ((node.changes['added'] === 1 && node.c.length == 0) ||
@@ -575,12 +544,10 @@ function loadChangeDetailsSection(d) {
 
 function nodeClick(node) {
     if (node) {
-        // console.log(node);
         loadChangeDetailsSection(node);
         if (!isLeaf(node)) {
             sunburstChart.focusOnNode(node);
         }
-        //    sunburstChart.zoomToNode(node);
         this.addLabel();
         sunburstSelection = true;
     }
@@ -593,7 +560,6 @@ function addLabel() {
         sunburstChart.focusOnNode() :
         sunburstChart.data();
     let currentState = `${node.rank}:${node.name}`;
-    //console.log(node);
     node.selected = true;
     sunburstNode = node;
     click = true;
@@ -616,10 +582,6 @@ function mouseClicked() {
 //processing function to detect window change in size
 //resize and change canvas position according to window size
 function windowResized() {
-    resizeCanvas(
-        getWindowWidth() * totalCanvasWidth,
-        windowHeight * totalCanvasHeight
-    );
     var x = 0;
     var y = 0; //(windowHeight*(1.0-totalCanvasHeight));
     canvas.position(x, y);
@@ -687,7 +649,6 @@ function loadChangesDetails(node, changeType) {
         document.querySelector('#sunburstChart');
     if (node != detailedNode) {
         detailedNode = node;
-        treeContainer.style.height = "60%"
         details.style.display = "block";
         let tree1Title = document.getElementById("tree1-title");
         let tree2Title = document.getElementById("tree2-title");
@@ -732,7 +693,6 @@ function hideDetailsSection() {
         document.querySelector("#indentedTree") :
         document.querySelector('#sunburstChart');
     details.style.display = "none";
-    treeContainer.style.height = "92%"
 }
 
 function hideLoader() {
@@ -768,97 +728,97 @@ function drawDifferenceVisualization(structure, filters) {
 }
 //processing function to draw on canvas, executed at a fixed rate, normaly 30 times per second
 function draw() {
-    // //smooth node focusing
-    // dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
-    // dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
+    //smooth node focusing
+    dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
+    dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
 
-    // left_pos = { x: initOptions.separation, y: 0 + dispLefTree };
-    // right_pos = {
-    //     x: getWindowWidth() - initOptions.separation,
-    //     y: 0 + dispRightTree,
-    // };
+    left_pos = { x: initOptions.separation, y: 0 + dispLefTree };
+    right_pos = {
+        x: getWindowWidth() - initOptions.separation,
+        y: 0 + dispRightTree,
+    };
 
-    // //if interface lines changed force update
-    // if (interface_variables.changedLines) {
-    //     interface_variables.changedLines = false;
-    //     createBundles(left_pos, right_pos, initOptions.bundle_radius);
-    // }
+    //if interface lines changed force update
+    if (interface_variables.changedLines) {
+        interface_variables.changedLines = false;
+        createBundles(left_pos, right_pos, initOptions.bundle_radius);
+    }
 
-    // if (interface_variables.secondaryFilter) {
-    //     interface_variables.secondaryFilter = false;
-    //     let currentFilters = filterCombination();
-    //     if (currentFilters != "000000" && filteredTrees[currentFilters]) {
-    //         //drawSunburst(filteredTrees[currentFilters], currentFilters);
-    //         loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters, loadChangesDetails);
-    //     } else {
-    //         const filterDiffs = filterDifferences(differences);
-    //         filteredTrees[currentFilters] = filterDiffs;
-    //         // drawSunburst(filterDiffs, currentFilters);
-    //         loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
-    //     }
-    // }
+    if (interface_variables.secondaryFilter) {
+        interface_variables.secondaryFilter = false;
+        let currentFilters = filterCombination();
+        if (currentFilters != "000000" && filteredTrees[currentFilters]) {
+            //drawSunburst(filteredTrees[currentFilters], currentFilters);
+            loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters, loadChangesDetails);
+        } else {
+            const filterDiffs = filterDifferences(differences);
+            filteredTrees[currentFilters] = filterDiffs;
+            // drawSunburst(filterDiffs, currentFilters);
+            loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
+        }
+    }
 
-    // translate(xPointer, -yPointer);
-    // background(255);
-    // fill(0);
+    translate(xPointer, -yPointer);
+    background(255);
+    fill(0);
 
-    // //draws based on the current window size
-    // let base_y = getWindowWidth() / 2 - initOptions.width / 2;
+    //draws based on the current window size
+    let base_y = getWindowWidth() / 2 - initOptions.width / 2;
 
-    // //Draw function, this draws the indented-treeTax
-    // optimizedDrawIndentedTree(
-    //     treeTax.visible_lbr,
-    //     initOptions,
-    //     initOptions.separation,
-    //     dispLefTree,
-    //     false
-    // );
-    // optimizedDrawIndentedTree(
-    //     treeTax2.visible_lbr,
-    //     initOptions,
-    //     getWindowWidth() - initOptions.separation,
-    //     dispRightTree,
-    //     true
-    // );
+    //Draw function, this draws the indented-treeTax
+    optimizedDrawIndentedTree(
+        treeTax.visible_lbr,
+        initOptions,
+        initOptions.separation,
+        dispLefTree,
+        false
+    );
+    optimizedDrawIndentedTree(
+        treeTax2.visible_lbr,
+        initOptions,
+        getWindowWidth() - initOptions.separation,
+        dispRightTree,
+        true
+    );
 
-    // //bundling comes from draw_menu js
-    // //Draw current visible lines
-    // ls_drawLines(
-    //     initOptions,
-    //     yPointer,
-    //     left_pos,
-    //     right_pos,
-    //     interface_variables.bundling
-    // );
+    //bundling comes from draw_menu js
+    //Draw current visible lines
+    ls_drawLines(
+        initOptions,
+        yPointer,
+        left_pos,
+        right_pos,
+        interface_variables.bundling
+    );
 
-    // //check if we are using bars
-    // //this is basicaly a switch when changed executes code
-    // if (initOptions.use_resume_bars != interface_variables.bars) {
-    //     initOptions.use_resume_bars = interface_variables.bars;
-    //     //update the treeTax if we are not using bars
-    //     recalculateTree(treeTax, initOptions, function() {
-    //         return;
-    //     });
-    //     recalculateTree(treeTax2, initOptions, function() {
-    //         return;
-    //     });
-    // }
+    //check if we are using bars
+    //this is basicaly a switch when changed executes code
+    if (initOptions.use_resume_bars != interface_variables.bars) {
+        initOptions.use_resume_bars = interface_variables.bars;
+        //update the treeTax if we are not using bars
+        recalculateTree(treeTax, initOptions, function() {
+            return;
+        });
+        recalculateTree(treeTax2, initOptions, function() {
+            return;
+        });
+    }
 
-    // //set click flag to false
-    // click = false;
+    //set click flag to false
+    click = false;
 
-    // //mark focused node, little gray rect on screen
-    // if (focusNode) {
-    //     let pc = 0.4;
-    //     fill(initOptions['focus-color']);
-    //     stroke(initOptions['focus-color']);
-    //     strokeWeight(1);
-    //     rect(-10,
-    //         focusNode.y + (initOptions.defaultSize * (1 - pc)) / 2,
-    //         getWindowWidth() + 10,
-    //         initOptions.defaultSize * 0.4
-    //     );
-    // }
+    //mark focused node, little gray rect on screen
+    if (focusNode) {
+        let pc = 0.4;
+        fill(initOptions['focus-color']);
+        stroke(initOptions['focus-color']);
+        strokeWeight(1);
+        rect(-10,
+            focusNode.y + (initOptions.defaultSize * (1 - pc)) / 2,
+            getWindowWidth() + 10,
+            initOptions.defaultSize * 0.4
+        );
+    }
 }
 
 //initialize required values on the json treeTax

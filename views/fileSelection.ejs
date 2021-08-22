@@ -60,12 +60,18 @@
         <div id="content" class="selection_body">
             <table class="table">
                 <td width="30%"><label id="label">First Taxonomy</label></td>
-                <td><input id="file1" class="file_input" type="file" name="Taxonomy1" value="Taxonomy" accept=".json"></input>
+                <td>
+                    <button style="display:block;" class="file_input" onclick="document.getElementById('file1').click()">Select First Taxonomy File</button>
+                    <input id="file1" type="file" onchange="OnChangeFile1Input()" name="Taxonomy1" value="Taxonomy" accept=".json" style="display:none" data-buttonText=""></input>
+                    <span id="firstFile"></span>
                     </br>
                 </td>
                 <tr>
                     <td width="30%"><label id="label">Second Taxonomy</label></td>
-                    <td><input id="file2" class="file_input" type="file" name="Taxonomy2" value="Taxonomy" accept=".json"></input>
+                    <td>
+                        <button style="display:block;" class="file_input" onclick="document.getElementById('file2').click()">Select Second Taxonomy File</button>
+                        <input id="file2" class="file_input" onchange="OnChangeFile1Input()" type="file" name="Taxonomy2" style="display:none" value="Taxonomy" data-buttonText="Select Second Taxonomy File" accept=".json"></input>
+                        <span id="secondFile"></span>
                         </br>
                     </td>
             </table>

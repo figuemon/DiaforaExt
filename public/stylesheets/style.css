@@ -30,9 +30,44 @@ body {
 
 .main_body {
     height: 100%;
-    position: fixed;
-    top: 0;
-    overflow-x: hidden;
+    width: 100%;
+}
+
+.p5Canvas {
+    position: relative !important;
+}
+
+.statistics-lbl {
+    position: relative;
+    left: 40%;
+}
+
+.left-panel {
+    flex-grow: 1;
+    height: 100%;
+    background-color: #201a1a;
+}
+
+.center-panel {
+    height: 100%;
+    background-color: blue;
+}
+
+.right-panel {
+    height: 100%;
+    resize: horizontal;
+    background-color: greenyellow;
+}
+
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
 }
 
 
@@ -495,7 +530,7 @@ input:checked+.slider_switch:before {
 }
 
 .treeContainer {
-    height: 92%;
+    height: 100%;
     width: 100%;
     overflow-y: auto;
     background-color: white;
@@ -631,4 +666,8 @@ input:checked+.slider_switch:before {
 
 .sunburst-viz {
     left: 30%;
+}
+
+body .lm_content {
+    overflow: auto;
 }

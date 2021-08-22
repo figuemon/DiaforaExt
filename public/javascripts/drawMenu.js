@@ -180,3 +180,7 @@ function toggleGraphSize() {
         sketchHolder.addClass('right');
     }
 }
+
+function toggleDifferenceView() {
+    $("#differenceView").toggle();
+}
