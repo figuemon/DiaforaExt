@@ -13,6 +13,7 @@ var tree2 = JSON.parse(sessionStorage.getItem('sessionTree2'));
 var treeTax = tree.taxonomy;
 var treeTax2 = tree2.taxonomy;
 var detailedNode;
+var isDetailDisplayed = false;
 
 countChildren(treeTax);
 countChildren(treeTax2);
@@ -571,7 +572,9 @@ function addLabel() {
 
 //processing function to detect mouse wheel movement used to move the visualization
 function mouseWheel(event) {
-    yPointer -= event.delta * SCROLL_SPEED;
+    if (event.target.id === "defaultCanvas0") {
+        yPointer -= event.delta * SCROLL_SPEED;
+    }
 }
 
 //processing function to detect mouse click, used to turn on a flag
@@ -643,11 +646,27 @@ function changeDetailTableForNode(node) {
 }
 
 function loadChangesDetails(node, changeType) {
+    if (!isDetailDisplayed) {
+        if (myLayout.root.contentItems[0].type == "column") {
+            myLayout.root.contentItems[0].addChild(gdetails);
+        } else {
+            let rowSection = myLayout.root.getItemsById("main-row");
+            myLayout.root.removeChild(rowSection[0], true);
+            myLayout.root.addChild({
+                type: 'column',
+                id: 'main-container',
+            });
+            let colSection = myLayout.root.getItemsById("main-container");
+            colSection[0].addChild(rowSection[0]);
+            colSection[0].addChild(gdetails);
+        }
+        isDetailDisplayed = true;
+    }
     let details = document.getElementById('changeDetailsContainer');
     let treeContainer = protoType !== 1 ?
         document.querySelector("#indentedTree") :
         document.querySelector('#sunburstChart');
-    if (node != detailedNode) {
+    if (node != detailedNode || details.style.display === "none") {
         detailedNode = node;
         details.style.display = "block";
         let tree1Title = document.getElementById("tree1-title");
@@ -678,21 +697,25 @@ function loadChangesDetails(node, changeType) {
             newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
         }
     } else {
-        if (details.style.display === "none") {
-            details.style.display = "block";
-        } else {
-            details.style.display = "none";
-            treeContainer.style.height = "100%"
-        }
+        hideDetailsSection();
+        details.style.display = "none";
+        treeContainer.style.height = "100%"
     }
 }
 
 function hideDetailsSection() {
+    if (isDetailDisplayed) {
+        let detailsGSection = myLayout.root.getItemsById("g-details-section");
+        myLayout.root.contentItems[0].removeChild(detailsGSection[0]);
+        isDetailDisplayed = false;
+    }
     let details = document.getElementById('changeDetailsContainer');
     let treeContainer = protoType !== 1 ?
         document.querySelector("#indentedTree") :
         document.querySelector('#sunburstChart');
-    details.style.display = "none";
+    if (details) {
+        details.style.display = "none";
+    }
 }
 
 function hideLoader() {

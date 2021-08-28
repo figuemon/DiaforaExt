@@ -33,6 +33,12 @@ body {
     width: 100%;
 }
 
+.vis-area {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - var(--top-margin));
+}
+
 .p5Canvas {
     position: relative !important;
 }
@@ -540,10 +546,7 @@ input:checked+.slider_switch:before {
 }
 
 .change-details {
-    bottom: 0px;
-    height: 40%;
-    width: 100%;
-    position: absolute;
+    height: 100%;
     background: #393B40;
     text-shadow: 2px 2px 4px black;
 }
@@ -567,6 +570,7 @@ input:checked+.slider_switch:before {
 #tree1-title {
     width: 50%;
     float: left;
+    padding-left: 10px;
     font-size: small;
     color: antiquewhite;
 }
@@ -661,7 +665,6 @@ input:checked+.slider_switch:before {
 
 .details-table {
     width: 100%;
-    height: calc(80% - 16px);
 }
 
 .sunburst-viz {
