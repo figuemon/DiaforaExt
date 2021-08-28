@@ -565,6 +565,12 @@ input:checked+.slider_switch:before {
     padding-top: 10px;
 }
 
+.placeholder {
+    position: absolute;
+    top: 40%;
+    left: 25%;
+}
+
 .column,
 #tree2-title,
 #tree1-title {

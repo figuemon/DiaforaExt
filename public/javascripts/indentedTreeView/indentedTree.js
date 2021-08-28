@@ -77,6 +77,9 @@
                 indentedTreeState.tooltip.style('left', ev.x + 'px').style('top', ev.y + 'px'); //.style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
             });
             indentedTreeState.tooltipContent = tooltipContent;
+            document.getElementById('placeholder').style.display = "none";
+        } else {
+            document.getElementById('placeholder').style.display = "block";
         }
 
     }
