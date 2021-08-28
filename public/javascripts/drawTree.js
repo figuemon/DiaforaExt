@@ -14,6 +14,7 @@ var treeTax = tree.taxonomy;
 var treeTax2 = tree2.taxonomy;
 var detailedNode;
 var isDetailDisplayed = false;
+var selectedNodeDiff = undefined;
 
 countChildren(treeTax);
 countChildren(treeTax2);
@@ -536,6 +537,10 @@ function isLeaf(d) {
 
 function loadChangeDetailsSection(d) {
     if (isLeaf(d) && loadChangesDetails) {
+        selectedNodeDiff = d.name + d.rank;
+        d.node.f.forEach((fnode) => {
+            toggleNode(fnode, true);
+        });
         let change = getChangeType(d);
         loadChangesDetails(d.node, change);
     } else {
@@ -1271,32 +1276,15 @@ function drawOnlyText(
             node.y + ypos,
             node_text_width,
             options.defaultSize
-        )
+        ) ||
+        isNodeDiffSelected(node)
     ) {
         fill(options['hover-color']);
         textSize(options.text_hover);
         node.selected = true;
 
-        //this functions comes from drawMenu.js
-        // Pending to delete, code to show a box with data
-        /*if(showInfo){
-			let author = node.a == '' ? '' : `<br>Author:${node.a}`;
-			let date = (node.ad || node.ad == '') ? '' : `  Date:${node.da}`;
-			let synonim = node.equivalent ? '<br>Synonims: '+ node.equivalent.length : '';
-			let splits = '<br>Splits: '+ node.totalSplits ;
-			let merges = '----Merges: '+ node.totalMerges;
-			let removes = '<br>Removes: '+ node.totalRemoves;
-			let insertions = '----Insertions: '+ node.totalInsertions;
-			let renames = '<br>Renames: '+ node.totalRenames;
-			let moves = '----Moves: '+ node.totalMoves;
-			let pv = '<br>----P: '+ node.p;
-			//shows info on screen*/
-        //}
-
-        //Bryan, good job!
-
         //if mouse is over and the button clicked
-        if (click) {
+        if (click || isNodeDiffSelected(node)) {
             //focus the equivalent node on the other side
             if (node.equivalent && node.equivalent.length > 0) {
                 //iterate equivalent nodes
@@ -1459,7 +1447,7 @@ function drawExpandButton(
             node_y_pos,
             button_size,
             button_size
-        )
+        ) || isNodeDiffSelected(node)
     ) {
         button_size *= 1.2;
 
@@ -2072,4 +2060,17 @@ function resetLines() {
         y: 0 + dispRightTree,
     };
     createBundles(left_pos, right_pos, initOptions.bundle_radius);
+}
+
+/**
+ * Verifies if the node is selected on the
+ * difference visualization
+ * @param {*} node 
+ */
+function isNodeDiffSelected(node) {
+    if (node) {
+        return node.n + node.r === selectedNodeDiff;
+    }
+    return false;
+
 }

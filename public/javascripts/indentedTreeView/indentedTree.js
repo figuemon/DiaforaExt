@@ -422,7 +422,6 @@
             d._children = null;
         }
         loadChangeDetailsSection(d.data);
-
         update(d);
 
     }

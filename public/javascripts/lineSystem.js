@@ -97,6 +97,7 @@ function setLineColor(line, options) {
 
 //Deterministic random number generator
 var seed = 328;
+
 function custom_random() {
     var x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
@@ -226,9 +227,7 @@ function ls_drawTreePointLine(
     curveVertex(origin.x, origin.y);
     bezierVertex(
         mid_origin_center.x,
-        mid_origin_center.y,
-        -mid_origin_center.x,
-        -mid_origin_center.y,
+        mid_origin_center.y, -mid_origin_center.x, -mid_origin_center.y,
         origin.x,
         origin.y
     );
@@ -237,9 +236,7 @@ function ls_drawTreePointLine(
     //bezierVertex(center.x - centerSmoothnes,center.y,center.x + centerSmoothnes,center.y,center.x,center.y);
     bezierVertex(
         mid_goal_center.x,
-        mid_goal_center.y,
-        -mid_goal_center.x,
-        -mid_goal_center.y,
+        mid_goal_center.y, -mid_goal_center.x, -mid_goal_center.y,
         goal.x,
         goal.y
     );
@@ -558,8 +555,10 @@ function removeLinesAndChildrenOf(node, isRight) {
         //inneficient could pass array of nodes and compare all at once, if
         //sorted could be even more eficient
         var currentNode = pending.pop();
-        removeLinesOf(currentNode);
-        pending = pending.concat(currentNode.c);
+        if (currentNode) {
+            removeLinesOf(currentNode);
+            pending = pending.concat(currentNode.c);
+        }
         //console.log(pending)
     }
 }
