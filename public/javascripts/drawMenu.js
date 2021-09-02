@@ -72,8 +72,8 @@ function onAuthorChange() {
 }
 
 
-function onSearch() {
-    const searchText = document.getElementById('tags').value;
+function onSearch(searchText) {
+    searchText = searchText ? searchText : document.getElementById('tags').value;
     if (currentSelectedItem) {
         $(currentSelectedItem).attr('fill', 'black');
     }
@@ -86,6 +86,7 @@ function onSearch() {
         const dataStructure = filteredTrees[currentFilters];
         const node = searchTree(dataStructure, searchText);
         sunburstChart.focusOnNode(node);
+        return true;
     } else {
         const currentElement = $("text:contains('" + searchText + "')");
         if (currentElement.length > 0) {
@@ -94,8 +95,10 @@ function onSearch() {
             $(currentElement[lastSearchIndex]).attr('fill', 'blue');
             currentSelectedItem = currentElement[lastSearchIndex];
             lastSearchIndex++;
+            return true;
         }
     }
+    return false;
 }
 
 function searchTree(element, matchingTitle) {

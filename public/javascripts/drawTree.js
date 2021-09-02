@@ -537,10 +537,23 @@ function isLeaf(d) {
 
 function loadChangeDetailsSection(d) {
     if (isLeaf(d) && loadChangesDetails) {
-        selectedNodeDiff = d.name + d.rank;
-        d.node.f.forEach((fnode) => {
-            toggleNode(fnode, true);
-        });
+        const selectedSpecies = d.name + d.rank;
+        const maxIndex = d.node.f.length;
+        let current = 1;
+        var interval = setInterval(function() {
+            if (current < maxIndex) {
+                if (d.node.f[current].collapsed) {
+                    synchronizedToggle(d.node.f[current], false);
+                }
+                current++;
+            } else {
+                selectedNodeDiff = selectedSpecies;
+                click = true;
+                clearInterval(interval);
+            }
+        }, 50);
+        //selectedNodeDiff = selectedSpecies;
+        // click = true;
         let change = getChangeType(d);
         loadChangesDetails(d.node, change);
     } else {
@@ -924,7 +937,7 @@ function calculateSize(root, options) {
     //iterative iteration of a treeTax
     while (pendingNodes.length > 0) {
         let actual = pendingNodes.pop();
-        //reset in case of being an actualizatioo
+        //reset in case of being an actualization
         //console.log(pendingNodes);
         if (actual.collapsed) {
             actual.height = getNodeSize(
@@ -1284,9 +1297,14 @@ function drawOnlyText(
         node.selected = true;
 
         //if mouse is over and the button clicked
-        if (click || isNodeDiffSelected(node)) {
+        if (click) {
+            const syncNode = onSearch(node.n);
             //focus the equivalent node on the other side
             if (node.equivalent && node.equivalent.length > 0) {
+
+                if (!syncNode) {
+                    onSearch(node.equivalent.n);
+                }
                 //iterate equivalent nodes
                 if (focusNode === node) focusClick++;
                 else focusClick = 0;
@@ -1447,7 +1465,7 @@ function drawExpandButton(
             node_y_pos,
             button_size,
             button_size
-        ) || isNodeDiffSelected(node)
+        )
     ) {
         button_size *= 1.2;
 
