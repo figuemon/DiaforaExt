@@ -632,3 +632,9 @@ input:checked+.slider_switch:before {
 .sunburst-viz {
     left: 30%;
 }
+
+.placeholder {
+    position: absolute;
+    top: 40%;
+    left: 25%;
+}

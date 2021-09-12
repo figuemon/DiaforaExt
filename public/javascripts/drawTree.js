@@ -416,8 +416,10 @@ function drawSunburst(data, filters) {
     const container = document.getElementById('sunburstChart');
     container.innerHTML = ''; // clean the container before drawing the interface
     if (filters === "0000000") {
+        document.getElementById('placeholder').style.display = "block";
         return;
     }
+    document.getElementById('placeholder').style.display = "none";
     sunburstChart = Sunburst()
         .data(data)
         .size(d => d.c.length || 1)
