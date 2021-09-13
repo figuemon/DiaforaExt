@@ -117,9 +117,9 @@ function searchTree(element, matchingTitle) {
 }
 
 function optionMenuChange() {
-    interface_variables.secondaryFilter = true;
     document.getElementById('busyLoader').style.display = 'block';
     setTimeout(() => {
+        interface_variables.secondaryFilter = true;
         LoadPrototypes().then(e => {
             hideLoader();
         });

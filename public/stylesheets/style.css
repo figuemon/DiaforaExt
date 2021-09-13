@@ -466,7 +466,7 @@ input:checked+.slider_switch:before {
 
 .sunburst {
     position: absolute;
-    left: 20%;
+    left: 5%;
     top: -50px;
     z-index: 2;
 }
@@ -678,9 +678,15 @@ input:checked+.slider_switch:before {
 }
 
 .sunburst-viz {
-    left: 30%;
+    left: 0%;
+    top: 5%;
 }
 
 body .lm_content {
     overflow: auto;
+}
+
+.treeContextLabel {
+    position: absolute;
+    color: black;
 }
