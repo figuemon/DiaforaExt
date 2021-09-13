@@ -124,18 +124,18 @@
 
         myLayout.registerComponent('statistics', function(container, componentState) {
             container.getElement().html('<div id="statistics" class="collapse show left-panel">\
-                                                                                                                                                                                                                                                                <table id="table_taxon_id" class="table_stadistic"></table>\
-                                                                                                                                                                                                                                                                <hr class="separator" />\
-                                                                                                                                                                                                                                                                <table id="table_rank_id" class="table_stadistic"></table>\
-                                                                                                                                                                                                                                                            </div>\
-                                                                                                                                                                                                                                                            ');
+                                                                                                                                                                                                                                                                                <table id="table_taxon_id" class="table_stadistic"></table>\
+                                                                                                                                                                                                                                                                                <hr class="separator" />\
+                                                                                                                                                                                                                                                                                <table id="table_rank_id" class="table_stadistic"></table>\
+                                                                                                                                                                                                                                                                            </div>\
+                                                                                                                                                                                                                                                                            ');
         });
 
 
         myLayout.registerComponent('edgeDrawing', function(container, componentState) {
             container.getElement().html('\
-                                                                                                                                                                                                                                                                                         <div id="sketch-holder" class="main_body">\
-                                                                                                                                                                                                                                                                                                                                        </div>');
+                                                                                                                                                                                                                                                                                                         <div id="sketch-holder" class="main_body">\
+                                                                                                                                                                                                                                                                                                                                                        </div>');
 
             container.on('resize', function() {
                 console.log('panel_resize');
@@ -148,48 +148,48 @@
 
         myLayout.registerComponent('diffView', function(container, componentState) {
             container.getElement().html(`
-                                                                                                                                                                                                                                                                    <div id="differenceView">
-                                                                                                                                                                                                                                                                    <div id="sunburstChart" class="treeContainer  topPane"></div>
-                                                                                                                                                                                                                                                                    <span id="treeContext" class"treeContextLabel"></span>
-                                                                                                                                                                                                                                                                    <div id="indentedTree" class="topPane treeContainer "></div>
-                                                                                                                                                                                                                                                                    <div class="input-group mb-3 search-diff">
-                                                                                                                                                                                                                                                                        <div class="ui-widget">
-                                                                                                                                                                                                                                                                            <input id="tags" class="form-control" placeholder="Search taxa" />
-                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                        <div class="input-group-append">
-                                                                                                                                                                                                                                                                            <button id="search-btn" class="btn btn-primary search-btn" onclick="onSearch()">
-                                                                                                                                                                                                                                                                                    <i class="fas fa-search"></i>
-                                                                                                                                                                                                                                                                                </button>
-                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                    <div id="tooltip" style="position: fixed; display: none;z-index: 5;">
-                                                                                                                                                                                                                                                                        <canvas id="tooltipChart" width="250" height="250"></canvas>
-                                                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                                                    <span id="placeholder" class="placeholder"> Select a change type to display this view </span>
-                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                    `);
+                                                                                                                                                                                                                                                                                    <div id="differenceView">
+                                                                                                                                                                                                                                                                                    <div id="sunburstChart" class="treeContainer  topPane"></div>
+                                                                                                                                                                                                                                                                                    <span id="treeContext" class"treeContextLabel"></span>
+                                                                                                                                                                                                                                                                                    <div id="indentedTree" class="topPane treeContainer "></div>
+                                                                                                                                                                                                                                                                                    <div class="input-group mb-3 search-diff">
+                                                                                                                                                                                                                                                                                        <div class="ui-widget">
+                                                                                                                                                                                                                                                                                            <input id="tags" class="form-control" placeholder="Search taxa" />
+                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                        <div class="input-group-append">
+                                                                                                                                                                                                                                                                                            <button id="search-btn" class="btn btn-primary search-btn" onclick="onSearch()">
+                                                                                                                                                                                                                                                                                                    <i class="fas fa-search"></i>
+                                                                                                                                                                                                                                                                                                </button>
+                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                    <div id="tooltip" style="position: fixed; display: none;z-index: 5;">
+                                                                                                                                                                                                                                                                                        <canvas id="tooltipChart" width="250" height="250"></canvas>
+                                                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                                                    <span id="placeholder" class="placeholder"> Select a change type to display this view </span>
+                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                    `);
         });
 
         myLayout.registerComponent('changedetails', function(container, componentState) {
             container.getElement().html(`
-                                                                                                                                                                                                                    <div id="changeDetailsContainer" class="main_body" style="display:none">
-                                                                                                                                                                                                                <div id="changeDetails" class="details-table change-details">
-                                                                                                                                                                                                                    <div class="general-title">
-                                                                                                                                                                                                                        <span id="change-title">Change details for: Species X</span>
-                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                    <div class="tree-titles">
-                                                                                                                                                                                                                        <div class="column">
-                                                                                                                                                                                                                            <span id="tree1-title">tree.author +""+ tree.date</span>
-                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                        <div class="column">
-                                                                                                                                                                                                                            <span id="tree2-title">tree.author +""+ tree.date</span>
-                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                    <div id="oldTaxonomy" class="old-tax"></div>
-                                                                                                                                                                                                                    <div id="newTaxonomy" class="new-tax"></div>
-                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                    `);
+                                                                                                                                                                                                                                    <div id="changeDetailsContainer" class="main_body" style="display:none">
+                                                                                                                                                                                                                                <div id="changeDetails" class="details-table change-details">
+                                                                                                                                                                                                                                    <div class="general-title">
+                                                                                                                                                                                                                                        <span id="change-title">Change details for: Species X</span>
+                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                    <div class="tree-titles">
+                                                                                                                                                                                                                                        <div class="column">
+                                                                                                                                                                                                                                            <span id="tree1-title">tree.author +""+ tree.date</span>
+                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                        <div class="column">
+                                                                                                                                                                                                                                            <span id="tree2-title">tree.author +""+ tree.date</span>
+                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                    <div id="oldTaxonomy" class="old-tax"></div>
+                                                                                                                                                                                                                                    <div id="newTaxonomy" class="new-tax"></div>
+                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                                                    `);
         });
 
         myLayout.on('initialised', function() {
@@ -404,21 +404,21 @@
                         </button>
                                 </li>-->
                                 <li class="nav-item">
-                                    <button id="show-details" class="buttonsHeader pressed" type="button" title="Toggle Differences View" onclick="toggleDifferenceView()">
+                                    <button id="show-details" class="buttonsHeader pressed" type="button" title="Enable change details table" onclick="toggleDifferenceView()">
                             Show Details<i class="bi bi-file-code"></i>
                         </button>
                                 </li>
                                 <% if (query.mode !== '1') { %>
 
                                     <li class="nav-item">
-                                        <button class="buttonsHeader" onclick="onExpand()">
+                                        <button class="buttonsHeader" title="Expand edge drawing tree" onclick="onExpand()">
                             Expand
                             <i class="bi bi-arrows-angle-expand"></i>
                         </button>
                                     </li>
                                     <li class="nav-item">
                                         <!--Function comes from drawing system -->
-                                        <button class="buttonsHeader" onclick="sort_and_update_lines()">
+                                        <button class="buttonsHeader" title="Sort taxonomy nodes" onclick="sort_and_update_lines()">
                             Sort
                             <i class="bi bi-sort-down-alt"></i>
                         </button>
@@ -433,7 +433,7 @@
                                     <%}%>
                                         <li class="nav-item">
                                             <!--Function comes from ordering menu script -->
-                                            <button type="“button”" class="buttonsHeader" onclick="onExit()">
+                                            <button type="“button”" class="buttonsHeader" title="Returns to homepage" onclick="onExit()">
                             Exit
                             <i class="bi bi-x-octagon"></i>
                         </button>
