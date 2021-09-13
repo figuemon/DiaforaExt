@@ -44,8 +44,8 @@ var initOptions = {
     use_resume_bars: true,
     log_increment: 15, //increment of node size by logarigmic level
     log_scale: 5, //base of the logaritm for scale
-    text_size: 12, //display text size in indented treeTax
-    text_hover: 14, //Size of text when hovered
+    text_size: 10, //display text size in indented treeTax
+    text_hover: 10, //Size of text when hovered
     'circle-padding': 3,
     hierarchy_distance: 700, //distance betwen hierarchys deprecated
     width: 350, //indented-treeTax height
@@ -72,6 +72,7 @@ var initOptions = {
     dirtyNodes: false, //flag marked when a node is moved in the children array of its parent
     lineTransparency: 0.7,
     lineDispersion: 40,
+    showDetails: true //Shows table details
 };
 
 //stores the canvas
@@ -404,18 +405,6 @@ function drawSunburst(data, filters) {
         .minSliceAngle(0.2)
         .maxLevels(10)
         .onClick(nodeClick)(document.getElementById('sunburstChart'));
-    //  sunburstChart = Icicle()
-    //         .data(data)
-    //         .size(d => d.c.length || 1)
-    //         .color(d => sunburstColors(d))
-    //         .width(800)
-    //         .height(500)
-    //         .children(d => d.c)
-    //         .tooltipTitle(d => d.rank)
-    //         .tooltipContent(d => d.name)
-    //         .minSegmentWidth(0.2)
-    //         .onClick(nodeClick)(document.getElementById('chart'));
-
     setTimeout(() => { addLabel(); }, 200);
 }
 
@@ -539,11 +528,13 @@ function loadChangeDetailsSection(d) {
     if (isLeaf(d) && loadChangesDetails) {
         const selectedSpecies = d.name + d.rank;
         const maxIndex = d.node.f.length;
+        const isRightNode = isRight(d);
         let current = 1;
         var interval = setInterval(function() {
+            debugger;
             if (current < maxIndex) {
                 if (d.node.f[current].collapsed) {
-                    synchronizedToggle(d.node.f[current], false);
+                    synchronizedToggle(d.node.f[current], isRightNode);
                 }
                 current++;
             } else {
@@ -555,10 +546,22 @@ function loadChangeDetailsSection(d) {
         //selectedNodeDiff = selectedSpecies;
         // click = true;
         let change = getChangeType(d);
-        loadChangesDetails(d.node, change);
+        if (initOptions.showDetails) {
+            loadChangesDetails(d.node, change);
+        } else {
+            hideDetailsSection();
+        }
     } else {
         hideDetailsSection();
     }
+}
+
+/**
+ * Returns true if node if from the right taxonomy
+ * @param {*} node 
+ */
+function isRight(d) {
+    return !(d.changes.splitted > 0 || d.changes.moved > 0)
 }
 
 function nodeClick(node) {
@@ -596,8 +599,10 @@ function mouseWheel(event) {
 }
 
 //processing function to detect mouse click, used to turn on a flag
-function mouseClicked() {
-    click = true;
+function mouseClicked(event) {
+    if (event.target.id === "defaultCanvas0") {
+        click = true;
+    }
 }
 
 //processing function to detect window change in size
@@ -1303,7 +1308,7 @@ function drawOnlyText(
             if (node.equivalent && node.equivalent.length > 0) {
 
                 if (!syncNode) {
-                    onSearch(node.equivalent.n);
+                    onSearch(node.equivalent[0].n);
                 }
                 //iterate equivalent nodes
                 if (focusNode === node) focusClick++;
@@ -1583,13 +1588,12 @@ function pushIntoUnfolded(node) {
     //printListNodeNames(actualVisibleRank);
 }
 
-//helper function for printen the name of a list of taxons
+//helper function for print the name of a list of taxons
 function printListNodeNames(printedList) {
     let result = '';
     for (let i = 0; i < printedList.length; i++) {
         result = result + '->' + printedList[i].n;
     }
-    // console.log(result);
 }
 
 //remove element from rendering queue
@@ -1621,7 +1625,6 @@ function isOverRect(xpos, ypos, rxpos, rypos, rwidth, rheight) {
 }
 
 function drawInside(node, xpos, ypos, options) {
-    //console.log(node.x+'--'+node.y+'--'+node.width+'--'+node.height );
     stroke(options['stroke-color']);
     noFill();
     if (!node.collapsed) {
@@ -1631,8 +1634,6 @@ function drawInside(node, xpos, ypos, options) {
             node.width - options.indent,
             node.height - options.defaultSize
         );
-    } else {
-        //rect(node.x + xpos /*- options.indent*/,node.y +ypos ,node.width /*+ options.indent*/,node.height);
     }
 }
 
@@ -1671,8 +1672,6 @@ function drawCutNode(node, initialY, finalY, options, xpos, ypos) {
         node.height + (node.y - yCoord),
         finalY - initialY
     );
-    //console.log(newHeigth);
-    //fill(options['background-color']);
     stroke(options['stroke-color']);
     strokeWeight(2);
     if (

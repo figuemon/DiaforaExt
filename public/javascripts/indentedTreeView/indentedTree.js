@@ -74,7 +74,7 @@
             d3.select("#indentedTree").on('mousemove', function(ev) {
                 var mousePos = d3Pointer(ev);
                 indentedTreeState.tooltip.style('position', 'fixed');
-                indentedTreeState.tooltip.style('left', ev.x + 'px').style('top', ev.y + 'px'); //.style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
+                indentedTreeState.tooltip.style('left', ev.x - 100 + 'px').style('top', ev.y + 'px'); //.style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
             });
             indentedTreeState.tooltipContent = tooltipContent;
             document.getElementById('placeholder').style.display = "none";

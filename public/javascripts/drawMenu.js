@@ -17,7 +17,8 @@ var interface_variables = {
     authorChanged: false,
     bundling: 0.5,
     changedLines: false,
-    secondaryFilter: false
+    secondaryFilter: false,
+    showDetails: true
 };
 
 //Used when the buttton exit is cliked
@@ -185,5 +186,11 @@ function toggleGraphSize() {
 }
 
 function toggleDifferenceView() {
-    $("#differenceView").toggle();
+    initOptions.showDetails = !initOptions.showDetails;
+    if (!initOptions.showDetails) {
+        $('#show-details').removeClass('pressed');
+        hideDetailsSection();
+    } else {
+        $('#show-details').addClass('pressed');
+    }
 }
