@@ -80,8 +80,7 @@ var canvas = null;
 
 //Canvas screen size rate
 var totalCanvasWidth = 1.0;
-var totalCanvasHeight = 0.6;
-
+var totalCanvasHeight = 1.0;
 //position of canvas focus
 var xPointer = 0; //stores x displacement of visualization, not used
 var yPointer = 0; //stores y displacement of  visualization
@@ -97,7 +96,7 @@ const SCROLL_SPEED = -0.4;
 
 var changed = false; //
 var click = false; //
-
+var userTriggered = false; // Set when the user clicks over the edge-drawing
 var focusNode = undefined; //Last node selected by the user
 var focusClick = 0;
 var sunburstChart = undefined;
@@ -314,13 +313,6 @@ function preload() {
 //processing function executed before the first draw
 function setup() {
 
-    // console.log({
-    //     dispLefTree,
-    //     dispRightTree,
-    //     targetDispLefTree,
-    //     targetDispRightTree,
-    // });
-
     //make canvas size dynamic
     var holder = document.getElementById('sketch-holder');
 
@@ -528,24 +520,7 @@ function isLeaf(d) {
 
 function loadChangeDetailsSection(d) {
     if (isLeaf(d) && loadChangesDetails) {
-        const selectedSpecies = d.name + d.rank;
-        const maxIndex = d.node.f.length;
-        const isRightNode = isRight(d);
-        let current = 1;
-        var interval = setInterval(function() {
-            if (current < maxIndex) {
-                if (d.node.f[current].collapsed) {
-                    synchronizedToggle(d.node.f[current], isRightNode);
-                }
-                current++;
-            } else {
-                selectedNodeDiff = selectedSpecies;
-                click = true;
-                clearInterval(interval);
-            }
-        }, 50);
-        //selectedNodeDiff = selectedSpecies;
-        // click = true;
+        selectOnEdgeDrawing(d);
         let change = getChangeType(d);
         if (initOptions.showDetails) {
             loadChangesDetails(d.node, change);
@@ -554,7 +529,32 @@ function loadChangeDetailsSection(d) {
         }
     } else {
         hideDetailsSection();
+        selectOnEdgeDrawing(d);
     }
+}
+
+/**
+ * Selects the current selected node 
+ * on the edge drawing visualization
+ * @param {*} d 
+ */
+function selectOnEdgeDrawing(d) {
+    const selectedSpecies = d.name + d.rank;
+    const maxIndex = d.node.f.length;
+    const isRightNode = isRight(d);
+    let current = 1;
+    var interval = setInterval(function() {
+        if (current < maxIndex) {
+            if (d.node.f[current].collapsed) {
+                synchronizedToggle(d.node.f[current], isRightNode);
+            }
+            current++;
+        } else {
+            selectedNodeDiff = selectedSpecies;
+            click = true;
+            clearInterval(interval);
+        }
+    }, 50);
 }
 
 /**
@@ -585,7 +585,6 @@ function addLabel() {
     let currentState = `${node.rank}:${node.name}`;
     node.selected = true;
     sunburstNode = node;
-    click = true;
     sunburstSelection = true;
     focusNode = node;
     p.innerHTML = currentState;
@@ -602,6 +601,7 @@ function mouseWheel(event) {
 //processing function to detect mouse click, used to turn on a flag
 function mouseClicked(event) {
     if (event.target.id === "defaultCanvas0") {
+        userTriggered = true;
         click = true;
     }
 }
@@ -795,12 +795,10 @@ function draw() {
         interface_variables.secondaryFilter = false;
         let currentFilters = filterCombination();
         if (currentFilters != "000000" && filteredTrees[currentFilters]) {
-            //drawSunburst(filteredTrees[currentFilters], currentFilters);
             loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters, loadChangesDetails);
         } else {
             const filterDiffs = filterDifferences(differences);
             filteredTrees[currentFilters] = filterDiffs;
-            // drawSunburst(filterDiffs, currentFilters);
             loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
         }
     }
@@ -976,7 +974,6 @@ function calculateSize(root, options) {
                 }
             }
         }
-        //fin de if
     }
 }
 
@@ -992,11 +989,10 @@ function getNodeSize(node, options) {
         options.log_increment;
     else if (node.desendece && options.use_resume_bars)
         extra = options.defaultBarSize;
-    //console.log({options,extra});
     return options.defaultSize + extra;
 }
 
-//adds size to a node based on tis famili
+//adds size to a node based on this family
 function increaseFamilySize(node, increment) {
     node.f.forEach(function(fam) {
         fam.height += increment;
@@ -1036,7 +1032,7 @@ function unfoldNode(node, options) {
     node.collapsed = false;
 }
 
-//closes a bode
+
 function foldNode(node, options) {
     //node.collapsed = true;
     node.collapsed = true;
@@ -1056,7 +1052,7 @@ function foldNode(node, options) {
     );
 }
 
-//Main draw functions this simply cals a draw for each rank on the hierarchy
+//Main draw functions this simply calls a draw for each rank on the hierarchy
 //also  checks the state of nodes and if they need to be recalculated to avoid inconsistency on the render
 //uses options.dirtyNodes flag to check if nodes have been reordered
 function optimizedDrawIndentedTree(listByRank, options, xpos, ypos, isRight) {
@@ -1140,12 +1136,12 @@ function drawHierarchyLevel(taxons, options, pointer, xpos, ypos, isRight) {
             draws++; //increase draws variable for debug
 
             let node_text_width = node.tw; //size of the text displayed on scren
-            //this depends on the data displkayed on DrawOnlyText and should be changed if that variable is changed
+            //this depends on the data displayed on DrawOnlyText and should be changed if that variable is changed
 
             fill(iniColor, 0, iniBrigthnes);
             //drawCutNode(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
             if (isRight) {
-                //a lot of dangerous magin numbers, they control the displcacement of the left treeTax text and button
+                //a lot of dangerous margin numbers, they control the displcacement of the left treeTax text and button
                 drawOnlyText(
                     node,
                     yPointer,
@@ -1208,6 +1204,7 @@ function drawHierarchyLevel(taxons, options, pointer, xpos, ypos, isRight) {
         }
         //if the node is out of the screen stop drawing
         if (node.y > pointer + windowHeight * totalCanvasHeight) {
+            debugger;
             break;
         }
     }
@@ -1304,7 +1301,7 @@ function drawOnlyText(
 
         //if mouse is over and the button clicked
         if (click) {
-            const syncNode = onSearch(node.n);
+            const syncNode = userTriggered ? onSearch(node.n) : undefined;
             //focus the equivalent node on the other side
             if (node.equivalent && node.equivalent.length > 0) {
 
@@ -1939,14 +1936,11 @@ function sortVisualNodes(options) {
 
     Object.keys(treeTax2.visible_lbr).forEach(function(rank) {
         rank = rank.toLowerCase();
-        //console.log(rank.toUpperCase(),treeTax.visible_lbr[rank].length);
         treeTax2.visible_lbr[rank].sort(
             (a, b) => +parseFloat(a.y) - parseFloat(b.y)
         );
-        //treeTax2.visible_lbr[rank].forEach((node) => console.log(node.n, node.y));
     });
 
-    //options.dirtyNodes = false;
 }
 
 /* https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript*/
@@ -2042,7 +2036,6 @@ function expandAllLevels() {
     };
     createBundles(left_pos, right_pos, initOptions.bundle_radius);
 
-    // console.log({ lines });
 }
 
 //requires that node position has been given at least onece

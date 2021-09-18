@@ -690,3 +690,11 @@ body .lm_content {
     position: absolute;
     color: black;
 }
+
+#treeContext {
+    position: absolute;
+}
+
+#changeDetailsContainer {
+    overflow: hidden;
+}
