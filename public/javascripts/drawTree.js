@@ -398,6 +398,7 @@ function setup() {
     $("#tags").autocomplete({
         source: Object.keys(taxaNames),
         minLength: 4,
+        select: () => { onSearch(); } // Search on change value
     });
     $("#tags").keypress(function(event) {
         if (event.keyCode === 13) {
