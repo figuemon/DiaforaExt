@@ -15,6 +15,7 @@ var workDone = true; // Flag to wait between API calls are done
 var botanyPattern = /\s&\s|\set\s|\sex\s/;
 var zoologyPattern = /\(|\)/g;
 var regularPattern = /,/g;
+var failedCallsTries = {};
 
 //options for the xml to json conversion
 //any change would require to adapt de parser
@@ -392,8 +393,10 @@ class TaxonomyTree {
                         this.pendingJobs
                     );
                     console.log('Error en job No:' + this.pendingJobs);
-                    if (call) {
+                    // Tries failed calls a couple of times
+                    if (call && !this.failedCallsTries[call.id] || this.failedCallsTries[call.id] < 2) {
                         this.pendingApiCalls.unshift(call);
+                        this.failedCallsTries[call.id] += 1;
                     }
                 }
             }

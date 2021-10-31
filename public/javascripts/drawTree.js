@@ -544,6 +544,7 @@ function selectOnEdgeDrawing(d) {
     const isRightNode = isRight(d);
     let current = 1;
     var interval = setInterval(function() {
+        initOptions.dirtyNodes = true;
         if (current < maxIndex) {
             if (d.node.f[current].collapsed) {
                 synchronizedToggle(d.node.f[current], isRightNode);
@@ -554,6 +555,7 @@ function selectOnEdgeDrawing(d) {
             click = true;
             clearInterval(interval);
         }
+        forceRenderUpdate(initOptions);
     }, 50);
 }
 
@@ -562,7 +564,7 @@ function selectOnEdgeDrawing(d) {
  * @param {*} node 
  */
 function isRight(d) {
-    return !(d.changes.splitted > 0 || d.changes.moved > 0)
+    return d.node.isRight;
 }
 
 function nodeClick(node) {
@@ -1204,7 +1206,7 @@ function drawHierarchyLevel(taxons, options, pointer, xpos, ypos, isRight) {
         }
         //if the node is out of the screen stop drawing
         if (node.y > pointer + windowHeight * totalCanvasHeight) {
-            debugger;
+
             break;
         }
     }
