@@ -48,10 +48,12 @@ async function verificar_name_changes(left_nodes, rigth_nodes) {
         }
         left_map[node.n].push(node);
         node.moved = false;
+        node.isRight = false;
         node.equivalent = [];
     });
 
     rigth_nodes.forEach(function(node) {
+        node.isRight = true;
         if (!taxaNames[node.n]) {
             taxaNames[node.n] = true;
         }

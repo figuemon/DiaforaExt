@@ -30,9 +30,50 @@ body {
 
 .main_body {
     height: 100%;
-    position: fixed;
-    top: 0;
-    overflow-x: hidden;
+    width: 100%;
+}
+
+.vis-area {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - var(--top-margin));
+}
+
+.p5Canvas {
+    position: relative !important;
+}
+
+.statistics-lbl {
+    position: relative;
+    left: 40%;
+}
+
+.left-panel {
+    flex-grow: 1;
+    height: 100%;
+    background-color: #201a1a;
+}
+
+.center-panel {
+    height: 100%;
+    background-color: blue;
+}
+
+.right-panel {
+    height: 100%;
+    resize: horizontal;
+    background-color: greenyellow;
+}
+
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
 }
 
 
@@ -66,6 +107,10 @@ body {
     top: var(--top-margin);
 }
 
+.pressed {
+    background-color: darkgreen !important;
+}
+
 
 /*Tables style*/
 
@@ -73,7 +118,7 @@ body {
     position: relative;
     border-collapse: collapse;
     text-align: right;
-    font-size: 8pt;
+    font-size: 7pt;
     color: #F2ECFF;
     border-bottom: 1px solid #999999;
     text-shadow: 2px 2px 4px black;
@@ -421,7 +466,7 @@ input:checked+.slider_switch:before {
 
 .sunburst {
     position: absolute;
-    left: 20%;
+    left: 5%;
     top: -50px;
     z-index: 2;
 }
@@ -495,7 +540,7 @@ input:checked+.slider_switch:before {
 }
 
 .treeContainer {
-    height: 92%;
+    height: 100%;
     width: 100%;
     overflow-y: auto;
     background-color: white;
@@ -505,10 +550,7 @@ input:checked+.slider_switch:before {
 }
 
 .change-details {
-    bottom: 0px;
-    height: 40%;
-    width: 100%;
-    position: absolute;
+    height: 100%;
     background: #393B40;
     text-shadow: 2px 2px 4px black;
 }
@@ -527,11 +569,18 @@ input:checked+.slider_switch:before {
     padding-top: 10px;
 }
 
+.placeholder {
+    position: absolute;
+    top: 40%;
+    left: 25%;
+}
+
 .column,
 #tree2-title,
 #tree1-title {
     width: 50%;
     float: left;
+    padding-left: 10px;
     font-size: small;
     color: antiquewhite;
 }
@@ -626,15 +675,26 @@ input:checked+.slider_switch:before {
 
 .details-table {
     width: 100%;
-    height: calc(80% - 16px);
 }
 
 .sunburst-viz {
-    left: 30%;
+    left: 0%;
+    top: 5%;
 }
 
-.placeholder {
+body .lm_content {
+    overflow: auto;
+}
+
+.treeContextLabel {
     position: absolute;
-    top: 40%;
-    left: 25%;
+    color: black;
+}
+
+#treeContext {
+    position: absolute;
+}
+
+#changeDetailsContainer {
+    overflow: hidden;
 }

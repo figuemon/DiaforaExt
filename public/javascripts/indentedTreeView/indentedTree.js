@@ -10,7 +10,7 @@
 
     var indentedTreeState = {};
 
-    var margin = { top: 30, right: 20, bottom: 30, left: 20 },
+    var margin = { top: 60, right: 20, bottom: 30, left: 20 },
         width = 960,
         barHeight = 20,
         barWidth = 460 //(width - margin.left - margin.right) * 0.35;
@@ -69,13 +69,12 @@
             root.x0 = 0;
             root.y0 = 0;
             update(root, detailsFn);
-
             svgTree.append('g'); // tooltips
             indentedTreeState.tooltip = d3.select("#indentedTree").append('div').attr('class', 'sunburst-tooltip');
             d3.select("#indentedTree").on('mousemove', function(ev) {
                 var mousePos = d3Pointer(ev);
                 indentedTreeState.tooltip.style('position', 'fixed');
-                indentedTreeState.tooltip.style('left', ev.x + 'px').style('top', ev.y + 'px'); //.style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
+                indentedTreeState.tooltip.style('left', ev.x - 100 + 'px').style('top', ev.y + 'px'); //.style('transform', "translate(-".concat(mousePos[0] / width * 100, "%, 21px)")); // adjust horizontal position to not exceed canvas boundaries
             });
             indentedTreeState.tooltipContent = tooltipContent;
             document.getElementById('placeholder').style.display = "none";
@@ -262,9 +261,9 @@
         nodeT.select('text').text(function(d) {
             const nodeText = d.data.rank + " " + d.data.name;
             if (d.children) {
-                return '+ ' + nodeText;
-            } else if (d._children) {
                 return '- ' + nodeText;
+            } else if (d._children) {
+                return '+ ' + nodeText;
             } else {
                 return nodeText;
             }
@@ -423,7 +422,6 @@
             d._children = null;
         }
         loadChangeDetailsSection(d.data);
-
         update(d);
 
     }

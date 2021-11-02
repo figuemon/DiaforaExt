@@ -13,6 +13,8 @@ var tree2 = JSON.parse(sessionStorage.getItem('sessionTree2'));
 var treeTax = tree.taxonomy;
 var treeTax2 = tree2.taxonomy;
 var detailedNode;
+var isDetailDisplayed = false;
+var selectedNodeDiff = undefined;
 
 countChildren(treeTax);
 countChildren(treeTax2);
@@ -21,9 +23,6 @@ countChildren(treeTax2);
 let levelList = createRankList(treeTax);
 let levelList2 = createRankList(treeTax2);
 //calculate_all_merges(levelList, levelList2);
-
-// console.log(treeTax);
-// console.log(treeTax2);
 
 //checks if both trees are valid for visualization
 //this treeTax comes from a file selected by the user and is modified by preprocesamiento.js and contChildren.js
@@ -45,13 +44,13 @@ var initOptions = {
     use_resume_bars: true,
     log_increment: 15, //increment of node size by logarigmic level
     log_scale: 5, //base of the logaritm for scale
-    text_size: 12, //display text size in indented treeTax
-    text_hover: 14, //Size of text when hovered
+    text_size: 10, //display text size in indented treeTax
+    text_hover: 10, //Size of text when hovered
     'circle-padding': 3,
     hierarchy_distance: 700, //distance betwen hierarchys deprecated
     width: 350, //indented-treeTax height
     height: 500, //indented-treeTax height
-    separation: 100, //Separation betwen indented-treeTax and the size of the screen
+    separation: 10, //Separation betwen indented-treeTax and the size of the screen
     'background-color': undefined, //color of the background
     'stroke-color': undefined,
     'indent-stroke': 0.5, // weight of indent iine
@@ -73,6 +72,7 @@ var initOptions = {
     dirtyNodes: false, //flag marked when a node is moved in the children array of its parent
     lineTransparency: 0.7,
     lineDispersion: 40,
+    showDetails: true //Shows table details
 };
 
 //stores the canvas
@@ -80,8 +80,7 @@ var canvas = null;
 
 //Canvas screen size rate
 var totalCanvasWidth = 1.0;
-var totalCanvasHeight = 0.6;
-
+var totalCanvasHeight = 1.0;
 //position of canvas focus
 var xPointer = 0; //stores x displacement of visualization, not used
 var yPointer = 0; //stores y displacement of  visualization
@@ -97,7 +96,7 @@ const SCROLL_SPEED = -0.4;
 
 var changed = false; //
 var click = false; //
-
+var userTriggered = false; // Set when the user clicks over the edge-drawing
 var focusNode = undefined; //Last node selected by the user
 var focusClick = 0;
 var sunburstChart = undefined;
@@ -143,6 +142,8 @@ treeTax2.visible_lbr = {
     subspecies: [],
 };
 
+var maxVal = 0;
+
 function PopulateStatistics() {
     document.getElementById('table_taxon_id').innerHTML =
         '<tr><th></th><th>' +
@@ -160,9 +161,9 @@ function PopulateStatistics() {
         tree2.date +
         '</th></tr>' +
         '<tr><th>Rank</th><th>' +
-        tree.accesDate +
+        tree.taxonomy.r +
         '</th><th>' +
-        tree2.accesDate +
+        tree2.taxonomy.r +
         '</th></tr>' +
         (treeTax.totalKingdom != null ?
             '<tr> <th>Kingdom</th><th>' +
@@ -298,60 +299,25 @@ function PopulateStatistics() {
 
 /*This function reasign value of windowWith due to the division*/
 function getWindowWidth() {
-    return windowWidth - windowWidth * 0.2;
+    var holder = document.getElementById('sketch-holder');
+    return holder.offsetWidth;
 }
 
-//  Splitter Actions to increase or decrease the details panel
-// 
-function resizer(e) {
-    const bottomPane = document.querySelector(".bottomPane");
-    const vizContainer = protoType !== 1 ?
-        document.querySelector("#indentedTree") :
-        document.querySelector('#sunburstChart');
-    const topPane = vizContainer;
 
-
-    window.addEventListener('mousemove', mousemove);
-    window.addEventListener('mouseup', mouseup);
-
-    let prevY = e.y;
-    const topPanel = topPane.getBoundingClientRect();
-    const bottomPanel = bottomPane.getBoundingClientRect();
-
-    function mousemove(e) {
-        let newY = prevY - e.y;
-        topPane.style.height = topPanel.height - newY + "px";
-        bottomPane.style.height = bottomPanel.height + newY + "px";
-        if (vizContainer) {
-            vizContainer.style.overflowY = 'hidden';
-        }
-    }
-
-    function mouseup() {
-        window.removeEventListener('mousemove', mousemove);
-        window.removeEventListener('mouseup', mouseup);
-        if (vizContainer) {
-            vizContainer.style.overflowY = 'auto';
-        }
+function preload() {
+    while (!goldeninit) {
+        // Loop until goldeninit is started;
     }
 }
 
 //processing function executed before the first draw
 function setup() {
-    const splitter = document.querySelector(".splitter");
-    splitter.addEventListener('mousedown', resizer);
-
-    // console.log({
-    //     dispLefTree,
-    //     dispRightTree,
-    //     targetDispLefTree,
-    //     targetDispRightTree,
-    // });
 
     //make canvas size dynamic
+    var holder = document.getElementById('sketch-holder');
+
     canvas = createCanvas(
-        getWindowWidth() * totalCanvasWidth,
-        windowHeight * totalCanvasHeight
+        holder.offsetWidth, holder.offsetHeight
     );
     canvas.parent('sketch-holder');
     var x = 0;
@@ -406,8 +372,6 @@ function setup() {
         }
     });
 
-
-
 }
 
 /**
@@ -436,18 +400,6 @@ function drawSunburst(data, filters) {
         .minSliceAngle(0.2)
         .maxLevels(10)
         .onClick(nodeClick)(document.getElementById('sunburstChart'));
-    //  sunburstChart = Icicle()
-    //         .data(data)
-    //         .size(d => d.c.length || 1)
-    //         .color(d => sunburstColors(d))
-    //         .width(800)
-    //         .height(500)
-    //         .children(d => d.c)
-    //         .tooltipTitle(d => d.rank)
-    //         .tooltipContent(d => d.name)
-    //         .minSegmentWidth(0.2)
-    //         .onClick(nodeClick)(document.getElementById('chart'));
-
     setTimeout(() => { addLabel(); }, 200);
 }
 
@@ -494,7 +446,7 @@ function filterDifferences(node) {
     }
     return cloneNode;
 }
-var maxVal = 0;
+
 
 function sunburstColors(node) {
     if (interface_variables.added && ((node.changes['added'] === 1 && node.c.length == 0) ||
@@ -569,21 +521,59 @@ function isLeaf(d) {
 
 function loadChangeDetailsSection(d) {
     if (isLeaf(d) && loadChangesDetails) {
+        selectOnEdgeDrawing(d);
         let change = getChangeType(d);
-        loadChangesDetails(d.node, change);
+        if (initOptions.showDetails) {
+            loadChangesDetails(d.node, change);
+        } else {
+            hideDetailsSection();
+        }
     } else {
         hideDetailsSection();
+        selectOnEdgeDrawing(d);
     }
+}
+
+/**
+ * Selects the current selected node 
+ * on the edge drawing visualization
+ * @param {*} d 
+ */
+function selectOnEdgeDrawing(d) {
+    const selectedSpecies = d.name + d.rank;
+    const maxIndex = d.node.f.length;
+    const isRightNode = isRight(d);
+    let current = 1;
+    var interval = setInterval(function() {
+        initOptions.dirtyNodes = true;
+        if (current < maxIndex) {
+            if (d.node.f[current].collapsed) {
+                synchronizedToggle(d.node.f[current], isRightNode);
+            }
+            current++;
+        } else {
+            selectedNodeDiff = selectedSpecies;
+            click = true;
+            clearInterval(interval);
+        }
+        forceRenderUpdate(initOptions);
+    }, 50);
+}
+
+/**
+ * Returns true if node if from the right taxonomy
+ * @param {*} node 
+ */
+function isRight(d) {
+    return d.node.isRight;
 }
 
 function nodeClick(node) {
     if (node) {
-        // console.log(node);
         loadChangeDetailsSection(node);
         if (!isLeaf(node)) {
             sunburstChart.focusOnNode(node);
         }
-        //    sunburstChart.zoomToNode(node);
         this.addLabel();
         sunburstSelection = true;
     }
@@ -596,10 +586,8 @@ function addLabel() {
         sunburstChart.focusOnNode() :
         sunburstChart.data();
     let currentState = `${node.rank}:${node.name}`;
-    //console.log(node);
     node.selected = true;
     sunburstNode = node;
-    click = true;
     sunburstSelection = true;
     focusNode = node;
     p.innerHTML = currentState;
@@ -608,21 +596,22 @@ function addLabel() {
 
 //processing function to detect mouse wheel movement used to move the visualization
 function mouseWheel(event) {
-    yPointer -= event.delta * SCROLL_SPEED;
+    if (event.target.id === "defaultCanvas0") {
+        yPointer -= event.delta * SCROLL_SPEED;
+    }
 }
 
 //processing function to detect mouse click, used to turn on a flag
-function mouseClicked() {
-    click = true;
+function mouseClicked(event) {
+    if (event.target.id === "defaultCanvas0") {
+        userTriggered = true;
+        click = true;
+    }
 }
 
 //processing function to detect window change in size
 //resize and change canvas position according to window size
 function windowResized() {
-    resizeCanvas(
-        getWindowWidth() * totalCanvasWidth,
-        windowHeight * totalCanvasHeight
-    );
     var x = 0;
     var y = 0; //(windowHeight*(1.0-totalCanvasHeight));
     canvas.position(x, y);
@@ -684,13 +673,28 @@ function changeDetailTableForNode(node) {
 }
 
 function loadChangesDetails(node, changeType) {
+    if (!isDetailDisplayed) {
+        if (myLayout.root.contentItems[0].type == "column") {
+            myLayout.root.contentItems[0].addChild(gdetails);
+        } else {
+            let rowSection = myLayout.root.getItemsById("main-row");
+            myLayout.root.removeChild(rowSection[0], true);
+            myLayout.root.addChild({
+                type: 'column',
+                id: 'main-container',
+            });
+            let colSection = myLayout.root.getItemsById("main-container");
+            colSection[0].addChild(rowSection[0]);
+            colSection[0].addChild(gdetails);
+        }
+        isDetailDisplayed = true;
+    }
     let details = document.getElementById('changeDetailsContainer');
     let treeContainer = protoType !== 1 ?
         document.querySelector("#indentedTree") :
         document.querySelector('#sunburstChart');
-    if (node != detailedNode) {
+    if (node != detailedNode || details.style.display === "none") {
         detailedNode = node;
-        treeContainer.style.height = "60%"
         details.style.display = "block";
         let tree1Title = document.getElementById("tree1-title");
         let tree2Title = document.getElementById("tree2-title");
@@ -703,13 +707,13 @@ function loadChangesDetails(node, changeType) {
         oldTaxonomy.innerHTML = "";
         newTaxonomy.innerHTML = "";
         changesTitle.innerHTML = `Change details for: ${node.r +" "+ node.n}`;
-        if (changeType === "splitted" || changeType === "moved") {
+        if (changeType === "splitted") {
             oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
             node.equivalent.forEach(eq => {
                 newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(eq))
             });
         }
-        if (changeType === "merged" || changeType === "renamed" || changeType === "authorChanged") {
+        if (changeType === "merged" || changeType === "renamed" || changeType === "authorChanged" || changeType === "moved") {
             newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
             node.equivalent.forEach(eq => {
                 oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(eq))
@@ -720,22 +724,25 @@ function loadChangesDetails(node, changeType) {
             newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
         }
     } else {
-        if (details.style.display === "none") {
-            details.style.display = "block";
-        } else {
-            details.style.display = "none";
-            treeContainer.style.height = "100%"
-        }
+        hideDetailsSection();
+        details.style.display = "none";
+        treeContainer.style.height = "100%"
     }
 }
 
 function hideDetailsSection() {
+    if (isDetailDisplayed) {
+        let detailsGSection = myLayout.root.getItemsById("g-details-section");
+        myLayout.root.contentItems[0].removeChild(detailsGSection[0]);
+        isDetailDisplayed = false;
+    }
     let details = document.getElementById('changeDetailsContainer');
     let treeContainer = protoType !== 1 ?
         document.querySelector("#indentedTree") :
         document.querySelector('#sunburstChart');
-    details.style.display = "none";
-    treeContainer.style.height = "92%"
+    if (details) {
+        details.style.display = "none";
+    }
 }
 
 function hideLoader() {
@@ -771,97 +778,95 @@ function drawDifferenceVisualization(structure, filters) {
 }
 //processing function to draw on canvas, executed at a fixed rate, normaly 30 times per second
 function draw() {
-    // //smooth node focusing
-    // dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
-    // dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
+    //smooth node focusing
+    dispLefTree = lerp(dispLefTree, targetDispLefTree, 0.1);
+    dispRightTree = lerp(dispRightTree, targetDispRightTree, 0.1);
 
-    // left_pos = { x: initOptions.separation, y: 0 + dispLefTree };
-    // right_pos = {
-    //     x: getWindowWidth() - initOptions.separation,
-    //     y: 0 + dispRightTree,
-    // };
+    left_pos = { x: initOptions.separation, y: 0 + dispLefTree };
+    right_pos = {
+        x: getWindowWidth() - initOptions.separation,
+        y: 0 + dispRightTree,
+    };
 
-    // //if interface lines changed force update
-    // if (interface_variables.changedLines) {
-    //     interface_variables.changedLines = false;
-    //     createBundles(left_pos, right_pos, initOptions.bundle_radius);
-    // }
+    //if interface lines changed force update
+    if (interface_variables.changedLines) {
+        interface_variables.changedLines = false;
+        createBundles(left_pos, right_pos, initOptions.bundle_radius);
+    }
 
-    // if (interface_variables.secondaryFilter) {
-    //     interface_variables.secondaryFilter = false;
-    //     let currentFilters = filterCombination();
-    //     if (currentFilters != "000000" && filteredTrees[currentFilters]) {
-    //         //drawSunburst(filteredTrees[currentFilters], currentFilters);
-    //         loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters, loadChangesDetails);
-    //     } else {
-    //         const filterDiffs = filterDifferences(differences);
-    //         filteredTrees[currentFilters] = filterDiffs;
-    //         // drawSunburst(filterDiffs, currentFilters);
-    //         loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
-    //     }
-    // }
+    if (interface_variables.secondaryFilter) {
+        interface_variables.secondaryFilter = false;
+        let currentFilters = filterCombination();
+        if (currentFilters != "000000" && filteredTrees[currentFilters]) {
+            loadTree(filteredTrees[currentFilters], tooltipContent, currentFilters, loadChangesDetails);
+        } else {
+            const filterDiffs = filterDifferences(differences);
+            filteredTrees[currentFilters] = filterDiffs;
+            loadTree(filterDiffs, tooltipContent, currentFilters, loadChangesDetails);
+        }
+    }
 
-    // translate(xPointer, -yPointer);
-    // background(255);
-    // fill(0);
+    translate(xPointer, -yPointer);
+    background(255);
+    fill(0);
 
-    // //draws based on the current window size
-    // let base_y = getWindowWidth() / 2 - initOptions.width / 2;
+    //draws based on the current window size
+    let base_y = getWindowWidth() / 2 - initOptions.width / 2;
 
-    // //Draw function, this draws the indented-treeTax
-    // optimizedDrawIndentedTree(
-    //     treeTax.visible_lbr,
-    //     initOptions,
-    //     initOptions.separation,
-    //     dispLefTree,
-    //     false
-    // );
-    // optimizedDrawIndentedTree(
-    //     treeTax2.visible_lbr,
-    //     initOptions,
-    //     getWindowWidth() - initOptions.separation,
-    //     dispRightTree,
-    //     true
-    // );
+    //Draw function, this draws the indented-treeTax
+    optimizedDrawIndentedTree(
+        treeTax.visible_lbr,
+        initOptions,
+        initOptions.separation,
+        dispLefTree,
+        false
+    );
+    optimizedDrawIndentedTree(
+        treeTax2.visible_lbr,
+        initOptions,
+        getWindowWidth() - initOptions.separation,
+        dispRightTree,
+        true
+    );
 
-    // //bundling comes from draw_menu js
-    // //Draw current visible lines
-    // ls_drawLines(
-    //     initOptions,
-    //     yPointer,
-    //     left_pos,
-    //     right_pos,
-    //     interface_variables.bundling
-    // );
+    //bundling comes from draw_menu js
+    //Draw current visible lines
+    ls_drawLines(
+        initOptions,
+        yPointer,
+        left_pos,
+        right_pos,
+        interface_variables.bundling
+    );
 
-    // //check if we are using bars
-    // //this is basicaly a switch when changed executes code
-    // if (initOptions.use_resume_bars != interface_variables.bars) {
-    //     initOptions.use_resume_bars = interface_variables.bars;
-    //     //update the treeTax if we are not using bars
-    //     recalculateTree(treeTax, initOptions, function() {
-    //         return;
-    //     });
-    //     recalculateTree(treeTax2, initOptions, function() {
-    //         return;
-    //     });
-    // }
+    //check if we are using bars
+    //this is basicaly a switch when changed executes code
+    if (initOptions.use_resume_bars != interface_variables.bars) {
+        initOptions.use_resume_bars = interface_variables.bars;
+        //update the treeTax if we are not using bars
+        recalculateTree(treeTax, initOptions, function() {
+            return;
+        });
+        recalculateTree(treeTax2, initOptions, function() {
+            return;
+        });
+    }
 
-    // //set click flag to false
-    // click = false;
+    //set click flag to false
+    click = false;
 
-    // //mark focused node, little gray rect on screen
-    // if (focusNode) {
-    //     let pc = 0.4;
-    //     fill(initOptions['focus-color']);
-    //     stroke(initOptions['focus-color']);
-    //     strokeWeight(1);
-    //     rect(-10,
-    //         focusNode.y + (initOptions.defaultSize * (1 - pc)) / 2,
-    //         getWindowWidth() + 10,
-    //         initOptions.defaultSize * 0.4
-    //     );
-    // }
+    //mark focused node, little gray rect on screen
+    if (focusNode) {
+        let pc = 0.4;
+        fill(initOptions['focus-color']);
+        stroke(initOptions['focus-color']);
+        strokeWeight(1);
+        rect(-10,
+            focusNode.y + (initOptions.defaultSize * (1 - pc)) / 2,
+            getWindowWidth() + 10,
+            initOptions.defaultSize * 0.4
+        );
+    }
 }
 
 //initialize required values on the json treeTax
@@ -939,7 +944,7 @@ function calculateSize(root, options) {
     //iterative iteration of a treeTax
     while (pendingNodes.length > 0) {
         let actual = pendingNodes.pop();
-        //reset in case of being an actualizatioo
+        //reset in case of being an actualization
         //console.log(pendingNodes);
         if (actual.collapsed) {
             actual.height = getNodeSize(
@@ -972,7 +977,6 @@ function calculateSize(root, options) {
                 }
             }
         }
-        //fin de if
     }
 }
 
@@ -988,11 +992,10 @@ function getNodeSize(node, options) {
         options.log_increment;
     else if (node.desendece && options.use_resume_bars)
         extra = options.defaultBarSize;
-    //console.log({options,extra});
     return options.defaultSize + extra;
 }
 
-//adds size to a node based on tis famili
+//adds size to a node based on this family
 function increaseFamilySize(node, increment) {
     node.f.forEach(function(fam) {
         fam.height += increment;
@@ -1032,7 +1035,7 @@ function unfoldNode(node, options) {
     node.collapsed = false;
 }
 
-//closes a bode
+
 function foldNode(node, options) {
     //node.collapsed = true;
     node.collapsed = true;
@@ -1052,7 +1055,7 @@ function foldNode(node, options) {
     );
 }
 
-//Main draw functions this simply cals a draw for each rank on the hierarchy
+//Main draw functions this simply calls a draw for each rank on the hierarchy
 //also  checks the state of nodes and if they need to be recalculated to avoid inconsistency on the render
 //uses options.dirtyNodes flag to check if nodes have been reordered
 function optimizedDrawIndentedTree(listByRank, options, xpos, ypos, isRight) {
@@ -1136,12 +1139,12 @@ function drawHierarchyLevel(taxons, options, pointer, xpos, ypos, isRight) {
             draws++; //increase draws variable for debug
 
             let node_text_width = node.tw; //size of the text displayed on scren
-            //this depends on the data displkayed on DrawOnlyText and should be changed if that variable is changed
+            //this depends on the data displayed on DrawOnlyText and should be changed if that variable is changed
 
             fill(iniColor, 0, iniBrigthnes);
             //drawCutNode(node,yPointer,yPointer+windowHeight*totalCanvasHeight,options,xpos,ypos);
             if (isRight) {
-                //a lot of dangerous magin numbers, they control the displcacement of the left treeTax text and button
+                //a lot of dangerous margin numbers, they control the displcacement of the left treeTax text and button
                 drawOnlyText(
                     node,
                     yPointer,
@@ -1204,6 +1207,7 @@ function drawHierarchyLevel(taxons, options, pointer, xpos, ypos, isRight) {
         }
         //if the node is out of the screen stop drawing
         if (node.y > pointer + windowHeight * totalCanvasHeight) {
+
             break;
         }
     }
@@ -1291,34 +1295,22 @@ function drawOnlyText(
             node.y + ypos,
             node_text_width,
             options.defaultSize
-        )
+        ) ||
+        isNodeDiffSelected(node)
     ) {
         fill(options['hover-color']);
         textSize(options.text_hover);
         node.selected = true;
 
-        //this functions comes from drawMenu.js
-        // Pending to delete, code to show a box with data
-        /*if(showInfo){
-			let author = node.a == '' ? '' : `<br>Author:${node.a}`;
-			let date = (node.ad || node.ad == '') ? '' : `  Date:${node.da}`;
-			let synonim = node.equivalent ? '<br>Synonims: '+ node.equivalent.length : '';
-			let splits = '<br>Splits: '+ node.totalSplits ;
-			let merges = '----Merges: '+ node.totalMerges;
-			let removes = '<br>Removes: '+ node.totalRemoves;
-			let insertions = '----Insertions: '+ node.totalInsertions;
-			let renames = '<br>Renames: '+ node.totalRenames;
-			let moves = '----Moves: '+ node.totalMoves;
-			let pv = '<br>----P: '+ node.p;
-			//shows info on screen*/
-        //}
-
-        //Bryan, good job!
-
         //if mouse is over and the button clicked
         if (click) {
+            const syncNode = userTriggered ? onSearch(node.n) : undefined;
             //focus the equivalent node on the other side
             if (node.equivalent && node.equivalent.length > 0) {
+
+                if (!syncNode) {
+                    onSearch(node.equivalent[0].n);
+                }
                 //iterate equivalent nodes
                 if (focusNode === node) focusClick++;
                 else focusClick = 0;
@@ -1597,13 +1589,12 @@ function pushIntoUnfolded(node) {
     //printListNodeNames(actualVisibleRank);
 }
 
-//helper function for printen the name of a list of taxons
+//helper function for print the name of a list of taxons
 function printListNodeNames(printedList) {
     let result = '';
     for (let i = 0; i < printedList.length; i++) {
         result = result + '->' + printedList[i].n;
     }
-    // console.log(result);
 }
 
 //remove element from rendering queue
@@ -1635,7 +1626,6 @@ function isOverRect(xpos, ypos, rxpos, rypos, rwidth, rheight) {
 }
 
 function drawInside(node, xpos, ypos, options) {
-    //console.log(node.x+'--'+node.y+'--'+node.width+'--'+node.height );
     stroke(options['stroke-color']);
     noFill();
     if (!node.collapsed) {
@@ -1645,8 +1635,6 @@ function drawInside(node, xpos, ypos, options) {
             node.width - options.indent,
             node.height - options.defaultSize
         );
-    } else {
-        //rect(node.x + xpos /*- options.indent*/,node.y +ypos ,node.width /*+ options.indent*/,node.height);
     }
 }
 
@@ -1685,8 +1673,6 @@ function drawCutNode(node, initialY, finalY, options, xpos, ypos) {
         node.height + (node.y - yCoord),
         finalY - initialY
     );
-    //console.log(newHeigth);
-    //fill(options['background-color']);
     stroke(options['stroke-color']);
     strokeWeight(2);
     if (
@@ -1953,14 +1939,11 @@ function sortVisualNodes(options) {
 
     Object.keys(treeTax2.visible_lbr).forEach(function(rank) {
         rank = rank.toLowerCase();
-        //console.log(rank.toUpperCase(),treeTax.visible_lbr[rank].length);
         treeTax2.visible_lbr[rank].sort(
             (a, b) => +parseFloat(a.y) - parseFloat(b.y)
         );
-        //treeTax2.visible_lbr[rank].forEach((node) => console.log(node.n, node.y));
     });
 
-    //options.dirtyNodes = false;
 }
 
 /* https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript*/
@@ -2056,7 +2039,6 @@ function expandAllLevels() {
     };
     createBundles(left_pos, right_pos, initOptions.bundle_radius);
 
-    // console.log({ lines });
 }
 
 //requires that node position has been given at least onece
@@ -2092,4 +2074,17 @@ function resetLines() {
         y: 0 + dispRightTree,
     };
     createBundles(left_pos, right_pos, initOptions.bundle_radius);
+}
+
+/**
+ * Verifies if the node is selected on the
+ * difference visualization
+ * @param {*} node 
+ */
+function isNodeDiffSelected(node) {
+    if (node) {
+        return node.n + node.r === selectedNodeDiff;
+    }
+    return false;
+
 }

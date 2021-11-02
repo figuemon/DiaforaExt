@@ -5,6 +5,19 @@ function onDownload() {
     window.location.replace(window.location.href + downloadUrl);
 }
 
+function OnChangeFile1Input() {
+    var fileInput1 = document.getElementById('file1');
+    var fileInput2 = document.getElementById('file2');
+    var file1Txt = document.getElementById('firstFile');
+    var file2Txt = document.getElementById('secondFile');
+    if (fileInput1.files.length > 0) {
+        file1Txt.innerHTML = fileInput1.files.item(0).name;
+    }
+    if (fileInput2.files.length > 0) {
+        file2Txt.innerHTML = fileInput2.files.item(0).name;
+    }
+}
+
 function VerificarDatos() {
     var errorText = document.getElementById('error_text');
     var fileInput1 = document.getElementById('file1');

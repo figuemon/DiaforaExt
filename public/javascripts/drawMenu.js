@@ -17,7 +17,8 @@ var interface_variables = {
     authorChanged: false,
     bundling: 0.5,
     changedLines: false,
-    secondaryFilter: false
+    secondaryFilter: false,
+    showDetails: true
 };
 
 //Used when the buttton exit is cliked
@@ -72,8 +73,8 @@ function onAuthorChange() {
 }
 
 
-function onSearch() {
-    const searchText = document.getElementById('tags').value;
+function onSearch(searchText) {
+    searchText = searchText ? searchText : document.getElementById('tags').value;
     if (currentSelectedItem) {
         $(currentSelectedItem).attr('fill', 'black');
     }
@@ -86,6 +87,7 @@ function onSearch() {
         const dataStructure = filteredTrees[currentFilters];
         const node = searchTree(dataStructure, searchText);
         sunburstChart.focusOnNode(node);
+        return true;
     } else {
         const currentElement = $("text:contains('" + searchText + "')");
         if (currentElement.length > 0) {
@@ -94,8 +96,10 @@ function onSearch() {
             $(currentElement[lastSearchIndex]).attr('fill', 'blue');
             currentSelectedItem = currentElement[lastSearchIndex];
             lastSearchIndex++;
+            return true;
         }
     }
+    return false;
 }
 
 function searchTree(element, matchingTitle) {
@@ -113,9 +117,9 @@ function searchTree(element, matchingTitle) {
 }
 
 function optionMenuChange() {
-    interface_variables.secondaryFilter = true;
     document.getElementById('busyLoader').style.display = 'block';
     setTimeout(() => {
+        interface_variables.secondaryFilter = true;
         LoadPrototypes().then(e => {
             hideLoader();
         });
@@ -178,5 +182,15 @@ function toggleGraphSize() {
         $('#statistics').collapse('show');
         sketchHolder.removeClass('fullwidth');
         sketchHolder.addClass('right');
+    }
+}
+
+function toggleDifferenceView() {
+    initOptions.showDetails = !initOptions.showDetails;
+    if (!initOptions.showDetails) {
+        $('#show-details').removeClass('pressed');
+        hideDetailsSection();
+    } else {
+        $('#show-details').addClass('pressed');
     }
 }
