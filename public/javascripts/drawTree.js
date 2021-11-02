@@ -364,6 +364,7 @@ function setup() {
     $("#tags").autocomplete({
         source: Object.keys(taxaNames),
         minLength: 4,
+        select: () => { onSearch(); } // Search on change value
     });
     $("#tags").keypress(function(event) {
         if (event.keyCode === 13) {
@@ -380,7 +381,7 @@ function drawSunburst(data, filters) {
     const container = document.getElementById('sunburstChart');
     container.innerHTML = ''; // clean the container before drawing the interface
     if (filters === "0000000") {
-        document.getElementById('placeholder').style.display = "none";
+        document.getElementById('placeholder').style.display = "block";
         return;
     }
     document.getElementById('placeholder').style.display = "none";
