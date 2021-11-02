@@ -706,13 +706,13 @@ function loadChangesDetails(node, changeType) {
         oldTaxonomy.innerHTML = "";
         newTaxonomy.innerHTML = "";
         changesTitle.innerHTML = `Change details for: ${node.r +" "+ node.n}`;
-        if (changeType === "splitted" || changeType === "moved") {
+        if (changeType === "splitted") {
             oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
             node.equivalent.forEach(eq => {
                 newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(eq))
             });
         }
-        if (changeType === "merged" || changeType === "renamed" || changeType === "authorChanged") {
+        if (changeType === "merged" || changeType === "renamed" || changeType === "authorChanged" || changeType === "moved") {
             newTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(node));
             node.equivalent.forEach(eq => {
                 oldTaxonomy.insertAdjacentHTML('beforeend', changeDetailTableForNode(eq))
